@@ -2,9 +2,9 @@
 
 //DEPS org.slf4j:slf4j-api:1.7.35
 //DEPS org.slf4j:slf4j-simple:1.7.35
-//DEPS com.pi4j:pi4j-core:2.1.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.1.1
-//DEPS com.pi4j:pi4j-plugin-pigpio:2.1.1
+//DEPS com.pi4j:pi4j-core:2.3.0
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
+//DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
@@ -15,8 +15,12 @@ import com.pi4j.util.Console;
 
 public class JBangPi4JMinimalExample {
 
-    private static final int PIN_BUTTON = 24; // PIN 18 = BCM 24
-    private static final int PIN_LED = 22; // PIN 15 = BCM 22
+    // Wiring see: https://pi4j.com/getting-started/minimal-example-application/
+
+    // Connect a button to PIN 18 = BCM 24
+    private static final int PIN_BUTTON = 24;
+    // Connect a LED to PIN 15 = BCM 22
+    private static final int PIN_LED = 22; 
 
     private static int pressCount = 0;
 
@@ -64,4 +68,3 @@ public class JBangPi4JMinimalExample {
         pi4j.shutdown();
     }
 }
-

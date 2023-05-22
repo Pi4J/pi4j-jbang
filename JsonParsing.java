@@ -7,14 +7,11 @@
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
-//DEPS com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.time.Instant;
