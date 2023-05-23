@@ -4,6 +4,11 @@
 // Therefore, you can't run it with `java JsonParsing.java`.
 // But it can be executed with https://www.jbang.dev with `jbang JsonParsing.java`.
 
+// This example uses a Record, which is available since Java 14.
+// More info about using specific Java versions with jbang is documented on
+// https://www.jbang.dev/documentation/guide/latest/javaversions.html
+//JAVA 14+
+
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
