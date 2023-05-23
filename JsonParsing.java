@@ -43,19 +43,16 @@ public class JsonParsing {
                 """;
 
         try {
-            System.out.println("--------------------------------------");
-            System.out.println("Data loaded from JSON:\n");
-
             ObjectMapper objectMapper = new ObjectMapper();
             LogMessage[] logMessages = objectMapper.readValue(json, LogMessage[].class);
+
+            System.out.println("Data loaded from JSON:\n");
+            
             for (LogMessage logMessage : logMessages) {
                 System.out.println("Log message at " + logMessage.getZonedDateTime()
                         + "\n\tSeverity: " + logMessage.level().getLabel()
                         + "\n\tMessage: " + logMessage.message());
             }
-
-            System.out.println("--------------------------------------");
-            System.out.println("JSON generated from Java array:\n");
         } catch (IOException ex) {
             System.err.println("Json processing exception: " + ex.getMessage());
         }
