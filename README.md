@@ -6,7 +6,9 @@ Pi4J V2 :: Java I/O Library for Raspberry Pi :: JBang example code
 [![Site](https://img.shields.io/badge/Website-pi4j.com-green)](https://pi4j.com)
 [![Twitter Follow](https://img.shields.io/twitter/follow/pi4j?label=Pi4J&style=social)](https://twitter.com/pi4j)
 
-This project contains several example applications that you can run as single files with JBang, using the Pi4J (V2).
+This project contains several example applications that you can run as single files with JBang, using the Pi4J (V2) as demonstrated on Voxxed Days Brussels on May 23th 2023.
+
+https://www.youtube.com/watch?v=w4AR4hWP3Qk
 
 ## PREREQUISITES
 
