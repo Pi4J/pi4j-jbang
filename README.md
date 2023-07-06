@@ -23,6 +23,12 @@ More info is available on [pi4j.com: "Running Pi4J with JBang"](https://pi4j.com
 
 ## SCRIPTS
 
+This project contains several examples to demonstrate both JBang and Pi4J:
+
+* HelloWorld.java: basic Java example
+* JsonParsing.java: shows how to use dependencies, can be executed on any computer
+* Pi4JMinimalExample.java: basic example with Pi4J and a LED and button
+
 Execute any of the following examples like this:
 
 ```bash
@@ -32,10 +38,6 @@ jbang SCRIPT.java
 // For example
 jbang HelloWorld.java
 ```
-
-* HelloWorld.java: basic Java example
-* JsonParsing.java: shows how to use dependencies, can be executed on any computer
-* JBangPi4JMinimalExample.java: basic example with Pi4J and a LED and button
 
 ## LICENSE
 
