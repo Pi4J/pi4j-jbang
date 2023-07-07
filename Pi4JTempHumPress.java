@@ -92,6 +92,9 @@ public class Pi4JTempHumPress {
         }
 
         pi4j.shutdown();
+
+        console.println("**************************************");
+        console.println("Finished");
     }
 
     private static void resetSensor(I2C device) {
