@@ -12,6 +12,8 @@ import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
 
+import java.text.DecimalFormat;
+
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  *
@@ -192,7 +194,12 @@ public class Pi4JTempHumPress {
             pressure = pressure + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
         
-        console.println("Pressure: " + pressure + "Pa");
+        console.println("Pressure: " + pressure + " Pa");
+        // 1 Pa = 0.00001 bar or 1 bar = 100,000 Pa
+        DecimalFormat df = new DecimalFormat("###.###");
+        console.println("Pressure: " + df.format(pressure / 100_000) + " bar");
+        // 1 Pa = 0.0000098692316931 atmosphere (standard) and 1 atm = 101.325 kPa
+        console.println("Pressure: " + df.format(pressure / 101_325) + " atm");
     }
 
     /**
