@@ -128,6 +128,8 @@ public class Pi4JTempHumPress {
 
         byte[] compVal = new byte[2];
 
+        DecimalFormat df = new DecimalFormat("0.###");
+
         // Temperature
         device.readRegister(wrtReg, compVal);
         long dig_t1 = castOffSignInt(compVal);
@@ -144,7 +146,7 @@ public class Pi4JTempHumPress {
         double t_fine = (int) (var1 + var2);
         double temperature = (var1 + var2) / 5120.0;
 
-        console.println("Measure temperature: " + temperature + "°C");
+        console.println("Measure temperature: " + df.format(temperature) + "°C");
 
         // Humidity
         double humidity = 0; // TODO
@@ -194,9 +196,8 @@ public class Pi4JTempHumPress {
             pressure = pressure + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
         
-        console.println("Pressure: " + pressure + " Pa");
+        console.println("Pressure: " + df.format(pressure) + " Pa");
         // 1 Pa = 0.00001 bar or 1 bar = 100,000 Pa
-        DecimalFormat df = new DecimalFormat("###.###");
         console.println("Pressure: " + df.format(pressure / 100_000) + " bar");
         // 1 Pa = 0.0000098692316931 atmosphere (standard) and 1 atm = 101.325 kPa
         console.println("Pressure: " + df.format(pressure / 101_325) + " atm");
