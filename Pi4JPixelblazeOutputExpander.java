@@ -18,6 +18,9 @@ import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 
 /**
+ * This example must be executed as sudo
+ * sudo `which jbang` Pi4JPixelblazeOutputExpander.java
+ * 
  * Thanks to Jeff Vyduna for his Java driver for the Output Expander that has been used in this example.
  *
  * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
