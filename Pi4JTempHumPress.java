@@ -15,6 +15,9 @@ import com.pi4j.io.i2c.I2CProvider;
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  *
+ * This example can be executed without sudo with:
+ * jbang Pi4JTempHumPress.java
+ *
  * Based on:
  * 
  * <ul>
