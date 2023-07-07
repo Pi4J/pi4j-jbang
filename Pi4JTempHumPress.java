@@ -74,6 +74,8 @@ public class Pi4JTempHumPress {
         try (I2C bme280 = i2CProvider.create(i2cConfig)) {           
             // Read values 10 times
             for (int counter = 0; counter < 10; counter++) {
+                console.println("Reading values, loop " + (counter + 1));
+
                 resetSensor(bme280);
 
                 // The sensor needs some time to make the measurement
@@ -81,7 +83,7 @@ public class Pi4JTempHumPress {
 
                 getMeasurements(bme280);
 
-                Thread.sleep(1000);
+                Thread.sleep(5000);
             }
         }
 
@@ -191,8 +193,6 @@ public class Pi4JTempHumPress {
      * @return unsigned value
      */
     private static int castOffSignByte(byte read) {
-        console.println("Enter: castOffSignByte byte " + read);
-        console.println("Exit: castOffSignByte  " + ((int) read & 0Xff));
         return ((int) read & 0Xff);
     }
 
@@ -201,11 +201,9 @@ public class Pi4JTempHumPress {
      * @return 16 bit signed
      */
     private static int signedInt(byte[] read) {
-        console.println("Enter: signedInt byte[] " + read.toString());
         int temp = 0;
         temp = (read[0] & 0xff);
         temp += (((long) read[1]) << 8);
-        console.println("Exit: signedInt  " + temp);
         return (temp);
     }
 
@@ -214,11 +212,9 @@ public class Pi4JTempHumPress {
      * @return 64 bit unsigned value
      */
     private static long castOffSignInt(byte[] read) {
-        console.println("Enter: castOffSignInt byte[] " + read.toString());
         long temp = 0;
         temp = ((long) read[0] & 0xff);
         temp += (((long) read[1] & 0xff)) << 8;
-        console.println("Exit: castOffSignInt  " + temp);
         return (temp);
     }
 
