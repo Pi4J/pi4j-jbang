@@ -74,6 +74,7 @@ public class Pi4JTempHumPress {
         try (I2C bme280 = i2CProvider.create(i2cConfig)) {           
             // Read values 10 times
             for (int counter = 0; counter < 10; counter++) {
+                console.println("**************************************");
                 console.println("Reading values, loop " + (counter + 1));
 
                 resetSensor(bme280);
