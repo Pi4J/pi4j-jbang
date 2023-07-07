@@ -91,13 +91,48 @@ public class Pi4JTempHumPress {
     }
 
     private static void resetSensor(I2C device) {
+        // Set forced mode to leave sleep ode state and initiate measurements.
+        // At measurement completion chip returns to sleep mode
+        int ctlReg = device.readRegister(BMP280Declares.ctrl_meas);
+        ctlReg |= BMP280Declares.ctl_forced;
+        ctlReg &= ~BMP280Declares.tempOverSampleMsk;   // mask off all temperauire bits
+        ctlReg |= BMP280Declares.ctl_tempSamp1;      // Temperature oversample 1
+        ctlReg &= ~BMP280Declares.presOverSampleMsk;   // mask off all pressure bits
+        ctlReg |= BMP280Declares.ctl_pressSamp1;   //  Pressure oversample 1
 
+        byte[] regVal = new byte[1];
+        regVal[0] = (byte)(BMP280Declares.ctrl_meas);
+        byte[] ctlVal = new byte[1];
+        ctlVal[0] = (byte) ctlReg;
+
+        device.writeRegister(regVal, ctlVal, ctlVal.length);
     }
 
     private static void getTemperature(I2C device) {
-        double value = 0; // TODO
+        byte[] buff = new byte[6];
+        device.readRegister(BMP280Declares.press_msb, buff);
+        long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
 
-        console.println("Measure temperature: " + value + "°C");
+        byte[] wrtReg = new byte[1];
+        wrtReg[0] = (byte) BMP280Declares.reg_dig_t1;
+
+        byte[] compVal = new byte[2];
+        device.readRegister(wrtReg, compVal);
+        long dig_t1 = castOffSignInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_t2, compVal);
+        int dig_t2 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_t3, compVal);
+        int dig_t3 = signedInt(compVal);
+
+        double var1 = (((double) adc_T) / 16384.0 - ((double) dig_t1) / 1024.0) * ((double) dig_t2);
+        double var2 = ((((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0) *
+                (((double) adc_T) / 131072.0 - ((double) dig_t1) / 8192.0)) * ((double) dig_t3);
+        double t_fine = (int) (var1 + var2);
+        double temperature = (var1 + var2) / 5120.0;
+
+        console.println("Measure temperature: " + temperature + "°C");
     }
 
     private static void getHumidity(I2C device) {
@@ -110,5 +145,106 @@ public class Pi4JTempHumPress {
         double value = 0; // TODO
         
         console.println("Pressure: " + value + "Pa");
+    }
+
+    /**
+     * @param read 8 bits data
+     * @return unsigned value
+     */
+    private static int castOffSignByte(byte read) {
+        console.println("Enter: castOffSignByte byte " + read);
+        console.println("Exit: castOffSignByte  " + ((int) read & 0Xff));
+        return ((int) read & 0Xff);
+    }
+
+    /**
+     * @param read 16 bits of data  stored in 8 bit array
+     * @return 16 bit signed
+     */
+    private static int signedInt(byte[] read) {
+        console.println("Enter: signedInt byte[] " + read.toString());
+        int temp = 0;
+        temp = (read[0] & 0xff);
+        temp += (((long) read[1]) << 8);
+        console.println("Exit: signedInt  " + temp);
+        return (temp);
+    }
+
+    /**
+     * @param read 16 bits of data  stored in 8 bit array
+     * @return 64 bit unsigned value
+     */
+    private static long castOffSignInt(byte[] read) {
+        console.println("Enter: castOffSignInt byte[] " + read.toString());
+        long temp = 0;
+        temp = ((long) read[0] & 0xff);
+        temp += (((long) read[1] & 0xff)) << 8;
+        console.println("Exit: castOffSignInt  " + temp);
+        return (temp);
+    }
+
+    private static class BMP280Declares {
+        /*  Begin device register definitions.        */
+        static int temp_xlsb = 0xFC;
+        static int temp_lsb = 0xFB;
+        static int temp_msb = 0xFA;
+        static int press_xlsb = 0xF9;
+        static int press_lsb = 0xF8;
+        static int press_msb = 0xF7;
+        static int config = 0xF5;
+        static int ctrl_meas = 0xF4;
+        static int status = 0xF3;
+        static int reset = 0xE0;
+        static int chipId = 0xD0;
+
+
+        // errata register definitions
+        static int reg_dig_t1 = 0x88;
+        static int reg_dig_t2 = 0x8A;
+        static int reg_dig_t3 = 0x8C;
+
+        static int reg_dig_p1 = 0x8E;
+        static int reg_dig_p2 = 0x90;
+        static int reg_dig_p3 = 0x92;
+        static int reg_dig_p4 = 0x94;
+        static int reg_dig_p5 = 0x96;
+        static int reg_dig_p6 = 0x98;
+        static int reg_dig_p7 = 0x9A;
+        static int reg_dig_p8 = 0x9C;
+        static int reg_dig_p9 = 0x9E;
+
+        // register contents
+        static int reset_cmd = 0xB6;  // written to reset
+
+        // Pertaining to 0xF3 status register
+        static int stat_measure = 0x08;  // set, conversion running
+        static int stat_update = 0x01;  // set, NVM being copied
+
+        // Pertaining to 0xF4 ctrl_meas register
+        static int tempOverSampleMsk = 0xE0;  // mask bits 5,6,7
+        static int presOverSampleMsk = 0x1C;  // mask bits 2,3,4
+        static int pwrModeMsk = 0x03;  // mask bits 0,1
+
+
+        // Pertaining to 0xF5 config register
+        static int inactDurationMsk = 0xE0;  // mask bits 5,6,7
+        static int iirFltMsk = 0x1C;  // mask bits 2,3,4
+        static int enableSpiMsk = 0x01;  // mask bits 0
+
+        // Pertaining to 0xF7 0xF8 0xF9 press  register
+        static int pressMsbMsk = 0xFF;  // mask bits 0 - 7
+        static int pressLsbMsk = 0xFF;  // mask bits 0 - 7
+        static int pressXlsbMsk = 0x0F;  // mask bits 0 - 3
+
+        // Pertaining to 0xFA 0xFB 0xFC temp  register
+        static int tempMsbMsk = 0xFF;  // mask bits 0 - 7
+        static int tempLsbMsk = 0xFF;  // mask bits 0 - 7
+        static int tempXlsbMsk = 0x0F;  // mask bits 0 - 3
+        static int idValueMsk = 0x58;   // expected chpId value
+
+        // For the control reg 0xf4
+        static int ctl_forced = 0x01;
+        static int ctl_tempSamp1 = 0x20;   // oversample *1
+        static int ctl_pressSamp1 = 0x04;   // oversample *1
     }
 }

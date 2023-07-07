@@ -20,6 +20,7 @@ More info is available on [pi4j.com: "Running Pi4J with JBang"](https://pi4j.com
 * Use [Visual Studio Code](https://code.visualstudio.com/), the free IDE, with the following extensions:
   * [Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
   * [JBang](https://marketplace.visualstudio.com/items?itemName=jbangdev.jbang-vscode)
+  * Install VSC with `sudo apt install code`
 
 ## SCRIPTS
 
