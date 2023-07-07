@@ -79,9 +79,7 @@ public class Pi4JTempHumPress {
                 // The sensor needs some time to make the measurement
                 Thread.sleep(100);
 
-                getTemperature(bme280);
-                getHumidity(bme280);
-                getPressure(bme280);
+                getMeasurements(bme280);
 
                 Thread.sleep(1000);
             }
@@ -108,15 +106,18 @@ public class Pi4JTempHumPress {
         device.writeRegister(regVal, ctlVal, ctlVal.length);
     }
 
-    private static void getTemperature(I2C device) {
+    private static void getMeasurements(I2C device) {
         byte[] buff = new byte[6];
         device.readRegister(BMP280Declares.press_msb, buff);
         long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) + (long) ((buff[1] & 0xFF) << 4) + (long) (buff[2] & 0xFF);
 
         byte[] wrtReg = new byte[1];
         wrtReg[0] = (byte) BMP280Declares.reg_dig_t1;
 
         byte[] compVal = new byte[2];
+
+        // Temperature
         device.readRegister(wrtReg, compVal);
         long dig_t1 = castOffSignInt(compVal);
 
@@ -133,18 +134,56 @@ public class Pi4JTempHumPress {
         double temperature = (var1 + var2) / 5120.0;
 
         console.println("Measure temperature: " + temperature + "°C");
-    }
 
-    private static void getHumidity(I2C device) {
-        double value = 0; // TODO
-        
-        console.println("Humidity: " + value + "%");
-    }
+        // Humidity
+        double humidity = 0; // TODO
+        console.println("Humidity: " + humidity + "%");
 
-    private static void getPressure(I2C device) {
-        double value = 0; // TODO
+        // Pressure
+        device.readRegister(BMP280Declares.reg_dig_p1, compVal);
+        long dig_p1 = castOffSignInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p2, compVal);
+        int dig_p2 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p3, compVal);
+        int dig_p3 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p4, compVal);
+        int dig_p4 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p5, compVal);
+        int dig_p5 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p6, compVal);
+        int dig_p6 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p7, compVal);
+        int dig_p7 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p8, compVal);
+        int dig_p8 = signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_p9, compVal);
+        int dig_p9 = signedInt(compVal);
         
-        console.println("Pressure: " + value + "Pa");
+        var1 = ((double) t_fine / 2.0) - 64000.0;
+        var2 = var1 * var1 * ((double) dig_p6) / 32768.0;
+        var2 = var2 + var1 * ((double) dig_p5) * 2.0;
+        var2 = (var2 / 4.0) + (((double) dig_p4) * 65536.0);
+        var1 = (((double) dig_p3) * var1 * var1 / 524288.0 + ((double) dig_p2) * var1) / 524288.0;
+        var1 = (1.0 + var1 / 32768.0) * ((double) dig_p1);
+        double pressure = 0;
+        if (var1 != 0.0) {
+            // avoid exception caused by division by zero
+            pressure = 1048576.0 - (double) adc_P;
+            pressure = (pressure - (var2 / 4096.0)) * 6250.0 / var1;
+            var1 = ((double) dig_p9) * pressure * pressure / 2147483648.0;
+            var2 = pressure * ((double) dig_p8) / 32768.0;
+            pressure = pressure + (var1 + var2 + ((double) dig_p7)) / 16.0;
+        }
+        
+        console.println("Pressure: " + pressure + "Pa");
     }
 
     /**
