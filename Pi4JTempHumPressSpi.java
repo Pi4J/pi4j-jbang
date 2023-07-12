@@ -46,18 +46,17 @@ public class Pi4JTempHumPressSpi {
 
     private static final String SPI_PROVIDER_NAME = "BME280 SPI Provider";
     private static final String SPI_PROVIDER_ID = "BME280-spi";
+
+    private static final SpiChipSelect chipSelect = SpiChipSelect.CS_0;
+    private static final SpiBus spiBus = SpiBus.BUS_0;
+    private static final int csPin = 21; // BCM 21 = physical pin 40
     private static DigitalOutput csGpio;
     private static Spi spi;
     public static void main(String[] args) throws Exception {
-
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize SPI
         console.println("Initializing the sensor via SPI");
-
-        SpiChipSelect chipSelect = SpiChipSelect.CS_0;
-        SpiBus spiBus = SpiBus.BUS_0;
-        int csPin = 21;
 
         var csGpioConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("CS_pin")
@@ -69,14 +68,11 @@ public class Pi4JTempHumPressSpi {
         csGpio = pi4j.create(csGpioConfig);
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
-                .id("SPI" + spiBus + "_BMP280")
-                .name("D/A converter")
+                .id(SPI_PROVIDER_ID)
+                .name(SPI_PROVIDER_NAME)
                 .bus(spiBus)
                 .chipSelect(chipSelect)
-                //1 20 19 18 17 16 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1  0
-                //b  b  b  b  b  b  R  T  n  n  n  n  W  A u2 u1 u0 p2 p1 p0  m  m
-                // .flags(0b0000000000000000100000L)  // MODE0, ux GPIO not used for chip select
-                .baud(Spi.DEFAULT_BAUD)    // Max 10MHz
+                .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
                 .provider("pigpio-spi")
                 .build();
