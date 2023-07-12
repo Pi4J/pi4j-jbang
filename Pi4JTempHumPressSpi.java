@@ -36,7 +36,7 @@ import java.text.DecimalFormat;
  *  <li>SDI to MOSI (BCM10, pin 19)</li>
  *  <li>SDO to MISO (BCM9, pin 21)</li>
  *  <li>SCK to SCLK (BCM11, pin 23)</li>
- *  <li>CS to BCM21 = CE0 (pin 40)</li>
+ *  <li>CS to BCM21 (pin 40)</li>
  * </ul>
  *
  */
