@@ -28,7 +28,9 @@ This project contains several examples to demonstrate both JBang and Pi4J:
 
 * HelloWorld.java: basic Java example
 * JsonParsing.java: shows how to use dependencies, can be executed on any computer
-* Pi4JMinimalExample.java: basic example with Pi4J and a LED and button
+* Pi4JMinimalExample.java: basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput)
+* Pi4JTempHumPressI2C.java: reading temperature, humidity and pressure from a BME280 sensor via I2C
+* Pi4JTempHumPressSpi.java: reading temperature, humidity and pressure from a BME280 sensor via SPI
 
 Execute any of the following examples like this:
 

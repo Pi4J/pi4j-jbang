@@ -28,7 +28,7 @@ import java.text.DecimalFormat;
  *  <li>https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts</li>
  * </ul>
  * 
- * I2C
+ * I2C Wiring
  *
  * <ul>
  *  <li>Vin to 3.3V</li>

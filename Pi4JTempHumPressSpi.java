@@ -28,13 +28,15 @@ import java.text.DecimalFormat;
  *  <li>https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts</li>
  * </ul>
  * 
- * I2C
+ * SPI Wiring
  *
  * <ul>
  *  <li>Vin to 3.3V</li>
  *  <li>GND to GND</li>
- *  <li>SCK to I2C clock SCL (pin 5)</li>
- *  <li>SDI to I2C data SDA (pin 3)</li>
+ *  <li>SDI to MOSI (BCM10, pin 19)</li>
+ *  <li>SDO to MISO (BCM9, pin 21)</li>
+ *  <li>SCK to SCLK (BCM11, pin 23)</li>
+ *  <li>CS to BCM21 = CE0 (pin 40)</li>
  * </ul>
  *
  */
