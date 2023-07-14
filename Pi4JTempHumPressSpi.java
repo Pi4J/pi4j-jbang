@@ -19,8 +19,8 @@ import java.text.DecimalFormat;
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
- * This example can be executed without sudo with:
- * jbang Pi4JTempHumPressSpi.java
+ * This example must be executed with sudo as it uses PiGpio with:
+ * sudo `which jbang` Pi4JTempHumPressSpi.java
  *
  * Based on:
  * 
@@ -207,14 +207,14 @@ public class Pi4JTempHumPressSpi {
      * @return 8bit value read from register
      */
     private static int readRegister(int register) {
-        console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
+        //console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         csGpio.low();
         byte data[] = new byte[]{(byte) (0b10000000 | register)};
         int bytesWritten = spi.write(data);
         byte value[] = new byte[1];
         byte rval = spi.readByte();
         csGpio.high();
-        console.println("<<< Exit readRegister   : " + String.format("0X%02x: ", rval));
+        //console.println("<<< Exit readRegister   : " + String.format("0X%02x: ", rval));
         return (rval);
     }
 
@@ -224,13 +224,13 @@ public class Pi4JTempHumPressSpi {
      * @return count     number bytes read or fail -1
      */
     private static int readRegister(int register, byte[] buffer) {
-        console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
+        //console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         byte data[] = new byte[]{(byte) (0b10000000 | register)};
         csGpio.low();
         int bytesWritten = spi.write(data);
         int bytesRead = spi.read(buffer);
         csGpio.high();
-        console.println("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
+        //console.println("<<< Exit readRegister   : " + String.format("0X%02x: ", buffer[0]) + String.format("0X%02x: ", buffer[0]));
         return (bytesRead);
     }
 
@@ -240,7 +240,7 @@ public class Pi4JTempHumPressSpi {
      * @return bytes written, else -1
      */
     private static int writeRegister(int register, int data) {
-        console.println(">>> Enter writeRegister   : " + String.format("0X%02x: ", register));
+        // console.println(">>> Enter writeRegister   : " + String.format("0X%02x: ", register));
         int rval = 0;
         int byteswritten = -1;
         byte buffer[] = new byte[]{(byte) (0b01111111 & register),
@@ -251,8 +251,7 @@ public class Pi4JTempHumPressSpi {
         csGpio.low();
         byteswritten = spi.write(buffer);
         csGpio.high();
-
-        console.println("<<< Exit writeRegister wrote : " + byteswritten);
+        // console.println("<<< Exit writeRegister wrote : " + byteswritten);
         return (rval);
     }
 
