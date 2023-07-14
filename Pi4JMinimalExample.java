@@ -13,6 +13,16 @@ import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.util.Console;
 
+/**
+ * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
+ * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ *
+ * This example must be executed with sudo with:
+ * sudo `which jbang` Pi4JMinimalExample.java
+ *
+ * More information and a video explaining this example is available on:
+ * https://pi4j.com/documentation/building/jbang/
+ */
 public class Pi4JMinimalExample {
 
     // Wiring see: https://pi4j.com/getting-started/minimal-example-application/

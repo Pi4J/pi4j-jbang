@@ -18,11 +18,13 @@ import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 
 /**
- * This example must be executed as sudo
+ * Example code to use a Pixelblaze to control a LED strip.
+ * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ *
+ * This example must be executed as sudo with:
  * sudo `which jbang` Pi4JPixelblazeOutputExpander.java
  * 
  * Thanks to Jeff Vyduna for his Java driver for the Output Expander that has been used in this example.
- *
  * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
  */
 public class Pi4JPixelblazeOutputExpander {
