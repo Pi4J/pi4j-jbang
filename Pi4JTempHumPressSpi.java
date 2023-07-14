@@ -5,6 +5,7 @@
 //DEPS com.pi4j:pi4j-core:2.3.0
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
 //DEPS com.pi4j:pi4j-plugin-linuxfs:2.3.0
+//DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
