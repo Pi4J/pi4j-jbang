@@ -116,7 +116,7 @@ TODO
 
 ### Pi4JTempHumPressSpi.java
 
-TODO
+![BME280 Wiring with SPI](wiring/bme280_wiring_spi_breadboard.png)
 
 ## LICENSE
 
