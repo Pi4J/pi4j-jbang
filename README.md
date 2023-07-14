@@ -59,7 +59,7 @@ $ cd pi4j-jbang
 
 ### EXAMPLE USAGE
 
-Check the **description of each example in the file itself**!
+Check the **description of each example in the file itself** for more information! These are only a few examples:
 
 ```bash
 // Execute HelloWorld 
