@@ -15,29 +15,108 @@ More info is available on [pi4j.com: "Running Pi4J with JBang"](https://pi4j.com
 ## PREREQUISITES
 
 * A Raspberry Pi with recent Raspberry Pi OS.
-* Install JBang as described on [jbang.dev/download](https://www.jbang.dev/download/).
-  * JBang will install Java if it's not installed yet.
-* Use [Visual Studio Code](https://code.visualstudio.com/), the free IDE, with the following extensions:
+* Install JBang as described on [jbang.dev/download](https://www.jbang.dev/download/). JBang will install Java if it's not installed yet.
+```shell
+# Install JBang
+$ curl -Ls https://sh.jbang.dev | bash -s - app setup
+
+# Check JBang by requesting its version
+$ jbang --version        
+0.109.0
+```
+* OPTIONAL: Use [Visual Studio Code](https://code.visualstudio.com/), the free IDE.
+```shell
+# Install Visual Studio Code
+$ sudo apt install code
+```
+* OPTIONAL: Install the following extensions in Visual Studio Code:
   * [Language Support for Java(TM) by Red Hat](https://marketplace.visualstudio.com/items?itemName=redhat.java)
   * [JBang](https://marketplace.visualstudio.com/items?itemName=jbangdev.jbang-vscode)
 
-## SCRIPTS
+## SCRIPTS IN THIS PROJECT
 
-This project contains several examples to demonstrate both JBang and Pi4J:
+This project contains several examples to demonstrate both JBang and Pi4J. Each java-file is a full-containing runnable JBang application. This means you don't need Maven, Gradle, or other Java build tool.
 
-* HelloWorld.java: basic Java example
-* JsonParsing.java: shows how to use dependencies, can be executed on any computer
-* Pi4JMinimalExample.java: basic example with Pi4J and a LED and button
+To tell JBang that it must handle the file as a Java application and do some upfront preparation work, the first line in each file is: `///usr/bin/env jbang "$0" "$@" ; exit $?`.
 
-Execute any of the following examples like this:
+When an application needs dependencies, they are defined inside the file itself in a line starting with `//DEPS`. For instance, to use the Pi4J Core library: `//DEPS com.pi4j:pi4j-core:2.3.0`.
+
+* `HelloWorld.java`: basic Java example
+* `JsonParsing.java`: shows how to use dependencies, can be executed on any computer
+* `Pi4JMinimalExample.java`: basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput)
+* `Pi4JPixelBlazeOutputExpander.java`: use a Pixelblaze to control a LED strip
+* `Pi4JTempHumPressI2C.java`: reading temperature, humidity and pressure from a BME280 sensor via I2C
+* `Pi4JTempHumPressSpi.java`: reading temperature, humidity and pressure from a BME280 sensor via SPI
+
+### GET FROM GITHUB
+
+You can clone this project to your Raspberry Pi in the terminal with the following commands:
 
 ```bash
-git clone https://github.com/Pi4J/pi4j-jbang
-cd pi4j-jbang
-jbang SCRIPT.java
-// For example
-jbang HelloWorld.java
+$ git clone https://github.com/Pi4J/pi4j-jbang
+$ cd pi4j-jbang
 ```
+
+### EXAMPLE USAGE
+
+Check the **description of each example in the file itself** for more information! These are only a few examples:
+
+```bash
+// Execute HelloWorld 
+$ jbang HelloWorld.java
+[jbang] Building jar...
+Hello World
+
+// Execute JsonParsing that needs fasterxml libraries 
+$ jbang JsonParsing.java 
+[jbang] Resolving dependencies...
+[jbang]    com.fasterxml.jackson.core:jackson-annotations:2.14.1
+[jbang]    com.fasterxml.jackson.core:jackson-core:2.14.1
+[jbang]    com.fasterxml.jackson.core:jackson-databind:2.14.1
+[jbang] Dependencies resolved
+[jbang] Building jar...
+Data loaded from JSON:
+
+Log message at 2023-02-08T14:39:44.342Z[UTC]
+        Severity: Informative message
+        Message: Program started
+Log message at 2023-02-08T14:39:45.921Z[UTC]
+        Severity: Warning message
+        Message: File X not found
+Log message at 2023-02-08T14:39:46.357Z[UTC]
+        Severity: Error message
+        Message: Error at line Y
+        
+// Execute Pi4JMinimalExample that needs the Pi4J and SLF4J libraries. 
+// This example must be executed with sudo as described in the file itself.
+$ sudo `which jbang` Pi4JMinimalExample.java
+[jbang] Building jar...
+[main] INFO com.pi4j.Pi4J - New auto context
+[main] INFO com.pi4j.Pi4J - New context builder
+[main] INFO com.pi4j.platform.impl.DefaultRuntimePlatforms - adding platform to managed platform map [id=raspberrypi; name=RaspberryPi Platform; priority=5; class=com.pi4j.plugin.raspberrypi.platform.RaspberryPiPlatform]
+[main] INFO com.pi4j.util.Console - LED high
+[main] INFO com.pi4j.util.Console - LED low
+```
+
+## WIRING
+
+The Pi4J examples in this project, require electronic components attached to the Raspberry Pi. In the code, you can find more information about the connections and here the wiring schemes are provided.
+
+### Pi4JMinimalExample.java
+
+TODO
+
+### Pi4JPixelBlazeOutputExpander.java
+
+TODO
+
+### Pi4JTempHumPressI2C.java
+
+![BME280 Wiring with I2C](wiring/bme280_wiring_i2c_breadboard.png)
+
+### Pi4JTempHumPressSpi.java
+
+![BME280 Wiring with SPI](wiring/bme280_wiring_spi_breadboard.png)
 
 ## LICENSE
 

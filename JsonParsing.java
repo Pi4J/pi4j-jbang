@@ -24,6 +24,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 
+/**
+ * Example code to illustrate how a Java file that needs dependencies can be executed with JBang.
+ * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ *
+ * This example can be executed with:
+ * jbang JsonParsing.java
+ */
 public class JsonParsing {
 
     public static void main (String[] args) {
