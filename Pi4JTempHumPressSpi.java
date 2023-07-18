@@ -88,7 +88,7 @@ public class Pi4JTempHumPressSpi {
             resetSensor();
 
             // The sensor needs some time to make the measurement
-            Thread.sleep(100);
+            Thread.sleep(300);
 
             getMeasurements();
 
@@ -101,7 +101,27 @@ public class Pi4JTempHumPressSpi {
         console.println("Finished");
     }
 
-    private static void resetSensor() {
+    /**
+     * The chip will be reset, forcing the POR (PowerOnReset)
+     * steps to occur. Once completes the chip will be configured
+     * to operate 'forced' mode and single sample.
+      * @throws Exception
+     */ private static void resetSensor()  throws Exception {
+
+        int rc = writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
+        // The sensor needs some time to complete POR steps
+        Thread.sleep(300);
+
+        int id = readRegister(BMP280Declares.chipId);
+        if(id != BMP280Declares.idValueMskBME)  {
+            console.println("Incorrect chip ID, NOT BME280");
+            System.exit(42);
+        }
+        int ctlHum = readRegister(BMP280Declares.ctrl_hum);
+        ctlHum |= BMP280Declares.ctl_humSamp1;
+        writeRegister(BMP280Declares.ctrl_hum, ctlHum);
+
+
         // Set forced mode to leave sleep ode state and initiate measurements.
         // At measurement completion chip returns to sleep mode
         int ctlReg = readRegister(BMP280Declares.ctrl_meas);
@@ -119,11 +139,20 @@ public class Pi4JTempHumPressSpi {
         writeRegister(BMP280Declares.ctrl_meas,ctlVal[0]);
     }
 
+    /**
+     * Three register sets containing the readings are read, then all factory
+     * compensation registers are read. The compensated reading are calculated and
+     * displayed.
+      */
     private static void getMeasurements() {
         byte[] buff = new byte[6];
         readRegister(BMP280Declares.press_msb, buff);
-        long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
-        long adc_P = (long) ((buff[0] & 0xFF) << 12) + (long) ((buff[1] & 0xFF) << 4) + (long) (buff[2] & 0xFF);
+        long adc_T =  (long)  ((buff[3] & 0xFF) << 12) |  (long)  ((buff[4] & 0xFF) << 4) |  (long) ((buff[5] & 0x0F) >> 4);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F)>> 4);
+
+        byte[] buffHum = new byte[2];
+        readRegister(BMP280Declares.hum_msb, buffHum);
+        long adc_H = (long) ((buffHum[0] & 0xFF) << 8) | (long) (buffHum[1] & 0xFF);
 
         byte[] compVal = new byte[2];
 
@@ -145,7 +174,8 @@ public class Pi4JTempHumPressSpi {
         double t_fine = (int) (var1 + var2);
         double temperature = (var1 + var2) / 5120.0;
 
-        console.println("Measure temperature: " + df.format(temperature) + "°C");
+        console.println("Temperature: " + df.format(temperature) + " °C");
+        console.println("Temperature: " + df.format(temperature* 1.8 + 32) + " °F ");
 
         // Pressure
         readRegister(BMP280Declares.reg_dig_p1, compVal);
@@ -198,8 +228,41 @@ public class Pi4JTempHumPressSpi {
         console.println("Pressure: " + df.format(pressure / 101_325) + " atm");
 
         // Humidity
-        double humidity = 0; // TODO
-        console.println("Humidity: " + humidity + "%");
+        byte[] charVal = new byte[1];
+
+        readRegister(BMP280Declares.reg_dig_h1, charVal);
+        long dig_h1 = castOffSignByte(charVal[0]);
+
+        readRegister(BMP280Declares.reg_dig_h2, compVal);
+        int dig_h2 =  signedInt(compVal);
+
+        readRegister(BMP280Declares.reg_dig_h3, charVal);
+        long dig_h3 = castOffSignByte(charVal[0]);
+
+        readRegister(BMP280Declares.reg_dig_h4, compVal);
+        // get the bits
+        int dig_h4 = (compVal[0] << 4)  | (compVal[1] & 0x0f) ;
+
+        readRegister(BMP280Declares.reg_dig_h5, compVal);
+        // get the bits
+        int dig_h5 = (compVal[0]&0x0f) | ((compVal[1] & 0xff) << 4);
+
+        readRegister(BMP280Declares.reg_dig_h6, charVal);
+        long dig_h6 = signedByte(charVal);
+
+
+        double humidity = (double)t_fine - 76800.0;
+        humidity = (adc_H -(((double)dig_h4) * 64.0 + ((double)dig_h5)/16384.0  * humidity)) * (((double)dig_h2)/65536.0 * (1.0 + ((double)dig_h6) /67108864.0 * humidity * (1.0 + ((double)dig_h3)/67108864.0 * humidity)));
+        humidity = humidity * (1.0 - ((double) dig_h1) * humidity/524288.0);
+        if(humidity > 100.0){
+            humidity = 100.0;
+        }else if(humidity < 0.0){
+            humidity = 0.0;
+        }
+
+
+        console.println("Humidity: " + df.format(humidity) + " %");
+
     }
 
     /**
@@ -284,8 +347,16 @@ public class Pi4JTempHumPressSpi {
         temp += (((long) read[1] & 0xff)) << 8;
         return (temp);
     }
+    /**
+     *
+     * @param read 8 bits data
+     * @return signed value
+     */
+    private static int signedByte(byte[] read) {
+        return ((int)read[0] );
+    }
 
-    private static class BMP280Declares {
+    private static class BMP280Declares  {
         /*  Begin device register definitions.        */
         static int temp_xlsb = 0xFC;
         static int temp_lsb = 0xFB;
@@ -298,6 +369,9 @@ public class Pi4JTempHumPressSpi {
         static int status = 0xF3;
         static int reset = 0xE0;
         static int chipId = 0xD0;
+        static int ctrl_hum = 0xF2;
+        static int hum_lsb = 0xFE;
+        static int hum_msb = 0xFD;
 
 
         // errata register definitions
@@ -315,7 +389,14 @@ public class Pi4JTempHumPressSpi {
         static int reg_dig_p8 = 0x9C;
         static int reg_dig_p9 = 0x9E;
 
+        static int reg_dig_h1 = 0xA1;
+        static int reg_dig_h2 = 0xE1;
+        static int reg_dig_h3 = 0xE3;
+        static int reg_dig_h4 = 0xE4;  // 11:4  3:0
+        static int reg_dig_h5 = 0xE5;    // 3:0   11:4
+        static int reg_dig_h6 = 0xE7;    // 3:0   11:4
         // register contents
+        static int idValueMskBME = 0x60;   // expected chpId value BME280
         static int reset_cmd = 0xB6;  // written to reset
 
         // Pertaining to 0xF3 status register
@@ -348,5 +429,6 @@ public class Pi4JTempHumPressSpi {
         static int ctl_forced = 0x01;
         static int ctl_tempSamp1 = 0x20;   // oversample *1
         static int ctl_pressSamp1 = 0x04;   // oversample *1
+        static int ctl_humSamp1 = 0x01;   // oversample *1
     }
 }

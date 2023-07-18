@@ -6,6 +6,18 @@
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
 //DEPS com.pi4j:pi4j-plugin-linuxfs:2.3.0
 
+
+/* work around */
+/* Intellij IDE Syncs DEPS single file at a time. If a file does
+// not contain all the DEPS the IDE build will fail
+ */
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
+//DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
+
+
+
+
 import com.pi4j.Pi4J;
 import com.pi4j.util.Console;
 import com.pi4j.io.i2c.I2C;
@@ -16,7 +28,6 @@ import java.text.DecimalFormat;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
- * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
  * This example can be executed without sudo with:
  * jbang Pi4JTempHumPressI2C.java
@@ -36,6 +47,7 @@ import java.text.DecimalFormat;
  *  <li>GND to GND</li>
  *  <li>SCK to I2C clock SCL (pin 5)</li>
  *  <li>SDI to I2C data SDA (pin 3)</li>
+ *  <li>CS to 3.3v</li>
  * </ul>
  * 
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
@@ -83,7 +95,7 @@ public class Pi4JTempHumPressI2C {
                 resetSensor(bme280);
 
                 // The sensor needs some time to make the measurement
-                Thread.sleep(100);
+                Thread.sleep(300);
 
                 getMeasurements(bme280);
 
@@ -97,7 +109,30 @@ public class Pi4JTempHumPressI2C {
         console.println("Finished");
     }
 
-    private static void resetSensor(I2C device) {
+    /**
+     * The chip will be reset, forcing the POR (PowerOnReset)
+     * steps to occur. Once completes the chip will be configured
+     * to operate 'forced' mode and single sample.
+     * @param device
+     * @throws Exception
+     */
+    private static void resetSensor(I2C device) throws Exception {
+
+        int rc = device.writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
+       // The sensor needs some time to complete POR steps
+        Thread.sleep(300);
+        int id = device.readRegister(BMP280Declares.chipId);
+        if(id != BMP280Declares.idValueMskBME)  {
+            console.println("Incorrect chip ID, NOT BME280");
+            System.exit(42);
+        }
+        int ctlHum = device.readRegister(BMP280Declares.ctrl_hum);
+        ctlHum |= BMP280Declares.ctl_humSamp1;
+        byte[] humRegVal = new byte[1];
+        humRegVal[0] = (byte) ctlHum;
+        device.writeRegister(BMP280Declares.ctrl_hum, humRegVal, humRegVal.length);
+
+
         // Set forced mode to leave sleep ode state and initiate measurements.
         // At measurement completion chip returns to sleep mode
         int ctlReg = device.readRegister(BMP280Declares.ctrl_meas);
@@ -115,21 +150,33 @@ public class Pi4JTempHumPressI2C {
         device.writeRegister(regVal, ctlVal, ctlVal.length);
     }
 
+    /**
+     * Three register sets containing the readings are read, then all factory
+     * compensation registers are read. The compensated reading are calculated and
+     * displayed.
+     * @param device
+     */
     private static void getMeasurements(I2C device) {
         byte[] buff = new byte[6];
         device.readRegister(BMP280Declares.press_msb, buff);
-        long adc_T = (long) ((buff[3] & 0xFF) << 12) + (long) ((buff[4] & 0xFF) << 4) + (long) (buff[5] & 0xFF);
-        long adc_P = (long) ((buff[0] & 0xFF) << 12) + (long) ((buff[1] & 0xFF) << 4) + (long) (buff[2] & 0xFF);
+        long adc_T =  (long)  ((buff[3] & 0xFF) << 12) |  (long)  ((buff[4] & 0xFF) << 4) |  (long) ((buff[5] & 0x0F) >> 4);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F)>> 4);
 
-        byte[] wrtReg = new byte[1];
-        wrtReg[0] = (byte) BMP280Declares.reg_dig_t1;
+        byte[] buffHum = new byte[2];
+        device.readRegister(BMP280Declares.hum_msb, buffHum);
+        long adc_H = (long) ((buffHum[0] & 0xFF) << 8) | (long) (buffHum[1] & 0xFF);
+
+
+
+        byte[] readReg = new byte[1];
+        readReg[0] = (byte) BMP280Declares.reg_dig_t1;
 
         byte[] compVal = new byte[2];
 
         DecimalFormat df = new DecimalFormat("0.###");
 
         // Temperature
-        device.readRegister(wrtReg, compVal);
+        device.readRegister(readReg, compVal);
         long dig_t1 = castOffSignInt(compVal);
 
         device.readRegister(BMP280Declares.reg_dig_t2, compVal);
@@ -144,7 +191,8 @@ public class Pi4JTempHumPressI2C {
         double t_fine = (int) (var1 + var2);
         double temperature = (var1 + var2) / 5120.0;
 
-        console.println("Measure temperature: " + df.format(temperature) + "°C");
+        console.println("Temperature: " + df.format(temperature) + " °C");
+        console.println("Temperature: " + df.format(temperature* 1.8 + 32) + " °F ");
 
         // Pressure
         device.readRegister(BMP280Declares.reg_dig_p1, compVal);
@@ -173,7 +221,9 @@ public class Pi4JTempHumPressI2C {
 
         device.readRegister(BMP280Declares.reg_dig_p9, compVal);
         int dig_p9 = signedInt(compVal);
-        
+
+
+
         var1 = ((double) t_fine / 2.0) - 64000.0;
         var2 = var1 * var1 * ((double) dig_p6) / 32768.0;
         var2 = var2 + var1 * ((double) dig_p5) * 2.0;
@@ -196,9 +246,44 @@ public class Pi4JTempHumPressI2C {
         // 1 Pa = 0.0000098692316931 atmosphere (standard) and 1 atm = 101.325 kPa
         console.println("Pressure: " + df.format(pressure / 101_325) + " atm");
 
+
         // Humidity
-        double humidity = 0; // TODO
-        console.println("Humidity: " + humidity + "%");
+
+        byte[] charVal = new byte[1];
+
+        device.readRegister(BMP280Declares.reg_dig_h1, charVal);
+        long dig_h1 = castOffSignByte(charVal[0]);
+
+        device.readRegister(BMP280Declares.reg_dig_h2, compVal);
+        int dig_h2 =  signedInt(compVal);
+
+        device.readRegister(BMP280Declares.reg_dig_h3, charVal);
+        long dig_h3 = castOffSignByte(charVal[0]);
+
+        device.readRegister(BMP280Declares.reg_dig_h4, compVal);
+        // get the bits
+        int dig_h4 = ((compVal[0]&0xff) << 4)  | (compVal[1] & 0x0f) ;
+
+        device.readRegister(BMP280Declares.reg_dig_h5, compVal);
+        // get the bits
+        int dig_h5 = (compVal[0]&0x0f) | ((compVal[1] & 0xff) << 4);
+
+        device.readRegister(BMP280Declares.reg_dig_h6, charVal);
+        long dig_h6 = signedByte(charVal);
+
+        double humidity = (double)t_fine - 76800.0;
+        humidity = (adc_H -(((double)dig_h4) * 64.0 + ((double)dig_h5)/16384.0  * humidity)) * (((double)dig_h2)/65536.0 * (1.0 + ((double)dig_h6) /67108864.0 * humidity * (1.0 + ((double)dig_h3)/67108864.0 * humidity)));
+        humidity = humidity * (1.0 - ((double) dig_h1) * humidity/524288.0);
+        if(humidity > 100.0){
+            humidity = 100.0;
+        }else if(humidity < 0.0){
+                humidity = 0.0;
+            }
+
+        console.println("Humidity: " + df.format(humidity) + " %");
+
+
+
     }
 
     /**
@@ -207,6 +292,15 @@ public class Pi4JTempHumPressI2C {
      */
     private static int castOffSignByte(byte read) {
         return ((int) read & 0Xff);
+    }
+
+    /**
+     *
+     * @param read 8 bits data
+     * @return signed value
+     */
+    private static int signedByte(byte[] read) {
+        return ((int)read[0] );
     }
 
     /**
@@ -231,8 +325,9 @@ public class Pi4JTempHumPressI2C {
         return (temp);
     }
 
+
     private static class BMP280Declares {
-        /*  Begin device register definitions.        */
+        /*  Begin device register definitions.         */
         static int temp_xlsb = 0xFC;
         static int temp_lsb = 0xFB;
         static int temp_msb = 0xFA;
@@ -242,6 +337,11 @@ public class Pi4JTempHumPressI2C {
         static int config = 0xF5;
         static int ctrl_meas = 0xF4;
         static int status = 0xF3;
+
+        static int ctrl_hum = 0xF2;
+        static int hum_lsb = 0xFE;
+        static int hum_msb = 0xFD;
+
         static int reset = 0xE0;
         static int chipId = 0xD0;
 
@@ -261,7 +361,17 @@ public class Pi4JTempHumPressI2C {
         static int reg_dig_p8 = 0x9C;
         static int reg_dig_p9 = 0x9E;
 
+        static int reg_dig_h1 = 0xA1;
+        static int reg_dig_h2 = 0xE1;
+        static int reg_dig_h3 = 0xE3;
+        static int reg_dig_h4 = 0xE4;  // 11:4  3:0
+        static int reg_dig_h5 = 0xE5;    // 3:0   11:4
+        static int reg_dig_h6 = 0xE7;    // 3:0   11:4
+
+
+
         // register contents
+        static int idValueMskBME = 0x60;   // expected chpId value BME280
         static int reset_cmd = 0xB6;  // written to reset
 
         // Pertaining to 0xF3 status register
@@ -294,5 +404,7 @@ public class Pi4JTempHumPressI2C {
         static int ctl_forced = 0x01;
         static int ctl_tempSamp1 = 0x20;   // oversample *1
         static int ctl_pressSamp1 = 0x04;   // oversample *1
+
+        static int ctl_humSamp1 = 0x01;   // oversample *1
     }
 }
