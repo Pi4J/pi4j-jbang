@@ -26,6 +26,20 @@ import java.util.zip.CRC32;
  * 
  * Thanks to Jeff Vyduna for his Java driver for the Output Expander that has been used in this example.
  * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
+ * 
+ * Serial Wiring
+ *
+ * <ul>
+ *  <li>GND to GND, common with RPi</li>
+ *  <li>5V to external power supply</li>
+ *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
+ * </ul>
+ * 
+ * After the Pixelblaze output expander is connected, send it a test command via the terminal:
+ * 
+ * $ stty 2000000 < /dev/ttyS0
+ * $ echo -e '\x55\x50\x58\x4c\x00\x01\x03\x00\x01\x00' > /dev/ttyS0
+ * 
  */
 public class Pi4JPixelblazeOutputExpander {
 
@@ -42,7 +56,7 @@ public class Pi4JPixelblazeOutputExpander {
         console = new Console();
         var pi4j = Pi4J.newAutoContext();
         var serialConfig = Serial.newConfigBuilder(pi4j)
-                .baud(2_000_000)
+                .baud(230_400) // 2_000_000 is not allowed by Pi4J
                 .dataBits_8()
                 .parity(Parity.NONE)
                 .stopBits(StopBits._1)
@@ -152,7 +166,8 @@ public class Pi4JPixelblazeOutputExpander {
                 console.println("Port open:" + isOpen);
                 return;
             }
-            // TODO serial.writeBytes(data, data.length);
+            ByteBuffer buffer = ByteBuffer.wrap(data);
+            serial.write(buffer);
             if (debug) {
                 for (int i = 0; i < data.length; i++) {
                     System.out.printf("%02x ", data[i]);
