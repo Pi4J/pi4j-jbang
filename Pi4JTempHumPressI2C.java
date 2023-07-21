@@ -165,9 +165,6 @@ public class Pi4JTempHumPressI2C {
         byte[] buffHum = new byte[2];
         device.readRegister(BMP280Declares.hum_msb, buffHum);
         long adc_H = (long) ((buffHum[0] & 0xFF) << 8) | (long) (buffHum[1] & 0xFF);
-
-
-
         byte[] readReg = new byte[1];
         readReg[0] = (byte) BMP280Declares.reg_dig_t1;
 

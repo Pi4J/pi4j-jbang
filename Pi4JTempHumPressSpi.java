@@ -111,7 +111,6 @@ public class Pi4JTempHumPressSpi {
         int rc = writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
         // The sensor needs some time to complete POR steps
         Thread.sleep(300);
-
         int id = readRegister(BMP280Declares.chipId);
         if(id != BMP280Declares.idValueMskBME)  {
             console.println("Incorrect chip ID, NOT BME280");
