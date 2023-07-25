@@ -6,18 +6,6 @@
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
 //DEPS com.pi4j:pi4j-plugin-linuxfs:2.3.0
 
-
-/* work around */
-/* Intellij IDE Syncs DEPS single file at a time. If a file does
-// not contain all the DEPS the IDE build will fail
- */
-//DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
-//DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
-
-
-
-
 import com.pi4j.Pi4J;
 import com.pi4j.util.Console;
 import com.pi4j.io.i2c.I2C;
@@ -47,7 +35,7 @@ import java.text.DecimalFormat;
  *  <li>GND to GND</li>
  *  <li>SCK to I2C clock SCL (pin 5)</li>
  *  <li>SDI to I2C data SDA (pin 3)</li>
- *  <li>CS to 3.3v</li>
+ *  <li>CS to 3.3V</li>
  * </ul>
  * 
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
