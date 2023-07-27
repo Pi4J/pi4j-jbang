@@ -10,17 +10,19 @@ import java.util.Random;
 import java.util.zip.CRC32;
 
 /**
- * Example code to use a Pixelblaze to control a LED strip.
+ * Example code to use a Pixelblaze Output Expander to control a LED strip.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- * 
+ *
  * Although this sample is part of the Pi4J JBang examples, it doesn't use Pi4J ;-)
- * The Pixelblaze is a serial device, and the library com.fazecast.jSerialComm seems to provide
+ * The Pixelblaze Output Expander is a serial device, and the library com.fazecast.jSerialComm seems to provide
  * good support for the data speed required by the Pixelblaze.
+ *
+ * Product page: https://shop.electromage.com/products/pixelblaze-output-expander-serial-to-8x-ws2812-apa102-driver
  *
  * This example can be executed without sudo:
  * jbang Pi4JPixelblazeOutputExpander.java
- * 
- * Thanks to Jeff Vyduna for his Java driver for the Output Expander that has been used in this example.
+ *
+ * Thanks to Jeff Vyduna for his Java driver for the Pixelblaze Output Expander that has been used in this example.
  * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
  * 
  * Serial Wiring
@@ -31,7 +33,7 @@ import java.util.zip.CRC32;
  *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
  * </ul>
  *
- * Status of the Pixelblaze LEDs
+ * Status of the Pixelblaze Output Expander LEDs
  *
  * <ul>
  *     <li>Fading / pulsing orange: has not seen any valid looking data</li>
@@ -39,7 +41,7 @@ import java.util.zip.CRC32;
  *     <li>Green LED (for short time): received data for its channels and is drawing</li>
  * </ul>
  *
- * Enabling serial on the Raspberry Pi
+ * Enabling serial port on the Raspberry Pi to be used by software
  *
  * <ul>
  *     <li>In terminal: sudo raspi-config</li>
@@ -61,9 +63,9 @@ public class Pi4JPixelblazeOutputExpander {
 
     private static ExpanderDataWriteAdapter adapter;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0", true);
-        
+
         // As test, fill strip with random colors
         try {
             byte[] pixelData = new byte[NUMBER_OF_LEDS * 4];
@@ -72,13 +74,13 @@ public class Pi4JPixelblazeOutputExpander {
                 rd.nextBytes(pixelData);
                 sendWs2812(0, 4, 0, 0, 0, 0, pixelData);
                 sendDrawAll();
-                    
+
                 Thread.sleep(1000);
             }
         } catch (Exception e) {
             System.err.println("Error during random color test: " + e.getMessage());
-        }   
-        
+        }
+
         // Red alert!
         try {
             byte[] red = new byte[NUMBER_OF_LEDS * 3];
@@ -89,10 +91,10 @@ public class Pi4JPixelblazeOutputExpander {
             }
             for (i = 0; i < 10; i++) {
                 sendWs2812(0, 3, 0, 0, 0, 0, red);
-                sendDrawAll();                    
+                sendDrawAll();
                 Thread.sleep(500);
                 sendWs2812(0, 3, 0, 0, 0, 0, off);
-                sendDrawAll();                    
+                sendDrawAll();
                 Thread.sleep(500);
             }
         } catch (Exception e) {
@@ -174,7 +176,8 @@ public class Pi4JPixelblazeOutputExpander {
 
         private SerialPort port = null;
         private final String portPath;
-        private boolean debug = false;
+        private final boolean debug;
+
         public ExpanderDataWriteAdapter (String portPath, boolean debug) {
             this.debug = debug;
             this.portPath = portPath;
