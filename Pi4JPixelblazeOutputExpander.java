@@ -1,17 +1,8 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:1.7.35
-//DEPS org.slf4j:slf4j-simple:1.7.35
-//DEPS com.pi4j:pi4j-core:2.3.0
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
-//DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
+//DEPS com.fazecast:jSerialComm:2.10.2
 
-import com.pi4j.Pi4J;
-import com.pi4j.io.serial.FlowControl;
-import com.pi4j.io.serial.Parity;
-import com.pi4j.io.serial.Serial;
-import com.pi4j.io.serial.StopBits;
-import com.pi4j.util.Console;
+import com.fazecast.jSerialComm.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -34,11 +25,24 @@ import java.util.zip.CRC32;
  *  <li>5V to external power supply</li>
  *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
  * </ul>
- * 
- * After the Pixelblaze output expander is connected, send it a test command via the terminal:
- * 
- * $ stty 2000000 < /dev/ttyS0
- * $ echo -e '\x55\x50\x58\x4c\x00\x01\x03\x00\x01\x00' > /dev/ttyS0
+ *
+ * Status of the Pixelblaze LED
+ *
+ * <ul>
+ *     <li>Fading / pulsing orange LED: has not seen any valid looking data</li>
+ *     <li>Solid orange: received expander data</li>
+ *     <li>Green LED: received data for its channels and is drawing</li>
+ * </ul>
+ *
+ * Enable serial on the Raspberry Pi
+ *
+ * <ul>
+ *     <li>In terminal: sudo raspi-config</li>
+ *     <li>Go to "Interface Options"</li>
+ *     <li>Go to "Serial Port"</li>
+ *     <li>Select "No" for "login shell"</li>
+ *     <li>Select "Yes" for "hardware enabled"</li>
+ * </ul>
  * 
  */
 public class Pi4JPixelblazeOutputExpander {
@@ -49,50 +53,33 @@ public class Pi4JPixelblazeOutputExpander {
     private static final byte CH_DRAW_ALL = 2;
     private static final byte CH_APA102_DATA = 3;
     private static final byte CH_APA102_CLOCK = 4;
-    private static Console console;
     private static ExpanderDataWriteAdapter adapter;
 
     public static void main(String[] args) throws Exception {
-        console = new Console();
-        var pi4j = Pi4J.newAutoContext();
-        var serialConfig = Serial.newConfigBuilder(pi4j)
-                .baud(230_400) // 2_000_000 is not allowed by Pi4J
-                .dataBits_8()
-                .parity(Parity.NONE)
-                .stopBits(StopBits._1)
-                .flowControl(FlowControl.NONE)
-                .id("my-serial")
-                .device("/dev/ttyS0")
-                .provider("pigpio-serial")
-                .build();
-        /*
-        Config used by Jeff Vyduna
-        port.setBaudRate(2_000_000);
-        port.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
-        port.openPort(0, 8192, 8192);
-        */
-        var serial = pi4j.create(serialConfig);
-        serial.open();
+        SerialPort comPort = SerialPort.getCommPort("/dev/ttyS0");
+        comPort.setBaudRate(2_000_000);
+        comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+        comPort.openPort(0, 8192, 8192);
 
-        adapter = new ExpanderDataWriteAdapter(serial, true);
+        adapter = new ExpanderDataWriteAdapter(comPort, true);
         byte[] pixelData = new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00};;
 
         sendWs2812(0, 3, 0, 0, 0, 0, pixelData);
 
-        pi4j.shutdown();
+        comPort.closePort();
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
         if (bytesPerPixel != 3 && bytesPerPixel != 4) {
-            console.println("bytesPerPixel not within expected range");
+            System.out.println("bytesPerPixel not within expected range");
             return;
         }
         if (rIndex > 3 || gIndex > 3 || bIndex > 3 || wIndex > 3) {
-            console.println("one or more indexes not within expected range");
+            System.out.println("one or more indexes not within expected range");
             return;
         }
         if (pixelData == null) {
-            console.println("pixelData can not be null");
+            System.out.println("pixelData can not be null");
             return;
         }
 
@@ -152,22 +139,21 @@ public class Pi4JPixelblazeOutputExpander {
 
     static class ExpanderDataWriteAdapter {
 
-        private Serial serial;
+        private SerialPort comPort;
         private boolean debug = false;
 
-        public ExpanderDataWriteAdapter(Serial serial, boolean debug) {
-            this.serial = serial;
+        public ExpanderDataWriteAdapter(SerialPort comPort, boolean debug) {
+            this.comPort = comPort;
             this.debug = debug;
         }
 
         public void write(byte[] data) {
-            boolean isOpen = serial != null && serial.isOpen();
-            if (serial == null || !isOpen) {
-                console.println("Port open:" + isOpen);
+            boolean isOpen = comPort != null && comPort.isOpen();
+            if (comPort == null || !isOpen) {
+                System.out.println("Port open:" + isOpen);
                 return;
             }
-            ByteBuffer buffer = ByteBuffer.wrap(data);
-            serial.write(buffer);
+            comPort.writeBytes(data, data.length);
             if (debug) {
                 for (int i = 0; i < data.length; i++) {
                     System.out.printf("%02x ", data[i]);
