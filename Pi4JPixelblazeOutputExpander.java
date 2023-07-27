@@ -56,17 +56,12 @@ public class Pi4JPixelblazeOutputExpander {
     private static ExpanderDataWriteAdapter adapter;
 
     public static void main(String[] args) throws Exception {
-        SerialPort comPort = SerialPort.getCommPort("/dev/ttyS0");
-        comPort.setBaudRate(2_000_000);
-        comPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
-        comPort.openPort(0, 8192, 8192);
-
-        adapter = new ExpanderDataWriteAdapter(comPort, true);
+        adapter = new ExpanderDataWriteAdapter("/dev/ttyS0", true);
         byte[] pixelData = new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00};;
 
         sendWs2812(0, 3, 0, 0, 0, 0, pixelData);
 
-        comPort.closePort();
+        adapter.closePort();
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
@@ -139,26 +134,50 @@ public class Pi4JPixelblazeOutputExpander {
 
     static class ExpanderDataWriteAdapter {
 
-        private SerialPort comPort;
+        private SerialPort port = null;
+        private final String portPath;
         private boolean debug = false;
-
-        public ExpanderDataWriteAdapter(SerialPort comPort, boolean debug) {
-            this.comPort = comPort;
+        public ExpanderDataWriteAdapter (String portPath, boolean debug) {
             this.debug = debug;
+            this.portPath = portPath;
+        }
+
+        private void openPort() {
+            if (port != null) {
+                System.out.println("Closing " + portPath);
+                port.closePort();
+            }
+            port = null; //set to null in case getCommPort throws, port will remain null.
+            port = SerialPort.getCommPort(this.portPath);
+            port.setBaudRate(2000000);
+            port.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+            port.openPort(0, 8192, 8192);
+            System.out.println("Opening " + portPath);
+        }
+
+        public void closePort() {
+            if (port != null) {
+                System.out.println("Closing " + portPath);
+                port.closePort();
+            }
         }
 
         public void write(byte[] data) {
-            boolean isOpen = comPort != null && comPort.isOpen();
-            if (comPort == null || !isOpen) {
-                System.out.println("Port open:" + isOpen);
-                return;
+            int lastErrorCode = port != null ? port.getLastErrorCode() : 0;
+            boolean isOpen = port != null && port.isOpen();
+            if (port == null || !isOpen || lastErrorCode != 0) {
+                System.out.println("Port was open:" + isOpen + ", last error:" + lastErrorCode);
+                openPort();
             }
-            comPort.writeBytes(data, data.length);
+            port.writeBytes(data, data.length);
             if (debug) {
                 for (int i = 0; i < data.length; i++) {
                     System.out.printf("%02x ", data[i]);
-                    if (i % 12 == 11)
+                    if (i % 12 == 11) {
                         System.out.print("\n");
+                    } else if (i % 4 == 3) {
+                        System.out.print("\t");
+                    }
                 }
                 System.out.print("\n");
             }
