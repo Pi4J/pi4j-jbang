@@ -6,14 +6,19 @@ import com.fazecast.jSerialComm.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Random;
 import java.util.zip.CRC32;
 
 /**
  * Example code to use a Pixelblaze to control a LED strip.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ * 
+ * Although this sample is part of the Pi4J JBang examples, it doesn't use Pi4J ;-)
+ * The Pixelblaze is a serial device, and the library com.fazecast.jSerialComm seems to provide
+ * good support for the data speed required by the Pixelblaze.
  *
- * This example must be executed as sudo with:
- * sudo `which jbang` Pi4JPixelblazeOutputExpander.java
+ * This example can be executed without sudo:
+ * jbang Pi4JPixelblazeOutputExpander.java
  * 
  * Thanks to Jeff Vyduna for his Java driver for the Output Expander that has been used in this example.
  * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
@@ -26,15 +31,15 @@ import java.util.zip.CRC32;
  *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
  * </ul>
  *
- * Status of the Pixelblaze LED
+ * Status of the Pixelblaze LEDs
  *
  * <ul>
- *     <li>Fading / pulsing orange LED: has not seen any valid looking data</li>
- *     <li>Solid orange: received expander data</li>
- *     <li>Green LED: received data for its channels and is drawing</li>
+ *     <li>Fading / pulsing orange: has not seen any valid looking data</li>
+ *     <li>Solid orange (for short time): received expander data</li>
+ *     <li>Green LED (for short time): received data for its channels and is drawing</li>
  * </ul>
  *
- * Enable serial on the Raspberry Pi
+ * Enabling serial on the Raspberry Pi
  *
  * <ul>
  *     <li>In terminal: sudo raspi-config</li>
@@ -47,19 +52,52 @@ import java.util.zip.CRC32;
  */
 public class Pi4JPixelblazeOutputExpander {
 
-    // Wiring see:
-
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
     private static final byte CH_APA102_DATA = 3;
     private static final byte CH_APA102_CLOCK = 4;
+
+    private static final int NUMBER_OF_LEDS = 11;
+
     private static ExpanderDataWriteAdapter adapter;
 
     public static void main(String[] args) throws Exception {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0", true);
-        byte[] pixelData = new byte[]{(byte) 0xff, (byte) 0x00, (byte) 0x00};;
-
-        sendWs2812(0, 3, 0, 0, 0, 0, pixelData);
+        
+        // As test, fill strip with random colors
+        try {
+            byte[] pixelData = new byte[NUMBER_OF_LEDS * 4];
+            Random rd = new Random();
+            for (int i = 0; i < 10; i++) {
+                rd.nextBytes(pixelData);
+                sendWs2812(0, 4, 0, 0, 0, 0, pixelData);
+                sendDrawAll();
+                    
+                Thread.sleep(1000);
+            }
+        } catch (Exception e) {
+            System.err.println("Error during random color test: " + e.getMessage());
+        }   
+        
+        // Red alert!
+        try {
+            byte[] red = new byte[NUMBER_OF_LEDS * 3];
+            byte[] off = new byte[NUMBER_OF_LEDS * 3];
+            int i;
+            for (i = 0; i < NUMBER_OF_LEDS; i++) {
+                red[i*3]= (byte) 0xff;
+            }
+            for (i = 0; i < 10; i++) {
+                sendWs2812(0, 3, 0, 0, 0, 0, red);
+                sendDrawAll();                    
+                Thread.sleep(500);
+                sendWs2812(0, 3, 0, 0, 0, 0, off);
+                sendDrawAll();                    
+                Thread.sleep(500);
+            }
+        } catch (Exception e) {
+            System.err.println("Error during random color test: " + e.getMessage());
+        }
 
         adapter.closePort();
     }
