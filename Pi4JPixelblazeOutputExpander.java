@@ -63,45 +63,74 @@ public class Pi4JPixelblazeOutputExpander {
 
     private static ExpanderDataWriteAdapter adapter;
 
-    public static void main(String[] args) {
-        adapter = new ExpanderDataWriteAdapter("/dev/ttyS0", true);
+    public static void main(String[] args) throws InterruptedException {
+        adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
 
-        // As test, fill strip with random colors
-        try {
-            byte[] pixelData = new byte[NUMBER_OF_LEDS * 4];
-            Random rd = new Random();
-            for (int i = 0; i < 10; i++) {
-                rd.nextBytes(pixelData);
-                sendWs2812(0, 4, 0, 0, 0, 0, pixelData);
-                sendDrawAll();
+        // All off
+        sendAllOff();
+        Thread.sleep(500);
 
-                Thread.sleep(1000);
+        // One by one red
+        System.out.println("One by one red");
+        for (int i = 0; i < NUMBER_OF_LEDS; i++) {
+            byte[] oneRed = new byte[NUMBER_OF_LEDS * 3];
+            oneRed[i * 3] = (byte) 0xff;
+            sendWs2812(0, 3, 1, 0, 2, 0, oneRed);
+            sendDrawAll();
+            Thread.sleep(250);
+        }
+
+        // All same color red, green, blue
+        for (int color = 0; color < 3; color++) {
+            System.out.println("All " + (color == 0 ? "red" : (color == 1 ? "green" : "blue")));
+            byte[] allSame = new byte[NUMBER_OF_LEDS * 3];
+            for (int i = 0; i < NUMBER_OF_LEDS; i++) {                
+                allSame[(3 * i) + color] = (byte) 0xff;
             }
-        } catch (Exception e) {
-            System.err.println("Error during random color test: " + e.getMessage());
+            sendWs2812(0, 3, 1, 0, 2, 0, allSame);
+            sendDrawAll();
+
+            Thread.sleep(1000);
+        }
+
+        // Fill strip with random colors        
+        Random rd = new Random();
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Random colors " + (i + 1));
+            byte[] random = new byte[NUMBER_OF_LEDS * 3];
+            rd.nextBytes(random);
+            sendWs2812(0, 3, 1, 0, 2, 0, random);
+            sendDrawAll();
+
+            Thread.sleep(1000);
         }
 
         // Red alert!
         try {
             byte[] red = new byte[NUMBER_OF_LEDS * 3];
-            byte[] off = new byte[NUMBER_OF_LEDS * 3];
             int i;
             for (i = 0; i < NUMBER_OF_LEDS; i++) {
                 red[i*3]= (byte) 0xff;
             }
-            for (i = 0; i < 10; i++) {
-                sendWs2812(0, 3, 0, 0, 0, 0, red);
+            for (i = 0; i < 5; i++) {
+                System.out.println("All red");
+                sendWs2812(0, 3, 1, 0, 2, 0, red);
                 sendDrawAll();
-                Thread.sleep(500);
-                sendWs2812(0, 3, 0, 0, 0, 0, off);
-                sendDrawAll();
-                Thread.sleep(500);
+                Thread.sleep(100);
+                sendAllOff();
+                Thread.sleep(100);
             }
         } catch (Exception e) {
             System.err.println("Error during random color test: " + e.getMessage());
         }
 
         adapter.closePort();
+    }
+
+    private static void sendAllOff() {
+        System.out.println("All off");
+        sendWs2812(0, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3]);
+        sendDrawAll();
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
@@ -126,6 +155,16 @@ public class Pi4JPixelblazeOutputExpander {
         buffer.put((byte) (rIndex | (gIndex << 2) | (bIndex << 4) | (wIndex << 6)));
         buffer.putShort((short) pixels);
         byte[] bytes = buffer.array();
+
+        for (int i = 0; i < pixelData.length; i++) {
+            System.out.printf("%02x ", pixelData[i]);
+            //if (i % 12 == 11) {
+            //    System.out.print("\n");
+            //} else if (i % 4 == 3) {
+            //    System.out.print("\t");
+            //}
+        }
+        System.out.print("\n");
 
         crc.update(bytes);
         adapter.write(bytes);
@@ -176,10 +215,8 @@ public class Pi4JPixelblazeOutputExpander {
 
         private SerialPort port = null;
         private final String portPath;
-        private final boolean debug;
 
-        public ExpanderDataWriteAdapter (String portPath, boolean debug) {
-            this.debug = debug;
+        public ExpanderDataWriteAdapter (String portPath) {
             this.portPath = portPath;
         }
 
@@ -211,17 +248,6 @@ public class Pi4JPixelblazeOutputExpander {
                 openPort();
             }
             port.writeBytes(data, data.length);
-            if (debug) {
-                for (int i = 0; i < data.length; i++) {
-                    System.out.printf("%02x ", data[i]);
-                    if (i % 12 == 11) {
-                        System.out.print("\n");
-                    } else if (i % 4 == 3) {
-                        System.out.print("\t");
-                    }
-                }
-                System.out.print("\n");
-            }
         }
     }
 }
