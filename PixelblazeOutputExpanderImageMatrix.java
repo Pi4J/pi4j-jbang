@@ -23,8 +23,11 @@ import java.util.zip.CRC32;
  */
 public class PixelblazeOutputExpanderImageMatrix {
 
+    private static final int CHANNEL = 2;
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
+
+    private static ExpanderDataWriteAdapter adapter;
 
     private static final String[] IMAGES = {
             "image_8_32_red.png",
@@ -35,6 +38,11 @@ public class PixelblazeOutputExpanderImageMatrix {
     };
 
     public static void main(String[] args) throws IOException, InterruptedException {
+        adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
+        sendDrawAll();       ; 
+
+        Thread.sleep(1000);
+
         for (String image : IMAGES) {
             System.out.println("Image: " + image);
             byte[] pixelData = getImageData("data/" + image);
@@ -43,11 +51,21 @@ public class PixelblazeOutputExpanderImageMatrix {
             }
             System.out.print("\n");
 
-            sendWs2812(2, 3, 2, 1, 0, 1, pixelData);
+            sendWs2812(CHANNEL, 3, 2, 1, 0, 1, pixelData);
             sendDrawAll();
 
-            Thread.sleep(2000);
+            Thread.sleep(3000);
+
+            sendAllOff();           ; 
+
+            Thread.sleep(1000);
         }
+    }
+
+    private static void sendAllOff() {
+        System.out.println("All off");
+        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, new byte[8 * 32 * 3]);
+        sendDrawAll();
     }
 
     /**
