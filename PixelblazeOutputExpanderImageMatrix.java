@@ -4,133 +4,68 @@
 
 import com.fazecast.jSerialComm.SerialPort;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Random;
 import java.util.zip.CRC32;
 
 /**
- * Example code to use a Pixelblaze Output Expander to control a LED strip.
- * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
- * Although this sample is part of the Pi4J JBang examples, it doesn't use Pi4J ;-)
- * The Pixelblaze Output Expander is a serial device, and the library com.fazecast.jSerialComm seems to provide
- * good support for the data speed required by the Pixelblaze.
- *
- * Product page: https://shop.electromage.com/products/pixelblaze-output-expander-serial-to-8x-ws2812-apa102-driver
+ * Example code to use a Pixelblaze Output Expander to send an 8*32 image to a LED matrix.
+ * This example is based on PixelblazeOutputExpander.java, so please check its documentation first!
  *
  * This example can be executed without sudo:
- * jbang Pi4JPixelblazeOutputExpander.java
- *
- * Thanks to Jeff Vyduna for his Java driver for the Pixelblaze Output Expander that has been used in this example.
- * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
- * 
- * Serial Wiring
- *
- * <ul>
- *  <li>GND to GND, common with RPi</li>
- *  <li>5V to external power supply</li>
- *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
- * </ul>
- *
- * Status of the Pixelblaze Output Expander LEDs
- *
- * <ul>
- *     <li>Fading / pulsing orange: has not seen any valid looking data</li>
- *     <li>Solid orange (for short time): received expander data</li>
- *     <li>Green LED (for short time): received data for its channels and is drawing</li>
- * </ul>
- *
- * Enabling serial port on the Raspberry Pi to be used by software
- *
- * <ul>
- *     <li>In terminal: sudo raspi-config</li>
- *     <li>Go to "Interface Options"</li>
- *     <li>Go to "Serial Port"</li>
- *     <li>Select "No" for "login shell"</li>
- *     <li>Select "Yes" for "hardware enabled"</li>
- * </ul>
- * 
+ * jbang PixelblazeOutputExpanderImageMatrix.java
  */
-public class Pi4JPixelblazeOutputExpander {
+public class PixelblazeOutputExpanderImageMatrix {
 
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
-    private static final byte CH_APA102_DATA = 3;
-    private static final byte CH_APA102_CLOCK = 4;
 
-    private static final int NUMBER_OF_LEDS = 11;
+    private static final String[] IMAGES = {
+            "image_8_32_red.png",
+            "image_8_32_green.png",
+            "image_8_32_blue.png",
+            "image_8_32_duke.png",
+            "image_8_32_raspberrypi.png"
+    };
 
-    private static ExpanderDataWriteAdapter adapter;
-
-    public static void main(String[] args) throws InterruptedException {
-        adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
-
-        // All off
-        sendAllOff();
-        Thread.sleep(500);
-
-        // One by one red
-        System.out.println("One by one red");
-        for (int i = 0; i < NUMBER_OF_LEDS; i++) {
-            byte[] oneRed = new byte[NUMBER_OF_LEDS * 3];
-            oneRed[i * 3] = (byte) 0xff;
-            sendWs2812(0, 3, 1, 0, 2, 0, oneRed);
-            sendDrawAll();
-            Thread.sleep(250);
-        }
-
-        // All same color red, green, blue
-        for (int color = 0; color < 3; color++) {
-            System.out.println("All " + (color == 0 ? "red" : (color == 1 ? "green" : "blue")));
-            byte[] allSame = new byte[NUMBER_OF_LEDS * 3];
-            for (int i = 0; i < NUMBER_OF_LEDS; i++) {                
-                allSame[(3 * i) + color] = (byte) 0xff;
+    public static void main(String[] args) throws IOException, InterruptedException {
+        for (String image : IMAGES) {
+            System.out.println("Image: " + image);
+            byte[] pixelData = getImageData("data/" + image);
+            for (int i = 0; i < pixelData.length; i++) {
+                System.out.printf("%02x ", pixelData[i]);
             }
-            sendWs2812(0, 3, 1, 0, 2, 0, allSame);
+            System.out.print("\n");
+
+            sendWs2812(2, 3, 2, 1, 0, 1, pixelData);
             sendDrawAll();
 
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
-
-        // Fill strip with random colors        
-        Random rd = new Random();
-        for (int i = 0; i < 5; i++) {
-            System.out.println("Random colors " + (i + 1));
-            byte[] random = new byte[NUMBER_OF_LEDS * 3];
-            rd.nextBytes(random);
-            sendWs2812(0, 3, 1, 0, 2, 0, random);
-            sendDrawAll();
-
-            Thread.sleep(1000);
-        }
-
-        // Red alert!
-        try {
-            byte[] red = new byte[NUMBER_OF_LEDS * 3];
-            int i;
-            for (i = 0; i < NUMBER_OF_LEDS; i++) {
-                red[i*3]= (byte) 0xff;
-            }
-            for (i = 0; i < 5; i++) {
-                System.out.println("All red");
-                sendWs2812(0, 3, 1, 0, 2, 0, red);
-                sendDrawAll();
-                Thread.sleep(100);
-                sendAllOff();
-                Thread.sleep(100);
-            }
-        } catch (Exception e) {
-            System.err.println("Error during random color test: " + e.getMessage());
-        }
-
-        adapter.closePort();
     }
 
-    private static void sendAllOff() {
-        System.out.println("All off");
-        sendWs2812(0, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3]);
-        sendDrawAll();
+    /**
+     * BufferedImage consists of two main classes: Raster & ColorModel. Raster itself consists of two classes,
+     * DataBufferByte for image content while the other for pixel color.
+     *
+     * @param imagePath
+     * @return
+     */
+    private static byte[] getImageData(String imagePath) throws IOException {
+        // open image
+        File imgPath = new File(imagePath);
+        BufferedImage bufferedImage = ImageIO.read(imgPath);
+
+        // get DataBufferBytes from Raster
+        WritableRaster raster = bufferedImage .getRaster();
+        DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
+        return data.getData();
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {

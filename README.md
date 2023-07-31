@@ -41,12 +41,13 @@ To tell JBang that it must handle the file as a Java application and do some upf
 
 When an application needs dependencies, they are defined inside the file itself in a line starting with `//DEPS`. For instance, to use the Pi4J Core library: `//DEPS com.pi4j:pi4j-core:2.3.0`.
 
-* `HelloWorld.java`: basic Java example
-* `JsonParsing.java`: shows how to use dependencies, can be executed on any computer
-* `Pi4JMinimalExample.java`: basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput)
-* `Pi4JPixelBlazeOutputExpander.java`: use a Pixelblaze to control a LED strip
-* `Pi4JTempHumPressI2C.java`: reading temperature, humidity and pressure from a BME280 sensor via I2C
-* `Pi4JTempHumPressSpi.java`: reading temperature, humidity and pressure from a BME280 sensor via SPI
+* `HelloWorld.java`: Basic Java example.
+* `JsonParsing.java`: Shows how to use dependencies, can be executed on any computer.
+* `Pi4JMinimalExample.java`: Basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput).
+* `Pi4JTempHumPressI2C.java`: Reading temperature, humidity and pressure from a BME280 sensor via I2C.
+* `Pi4JTempHumPressSpi.java`: Reading temperature, humidity and pressure from a BME280 sensor via SPI.
+* `PixelblazeOutputExpander.java`: Controlling LED strips via serial commands to the Pixelblaze Output Expander.
+* `PixelblazeOutputExpanderImageMatrix.java`: Similar to `PixelblazeOutputExpander.java` to output 8*32 images onto an RGB LED matrix.
 
 ### GET FROM GITHUB
 
