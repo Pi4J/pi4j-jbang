@@ -6,6 +6,7 @@ import com.fazecast.jSerialComm.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.Channel;
 import java.util.Random;
 import java.util.zip.CRC32;
 
@@ -67,7 +68,7 @@ public class PixelblazeOutputExpander {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
 
         // All off
-        sendAllOff();
+        sendAllOff(0, NUMBER_OF_LEDS);
         Thread.sleep(500);
 
         // One by one red
@@ -106,30 +107,54 @@ public class PixelblazeOutputExpander {
         }
 
         // Red alert!
-        try {
-            byte[] red = new byte[NUMBER_OF_LEDS * 3];
-            int i;
-            for (i = 0; i < NUMBER_OF_LEDS; i++) {
-                red[i*3]= (byte) 0xff;
-            }
-            for (i = 0; i < 5; i++) {
-                System.out.println("All red");
-                sendWs2812(0, 3, 1, 0, 2, 0, red);
-                sendDrawAll();
-                Thread.sleep(100);
-                sendAllOff();
-                Thread.sleep(100);
-            }
-        } catch (Exception e) {
-            System.err.println("Error during random color test: " + e.getMessage());
+        byte[] red = new byte[NUMBER_OF_LEDS * 3];
+        int i;
+        for (i = 0; i < NUMBER_OF_LEDS; i++) {
+            red[i*3]= (byte) 0xff;
+        }
+        for (i = 0; i < 5; i++) {
+            System.out.println("All red");
+            sendWs2812(0, 3, 1, 0, 2, 0, red);
+            sendDrawAll();
+            Thread.sleep(100);
+            sendAllOff(0, NUMBER_OF_LEDS);
+            Thread.sleep(100);
+        }
+
+        // Send to LED strip on Channel 1, 5 meter with 60 LEDs/meter
+        byte[] redFiveMeter = new byte[300 * 3];
+        for (i = 0; i < 300; i++) {
+            redFiveMeter[i*3]= (byte) 0xff;
+        }
+        for (i = 0; i < 5; i++) {
+            System.out.println("All red on LED strip on channel 1");
+            sendWs2812(1, 3, 1, 0, 2, 0, redFiveMeter);
+            sendDrawAll();
+            Thread.sleep(100);
+            sendAllOff(1, 300);
+            Thread.sleep(100);
+        }
+
+        // Send to 8*32 LED matrix on Channel 2
+        byte[] redMatrix = new byte[300 * 3];
+        for (i = 0; i < 300; i++) {
+            redMatrix[i*3]= (byte) 0xff;
+        }
+        for (i = 0; i < 5; i++) {
+            System.out.println("All red on LED matrix on channel 2");
+            sendWs2812(2, 3, 1, 0, 2, 0, redMatrix);
+            sendDrawAll();
+            Thread.sleep(100);
+            sendAllOff(2, 300);
+            Thread.sleep(100);
         }
 
         adapter.closePort();
     }
 
-    private static void sendAllOff() {
-        System.out.println("All off");
-        sendWs2812(0, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3]);
+    private static void sendAllOff(int channel, int numberOfLeds) {
+        System.out.println("All off on channel " + channel + " for " + numberOfLeds + " LEDs");
+        sendWs2812(channel, 3, 1, 0, 2, 0, new byte[numberOfLeds * 3]);
         sendDrawAll();
     }
 

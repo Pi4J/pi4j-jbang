@@ -51,7 +51,7 @@ public class PixelblazeOutputExpanderImageMatrix {
             }
             System.out.print("\n");
 
-            sendWs2812(CHANNEL, 3, 2, 1, 0, 1, pixelData);
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
             sendDrawAll();
 
             Thread.sleep(3000);
@@ -76,14 +76,31 @@ public class PixelblazeOutputExpanderImageMatrix {
      * @return
      */
     private static byte[] getImageData(String imagePath) throws IOException {
-        // open image
+        byte[] imageData = new byte[8 * 32 * 3];
+
+        // Open image
         File imgPath = new File(imagePath);
         BufferedImage bufferedImage = ImageIO.read(imgPath);
+
+        // Read color values for each pixel
+        int pixelCounter = 0;
+        for (int y = 0; y < 8; y++) {
+            for (int x = 0; x < 32; x++) {
+                int color = bufferedImage.getRGB(x, y);
+                byte blue = (byte) (color & 0xff);
+                byte green = (byte) ((color & 0xff00) >> 8);
+                byte red = (byte) ((color & 0xff0000) >> 16);
+                imageData[pixelCounter * 3] = red;
+                imageData[(pixelCounter * 3) + 1] = green;
+                imageData[(pixelCounter * 3) + 2] = blue;
+                pixelCounter++;
+            }
+        }
 
         // get DataBufferBytes from Raster
         WritableRaster raster = bufferedImage .getRaster();
         DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
-        return data.getData();
+        return imageData;
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
