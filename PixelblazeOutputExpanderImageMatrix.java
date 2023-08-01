@@ -25,6 +25,8 @@ import java.util.zip.CRC32;
 public class PixelblazeOutputExpanderImageMatrix {
 
     private static final int CHANNEL = 2;
+    private static final int NUMBER_OF_LEDS = 8 * 32;
+
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
 
@@ -35,16 +37,34 @@ public class PixelblazeOutputExpanderImageMatrix {
             "image_8_32_green.png",
             "image_8_32_blue.png",
             "image_8_32_stripes.png",
-            "image_8_32_stripes_test.png"
+            "image_8_32_stripes_test.png",
+            "image_8_32_line_1.png",
+            "image_8_32_line_2.png",
+            "image_8_32_line_3.png",
+            "image_8_32_line_4.png",
+            "image_8_32_line_5.png",
+            "image_8_32_line_6.png",
+            "image_8_32_line_7.png",
+            "image_8_32_line_8.png"
     };
 
     public static void main(String[] args) throws IOException, InterruptedException {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
+        int i;
 
         // Clear any remaining LEDs from previous test
         sendAllOff();
         sendDrawAll();
         Thread.sleep(1000);
+
+        // Check the position of the LEDs, to identify how the LED strip is wired
+        for (i = 0; i < NUMBER_OF_LEDS; i++) {
+            byte[] pixelData = new byte[NUMBER_OF_LEDS * 3];
+            pixelData[i * 3] = (byte) 0xff; // red
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
+            sendDrawAll();
+            Thread.sleep(100);
+        }
 
         // Output all defined images
         for (String image : IMAGES) {
@@ -53,12 +73,6 @@ public class PixelblazeOutputExpanderImageMatrix {
             // Get the bytes from the given image
             byte[] pixelData = getImageData("data/" + image);
 
-            // Output for debugging
-            for (int i = 0; i < pixelData.length; i++) {
-                System.out.printf("%02x ", pixelData[i]);
-            }
-            System.out.print("\n");
-
             // Show the image on the LED matrix
             sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
             sendDrawAll();
@@ -66,24 +80,23 @@ public class PixelblazeOutputExpanderImageMatrix {
 
             // Clear the LEDs
             sendAllOff();
-            Thread.sleep(1000);
+            Thread.sleep(200);
         }
 
         // Random colors
         Random rd = new Random();
-        for (int i = 0; i < 10; i++) {
-            System.out.println("Random colors " + (i + 1));
+        for (i = 0; i < 100; i++) {
             byte[] random = new byte[8 * 32 * 3];
             rd.nextBytes(random);
-            sendWs2812(0, 3, 1, 0, 2, 0, random);
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 0, random);
             sendDrawAll();
-            Thread.sleep(250);
+            Thread.sleep(100);
         }
     }
 
     private static void sendAllOff() {
         System.out.println("All off");
-        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, new byte[8 * 32 * 3]);
+        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3]);
         sendDrawAll();
     }
 
@@ -95,7 +108,7 @@ public class PixelblazeOutputExpanderImageMatrix {
      * @return
      */
     private static byte[] getImageData(String imagePath) throws IOException {
-        byte[] imageData = new byte[8 * 32 * 3];
+        byte[] imageData = new byte[NUMBER_OF_LEDS * 3];
 
         // Open image
         File imgPath = new File(imagePath);
@@ -145,14 +158,14 @@ public class PixelblazeOutputExpanderImageMatrix {
         buffer.putShort((short) pixels);
         byte[] bytes = buffer.array();
 
-        for (int i = 0; i < pixelData.length; i++) {
-            System.out.printf("%02x ", pixelData[i]);
+        //for (int i = 0; i < pixelData.length; i++) {
+            //System.out.printf("%02x ", pixelData[i]);
             //if (i % 12 == 11) {
             //    System.out.print("\n");
             //} else if (i % 4 == 3) {
             //    System.out.print("\t");
             //}
-        }
+        //}
         System.out.print("\n");
 
         crc.update(bytes);
