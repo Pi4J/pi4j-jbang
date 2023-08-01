@@ -45,7 +45,9 @@ public class PixelblazeOutputExpanderImageMatrix {
             "image_8_32_line_5.png",
             "image_8_32_line_6.png",
             "image_8_32_line_7.png",
-            "image_8_32_line_8.png"
+            "image_8_32_line_8.png",
+            "image_8_32_duke.png",
+            "image_8_32_raspberrypi.png"
     };
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -71,7 +73,7 @@ public class PixelblazeOutputExpanderImageMatrix {
             System.out.println("Image: " + image);
 
             // Get the bytes from the given image
-            byte[] pixelData = getImageData("data/" + image);
+            byte[] pixelData = imageToMatrix(getImageData("data/" + image));
 
             // Show the image on the LED matrix
             sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
@@ -129,10 +131,45 @@ public class PixelblazeOutputExpanderImageMatrix {
             }
         }
 
-        // get DataBufferBytes from Raster
-        WritableRaster raster = bufferedImage .getRaster();
-        DataBufferByte data   = (DataBufferByte) raster.getDataBuffer();
         return imageData;
+    }
+
+    /**
+     * Image is read to byte array pixel per pixel for each row to get one continuous line of data.
+     * But the matrix is wired in columns, first down, second up, third down,...
+     *
+     * So we need to "mix up" the image byte array to one that matches the coordinates on the matrix.
+     *
+     * @param imageData
+     * @return
+     */
+    private static byte[] imageToMatrix(byte[] imageData) {
+        byte[] matrixData = new byte[imageData.length];
+
+        int imagePosition;
+        int row = 0;
+        int column = 0;
+        for (int pixelCounter = 0; pixelCounter < NUMBER_OF_LEDS; pixelCounter++) {
+            imagePosition = row * column;
+            matrixData[pixelCounter * 3] = imageData[imagePosition];
+            matrixData[(pixelCounter * 3) + 1] = imageData[(imagePosition * 3) + 1];
+            matrixData[(pixelCounter * 3) + 2] = imageData[(imagePosition * 3) + 1];
+            if (column % 2 == 0) {
+                row++;
+            } else {
+                row--;
+            }
+            if (row < 0 || row > 7) {
+                column++;
+                if (column % 2 == 0) {
+                    row = 0;
+                } else {
+                    row = 7;
+                }
+            }
+        }
+
+        return matrixData;
     }
 
     private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
