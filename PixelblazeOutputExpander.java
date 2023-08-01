@@ -56,8 +56,6 @@ public class PixelblazeOutputExpander {
 
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
-    private static final byte CH_APA102_DATA = 3;
-    private static final byte CH_APA102_CLOCK = 4;
 
     private static final int NUMBER_OF_LEDS = 11;
 
@@ -80,7 +78,7 @@ public class PixelblazeOutputExpander {
             Thread.sleep(250);
         }
 
-        // All same color red, green, blue
+        // All the same color red, green, blue
         for (int color = 0; color < 3; color++) {
             System.out.println("All " + (color == 0 ? "red" : (color == 1 ? "green" : "blue")));
             byte[] allSame = new byte[NUMBER_OF_LEDS * 3];

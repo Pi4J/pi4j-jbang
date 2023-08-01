@@ -5,7 +5,6 @@
 import com.fazecast.jSerialComm.SerialPort;
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.TreeUI;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -133,11 +132,7 @@ public class PixelblazeOutputExpanderImageMatrix {
     }
 
     /**
-     * BufferedImage consists of two main classes: Raster & ColorModel. Raster itself consists of two classes,
-     * DataBufferByte for image content while the other for pixel color.
-     *
-     * @param imagePath
-     * @return
+     * Loads the given image into a byte array with RGB colors, 3 bytes per pixel.
      */
     private static byte[] getImageData(String imagePath) throws IOException {
         byte[] imageData = new byte[NUMBER_OF_LEDS * 3];
@@ -151,12 +146,9 @@ public class PixelblazeOutputExpanderImageMatrix {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 32; x++) {
                 int color = bufferedImage.getRGB(x, y);
-                byte blue = (byte) (color & 0xff);
-                byte green = (byte) ((color & 0xff00) >> 8);
-                byte red = (byte) ((color & 0xff0000) >> 16);
-                imageData[pixelCounter * 3] = red;
-                imageData[(pixelCounter * 3) + 1] = green;
-                imageData[(pixelCounter * 3) + 2] = blue;
+                imageData[pixelCounter * 3] = (byte) ((color & 0xff0000) >> 16); // Red
+                imageData[(pixelCounter * 3) + 1] = (byte) ((color & 0xff00) >> 8); // Green
+                imageData[(pixelCounter * 3) + 2] = (byte) (color & 0xff); // Blue
                 pixelCounter++;
             }
         }
@@ -166,12 +158,9 @@ public class PixelblazeOutputExpanderImageMatrix {
 
     /**
      * Image is read to byte array pixel per pixel for each row to get one continuous line of data.
-     * But the matrix is wired in columns, first down, second up, third down,...
+     * But the matrix is wired in columns, first column down, second column up, third column down,...
      *
      * So we need to "mix up" the image byte array to one that matches the coordinates on the matrix.
-     *
-     * @param imageData
-     * @return
      */
     private static byte[] imageToMatrix(byte[] imageData) {
         byte[] matrixData = new byte[imageData.length];
@@ -215,13 +204,15 @@ public class PixelblazeOutputExpanderImageMatrix {
         byte[] bytes = buffer.array();
 
         if (debug) {
+            // Output the RGB byte array for testing
+            // This slows down the execution of the application!
             for (int i = 0; i < pixelData.length; i++) {
                 System.out.printf("%02x ", pixelData[i]);
-                //if (i % 12 == 11) {
-                //    System.out.print("\n");
-                //} else if (i % 4 == 3) {
-                //    System.out.print("\t");
-                //}
+                if (i % 12 == 11) {
+                    System.out.print("\n");
+                } else if (i % 4 == 3) {
+                    System.out.print("\t");
+                }
             }
             System.out.print("\n");
         }
