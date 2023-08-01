@@ -5,9 +5,9 @@
 import com.fazecast.jSerialComm.SerialPort;
 
 import javax.imageio.ImageIO;
+import javax.swing.plaf.TreeUI;
+
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -32,22 +32,38 @@ public class PixelblazeOutputExpanderImageMatrix {
 
     private static ExpanderDataWriteAdapter adapter;
 
-    private static final String[] IMAGES = {
-            "image_8_32_red.png",
-            "image_8_32_green.png",
-            "image_8_32_blue.png",
-            "image_8_32_stripes.png",
-            "image_8_32_stripes_test.png",
-            "image_8_32_line_1.png",
-            "image_8_32_line_2.png",
-            "image_8_32_line_3.png",
-            "image_8_32_line_4.png",
-            "image_8_32_line_5.png",
-            "image_8_32_line_6.png",
-            "image_8_32_line_7.png",
-            "image_8_32_line_8.png",
-            "image_8_32_duke.png",
-            "image_8_32_raspberrypi.png"
+    private static enum TestImage {
+        LINE_1("image_8_32_line_1.png", 250),
+        LINE_2("image_8_32_line_2.png", 250),
+        LINE_3("image_8_32_line_3.png", 250),
+        LINE_4("image_8_32_line_4.png", 250),
+        LINE_5("image_8_32_line_5.png", 250),
+        LINE_6("image_8_32_line_6.png", 250),
+        LINE_7("image_8_32_line_7.png", 250),
+        LINE_8("image_8_32_line_8.png", 250),
+        RED("image_8_32_red.png", 500),
+        GREEN("image_8_32_green.png", 500),
+        BLUE("image_8_32_blue.png", 500),
+        STRIPES("image_8_32_stripes.png", 2000),
+        STRIPES_TEST("image_8_32_stripes_test.png", 2000),
+        DUKE("image_8_32_duke.png", 2000),
+        RPI("image_8_32_raspberrypi.png", 2000);
+
+        private final String fileName;
+        private final int duration;
+
+        TestImage(String fileName, int duration) {
+            this.fileName = fileName;
+            this.duration = duration;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public int getDuration() {
+            return duration;
+        }
     };
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -58,31 +74,39 @@ public class PixelblazeOutputExpanderImageMatrix {
         sendAllOff();
         sendDrawAll();
         Thread.sleep(1000);
-
+        
         // Check the position of the LEDs, to identify how the LED strip is wired
+        System.out.println("One by one RED");
         for (i = 0; i < NUMBER_OF_LEDS; i++) {
             byte[] pixelData = new byte[NUMBER_OF_LEDS * 3];
             pixelData[i * 3] = (byte) 0xff; // red
-            sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 0, pixelData, false);
             sendDrawAll();
-            Thread.sleep(100);
+            Thread.sleep(20);
         }
 
+        // All white to test load on power supply
+        System.out.println("Full RGB");
+        byte[] allWhite = new byte[NUMBER_OF_LEDS * 3];
+        for (i = 0; i < NUMBER_OF_LEDS * 3; i++) {
+            allWhite[i] = (byte) 0xff;
+        }         
+        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, allWhite, false);
+        sendDrawAll();
+        Thread.sleep(5000);
+
         // Output all defined images
-        for (String image : IMAGES) {
-            System.out.println("Image: " + image);
+        for (TestImage testImage : TestImage.values()) {
+            System.out.println("Image: " + testImage);
 
             // Get the bytes from the given image
-            byte[] pixelData = imageToMatrix(getImageData("data/" + image));
+            byte[] pixelData = imageToMatrix(getImageData("data/" + testImage.getFileName()));
 
             // Show the image on the LED matrix
-            sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData, false);
             sendDrawAll();
-            Thread.sleep(3000);
 
-            // Clear the LEDs
-            sendAllOff();
-            Thread.sleep(200);
+            Thread.sleep(testImage.getDuration());
         }
 
         // Random colors
@@ -90,15 +114,21 @@ public class PixelblazeOutputExpanderImageMatrix {
         for (i = 0; i < 100; i++) {
             byte[] random = new byte[8 * 32 * 3];
             rd.nextBytes(random);
-            sendWs2812(CHANNEL, 3, 1, 0, 2, 0, random);
+            sendWs2812(CHANNEL, 3, 1, 0, 2, 0, random, false);
             sendDrawAll();
-            Thread.sleep(100);
+            Thread.sleep(50);
         }
+
+        // Done
+        sendAllOff();
+        Thread.sleep(1000);
+
+        adapter.closePort();
     }
 
     private static void sendAllOff() {
         System.out.println("All off");
-        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3]);
+        sendWs2812(CHANNEL, 3, 1, 0, 2, 0, new byte[NUMBER_OF_LEDS * 3], false);
         sendDrawAll();
     }
 
@@ -146,33 +176,22 @@ public class PixelblazeOutputExpanderImageMatrix {
     private static byte[] imageToMatrix(byte[] imageData) {
         byte[] matrixData = new byte[imageData.length];
 
-        int imagePosition;
-        int row = 0;
-        int column = 0;
-        for (int pixelCounter = 0; pixelCounter < NUMBER_OF_LEDS; pixelCounter++) {
-            imagePosition = row * column;
-            matrixData[pixelCounter * 3] = imageData[imagePosition];
-            matrixData[(pixelCounter * 3) + 1] = imageData[(imagePosition * 3) + 1];
-            matrixData[(pixelCounter * 3) + 2] = imageData[(imagePosition * 3) + 1];
-            if (column % 2 == 0) {
-                row++;
-            } else {
-                row--;
-            }
-            if (row < 0 || row > 7) {
-                column++;
-                if (column % 2 == 0) {
-                    row = 0;
-                } else {
-                    row = 7;
-                }
+        int indexInImage = 0;;
+        for (int row = 0; row < 8; row++) {
+            for (int column = 0; column < 32; column++) {
+                int indexInMatrix = (column * 8) + (column % 2 == 0 ? row : 7 - row);
+                //System.out.println("Row : " + row + " / column: " + column + " / index image : " + indexInImage + " / index matrix: " + indexInMatrix);
+                matrixData[indexInMatrix * 3] = imageData[indexInImage * 3];
+                matrixData[(indexInMatrix * 3) + 1] = imageData[(indexInImage * 3) + 1];
+                matrixData[(indexInMatrix * 3) + 2] = imageData[(indexInImage * 3) + 2];
+                indexInImage++;
             }
         }
 
         return matrixData;
     }
 
-    private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData) {
+    private static void sendWs2812(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData, boolean debug) {
         if (bytesPerPixel != 3 && bytesPerPixel != 4) {
             System.out.println("bytesPerPixel not within expected range");
             return;
@@ -195,15 +214,17 @@ public class PixelblazeOutputExpanderImageMatrix {
         buffer.putShort((short) pixels);
         byte[] bytes = buffer.array();
 
-        //for (int i = 0; i < pixelData.length; i++) {
-            //System.out.printf("%02x ", pixelData[i]);
-            //if (i % 12 == 11) {
-            //    System.out.print("\n");
-            //} else if (i % 4 == 3) {
-            //    System.out.print("\t");
-            //}
-        //}
-        System.out.print("\n");
+        if (debug) {
+            for (int i = 0; i < pixelData.length; i++) {
+                System.out.printf("%02x ", pixelData[i]);
+                //if (i % 12 == 11) {
+                //    System.out.print("\n");
+                //} else if (i % 4 == 3) {
+                //    System.out.print("\t");
+                //}
+            }
+            System.out.print("\n");
+        }
 
         crc.update(bytes);
         adapter.write(bytes);

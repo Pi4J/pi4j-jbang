@@ -6,7 +6,6 @@ import com.fazecast.jSerialComm.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.Channel;
 import java.util.Random;
 import java.util.zip.CRC32;
 
