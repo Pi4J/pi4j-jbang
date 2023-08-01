@@ -200,12 +200,6 @@ public class PixelblazeOutputExpander {
         writeCrc(crc);
     }
 
-    private static void writeCrc(CRC32 crc) {
-        byte[] crcBytes = new byte[4];
-        packInt(crcBytes, 0, (int) crc.getValue());
-        adapter.write(crcBytes);
-    }
-
     public static void sendDrawAll() {
         CRC32 crc = new CRC32();
         crc.reset();
@@ -214,6 +208,12 @@ public class PixelblazeOutputExpander {
         crc.update(bytes);
         adapter.write(bytes);
         writeCrc(crc);
+    }
+
+    private static void writeCrc(CRC32 crc) {
+        byte[] crcBytes = new byte[4];
+        packInt(crcBytes, 0, (int) crc.getValue());
+        adapter.write(crcBytes);
     }
 
     private static void packInt(byte[] outgoing, int index, int val) {

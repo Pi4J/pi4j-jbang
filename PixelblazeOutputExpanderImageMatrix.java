@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Random;
 import java.util.zip.CRC32;
 
 /**
@@ -33,32 +34,50 @@ public class PixelblazeOutputExpanderImageMatrix {
             "image_8_32_red.png",
             "image_8_32_green.png",
             "image_8_32_blue.png",
-            "image_8_32_duke.png",
-            "image_8_32_raspberrypi.png"
+            "image_8_32_stripes.png",
+            "image_8_32_stripes_test.png"
     };
 
     public static void main(String[] args) throws IOException, InterruptedException {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
-        sendDrawAll();       ; 
 
+        // Clear any remaining LEDs from previous test
+        sendAllOff();
+        sendDrawAll();
         Thread.sleep(1000);
 
+        // Output all defined images
         for (String image : IMAGES) {
             System.out.println("Image: " + image);
+
+            // Get the bytes from the given image
             byte[] pixelData = getImageData("data/" + image);
+
+            // Output for debugging
             for (int i = 0; i < pixelData.length; i++) {
                 System.out.printf("%02x ", pixelData[i]);
             }
             System.out.print("\n");
 
+            // Show the image on the LED matrix
             sendWs2812(CHANNEL, 3, 1, 0, 2, 1, pixelData);
             sendDrawAll();
-
             Thread.sleep(3000);
 
-            sendAllOff();           ; 
-
+            // Clear the LEDs
+            sendAllOff();
             Thread.sleep(1000);
+        }
+
+        // Random colors
+        Random rd = new Random();
+        for (int i = 0; i < 10; i++) {
+            System.out.println("Random colors " + (i + 1));
+            byte[] random = new byte[8 * 32 * 3];
+            rd.nextBytes(random);
+            sendWs2812(0, 3, 1, 0, 2, 0, random);
+            sendDrawAll();
+            Thread.sleep(250);
         }
     }
 
@@ -145,12 +164,6 @@ public class PixelblazeOutputExpanderImageMatrix {
         writeCrc(crc);
     }
 
-    private static void writeCrc(CRC32 crc) {
-        byte[] crcBytes = new byte[4];
-        packInt(crcBytes, 0, (int) crc.getValue());
-        adapter.write(crcBytes);
-    }
-
     public static void sendDrawAll() {
         CRC32 crc = new CRC32();
         crc.reset();
@@ -159,6 +172,12 @@ public class PixelblazeOutputExpanderImageMatrix {
         crc.update(bytes);
         adapter.write(bytes);
         writeCrc(crc);
+    }
+
+    private static void writeCrc(CRC32 crc) {
+        byte[] crcBytes = new byte[4];
+        packInt(crcBytes, 0, (int) crc.getValue());
+        adapter.write(crcBytes);
     }
 
     private static void packInt(byte[] outgoing, int index, int val) {
