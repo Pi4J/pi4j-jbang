@@ -33,56 +33,31 @@ import java.util.zip.CRC32;
  *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
  * </ul>
  *
- * Status of the Pixelblaze Output Expander LEDs
- *
- * <ul>
- *     <li>Fading / pulsing orange: has not seen any valid looking data</li>
- *     <li>Solid orange (for short time): received expander data</li>
- *     <li>Green LED (for short time): received data for its channels and is drawing</li>
- * </ul>
- *
- * Enabling serial port on the Raspberry Pi to be used by software
- *
- * <ul>
- *     <li>In terminal: sudo raspi-config</li>
- *     <li>Go to "Interface Options"</li>
- *     <li>Go to "Serial Port"</li>
- *     <li>Select "No" for "login shell"</li>
- *     <li>Select "Yes" for "hardware enabled"</li>
- * </ul>
- * 
+ * All info about this example is described here:
+ * https://pi4j.com/examples/jbang/pixelblaze_output_expander/
  */
 public class PixelblazeOutputExpander {
 
     private static final byte CH_WS2812_DATA = 1;
     private static final byte CH_DRAW_ALL = 2;
 
-    private static final int NUMBER_OF_LEDS = 11;
-
     private static ExpanderDataWriteAdapter adapter;
 
     public static void main(String[] args) throws InterruptedException {
         adapter = new ExpanderDataWriteAdapter("/dev/ttyS0");
 
-        // All off
-        sendAllOff(0, NUMBER_OF_LEDS);
+        // All off on channel 0, LED strip with 11 LEDs
+        sendAllOff(0, 11);
         Thread.sleep(500);
 
-        // One by one red
-        System.out.println("One by one red");
-        for (int i = 0; i < NUMBER_OF_LEDS; i++) {
-            byte[] oneRed = new byte[NUMBER_OF_LEDS * 3];
-            oneRed[i * 3] = (byte) 0xff;
-            sendWs2812(0, 3, 1, 0, 2, 0, oneRed);
-            sendDrawAll();
-            Thread.sleep(250);
-        }
+        // One by one red on channel 0, LED strip with 11 LEDs
+        sendOneByOne(0, 11, (byte) 0xff, (byte) 0x00, (byte) 0x00);
 
-        // All the same color red, green, blue
+        // All the same color red, green, blue on channel 0, LED strip with 11 LEDs
         for (int color = 0; color < 3; color++) {
             System.out.println("All " + (color == 0 ? "red" : (color == 1 ? "green" : "blue")));
-            byte[] allSame = new byte[NUMBER_OF_LEDS * 3];
-            for (int i = 0; i < NUMBER_OF_LEDS; i++) {                
+            byte[] allSame = new byte[11 * 3];
+            for (int i = 0; i < 11; i++) {                
                 allSame[(3 * i) + color] = (byte) 0xff;
             }
             sendWs2812(0, 3, 1, 0, 2, 0, allSame);
@@ -91,11 +66,11 @@ public class PixelblazeOutputExpander {
             Thread.sleep(1000);
         }
 
-        // Fill strip with random colors        
+        // Fill strip with random colors on channel 0, LED strip with 11 LEDs   
         Random rd = new Random();
         for (int i = 0; i < 5; i++) {
             System.out.println("Random colors " + (i + 1));
-            byte[] random = new byte[NUMBER_OF_LEDS * 3];
+            byte[] random = new byte[11 * 3];
             rd.nextBytes(random);
             sendWs2812(0, 3, 1, 0, 2, 0, random);
             sendDrawAll();
@@ -103,10 +78,10 @@ public class PixelblazeOutputExpander {
             Thread.sleep(1000);
         }
 
-        // Red alert!
-        byte[] red = new byte[NUMBER_OF_LEDS * 3];
+        // Red alert on channel 0, LED strip with 11 LEDs
+        byte[] red = new byte[11 * 3];
         int i;
-        for (i = 0; i < NUMBER_OF_LEDS; i++) {
+        for (i = 0; i < 11; i++) {
             red[i*3]= (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
@@ -114,27 +89,41 @@ public class PixelblazeOutputExpander {
             sendWs2812(0, 3, 1, 0, 2, 0, red);
             sendDrawAll();
             Thread.sleep(100);
-            sendAllOff(0, NUMBER_OF_LEDS);
+            sendAllOff(0, 11);
             Thread.sleep(100);
         }
 
-        // Send to LED strip on Channel 1, 5 meter with 60 LEDs/meter
-        byte[] redFiveMeter = new byte[300 * 3];
+        // One by one red/green/blue on strip on channel 1, 5 meter with 60 LEDs/meter
+        sendOneByOne(1, 300, (byte) 0xff, (byte) 0x00, (byte) 0x00);
+        sendOneByOne(1, 300, (byte) 0x00, (byte) 0xff, (byte) 0x00);
+        sendOneByOne(1, 300, (byte) 0x00, (byte) 0x00, (byte) 0xff);
+
+        // Flash all red/white on strip on channel 1, 5 meter with 60 LEDs/meter
+        byte[] fiveMeterRed = new byte[300 * 3];
+        byte[] fiveMeterWhite = new byte[300 * 3];
         for (i = 0; i < 300; i++) {
-            redFiveMeter[i*3]= (byte) 0xff;
+            fiveMeterRed[i*3]= (byte) 0xff;
+            fiveMeterWhite[i*3]= (byte) 0xff;
+            fiveMeterWhite[(i*3) + 1]= (byte) 0xff;
+            fiveMeterWhite[(i*3) + 2]= (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
-            System.out.println("All red on LED strip on channel 1");
-            sendWs2812(1, 3, 1, 0, 2, 0, redFiveMeter);
+            System.out.println("All RED on LED strip on channel 1");
+            sendWs2812(1, 3, 1, 0, 2, 0, fiveMeterRed);
             sendDrawAll();
-            Thread.sleep(100);
-            sendAllOff(1, 300);
-            Thread.sleep(100);
+            Thread.sleep(500);
+            System.out.println("All RED on LED strip on channel 1");
+            sendWs2812(1, 3, 1, 0, 2, 0, fiveMeterWhite);
+            sendDrawAll();
+            Thread.sleep(500);
         }
 
-        // Send to 8*32 LED matrix on Channel 2
-        byte[] redMatrix = new byte[300 * 3];
-        for (i = 0; i < 300; i++) {
+        sendAllOff(1, 300);
+        Thread.sleep(100);
+
+        // All red on channel 2, 8*32 LED matrix
+        byte[] redMatrix = new byte[256 * 3];
+        for (i = 0; i < 256; i++) {
             redMatrix[i*3]= (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
@@ -142,11 +131,25 @@ public class PixelblazeOutputExpander {
             sendWs2812(2, 3, 1, 0, 2, 0, redMatrix);
             sendDrawAll();
             Thread.sleep(100);
-            sendAllOff(2, 300);
+            sendAllOff(2, 256);
             Thread.sleep(100);
         }
 
         adapter.closePort();
+    }
+
+    private static void sendOneByOne(int channel, int numberOfLeds, byte red, byte green, byte blue) throws InterruptedException {
+        // One by one red on strip on channel 0
+        System.out.println("One by one on channel " + channel );
+        for (int i = 0; i < numberOfLeds; i++) {
+            byte[] oneLed = new byte[numberOfLeds * 3];
+            oneLed[i * 3] = red;
+            oneLed[(i * 3) + 1] = green;
+            oneLed[(i * 3) + 2] = blue;
+            sendWs2812(channel, 3, 1, 0, 2, 0, oneLed);
+            sendDrawAll();
+            Thread.sleep(50);
+        }
     }
 
     private static void sendAllOff(int channel, int numberOfLeds) {
@@ -178,15 +181,15 @@ public class PixelblazeOutputExpander {
         buffer.putShort((short) pixels);
         byte[] bytes = buffer.array();
 
-        for (int i = 0; i < pixelData.length; i++) {
-            System.out.printf("%02x ", pixelData[i]);
+        //for (int i = 0; i < pixelData.length; i++) {
+            //System.out.printf("%02x ", pixelData[i]);
             //if (i % 12 == 11) {
             //    System.out.print("\n");
             //} else if (i % 4 == 3) {
             //    System.out.print("\t");
             //}
-        }
-        System.out.print("\n");
+        //}
+        //System.out.print("\n");
 
         crc.update(bytes);
         adapter.write(bytes);
