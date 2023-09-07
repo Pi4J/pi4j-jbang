@@ -24,7 +24,9 @@ public class PixelBlazeOutputExpanderHelper {
     }
 
     public void sendColors(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData, boolean debug) {
-        System.out.println("Sending colors on channel " + channel);
+        if (debug) {
+            System.out.println("Sending colors on channel " + channel);
+        }
 
         if (bytesPerPixel != 3 && bytesPerPixel != 4) {
             System.out.println("bytesPerPixel not within expected range");
