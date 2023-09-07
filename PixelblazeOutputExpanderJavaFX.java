@@ -37,7 +37,6 @@ import java.util.List;
 public class PixelblazeOutputExpanderJavaFX extends Application {
 
     private static final int BYTES_PER_PIXEL = 3;
-
     private static final int CHANNEL = 0;
     private static final int NUMBER_OF_LEDS = 11;
 
@@ -53,6 +52,7 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
         holder.setAlignment(Pos.CENTER);
         holder.setSpacing(5);
 
+        // Color picker to control the LEDs one-by-one
         holder.getChildren().add(new Label("One by one"));
         for (int led = 0; led < NUMBER_OF_LEDS; led++) {
             ColorPicker colorPicker = new ColorPicker();
@@ -62,12 +62,14 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
             colorPickers.add(colorPicker);
         }
 
+        // Color picker to put the same color on all LEDs
         holder.getChildren().add(new Label("All same color"));
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setPrefWidth(200);
         colorPicker.setOnAction(e -> sendAll(colorPicker.getValue()));
         holder.getChildren().add(colorPicker);
 
+        // Clear button
         holder.getChildren().add(new Label("Clear"));
         Button clearAll = new Button("All");
         clearAll.setPrefWidth(200);

@@ -25,7 +25,7 @@ public class PixelblazeOutputExpanderImageMatrix {
     private static final int CHANNEL = 2;
     private static final int NUMBER_OF_LEDS = 8 * 32;
 
-    private static enum TestImage {
+    private enum TestImage {
         LINE_1("image_8_32_line_1.png", 250),
         LINE_2("image_8_32_line_2.png", 250),
         LINE_3("image_8_32_line_3.png", 250),
@@ -115,7 +115,7 @@ public class PixelblazeOutputExpanderImageMatrix {
     }
 
     /**
-     * Loads the given image into a byte array with RGB colors, 3 bytes per pixel.
+     * Loads the given image into a byte array with RGB colors.
      */
     private static byte[] getImageData(String imagePath) throws IOException {
         byte[] imageData = new byte[NUMBER_OF_LEDS * BYTES_PER_PIXEL];
