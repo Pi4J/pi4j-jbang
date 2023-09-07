@@ -21,6 +21,7 @@ import java.util.Random;
  */
 public class PixelblazeOutputExpanderImageMatrix {
 
+    private static final int BYTES_PER_PIXEL = 3;
     private static final int CHANNEL = 2;
     private static final int NUMBER_OF_LEDS = 8 * 32;
 
@@ -69,19 +70,19 @@ public class PixelblazeOutputExpanderImageMatrix {
         // Check the position of the LEDs, to identify how the LED strip is wired
         System.out.println("One by one RED");
         for (i = 0; i < NUMBER_OF_LEDS; i++) {
-            byte[] pixelData = new byte[NUMBER_OF_LEDS * 3];
-            pixelData[i * 3] = (byte) 0xff; // red
-            helper.sendColors(CHANNEL, 3, 1, 0, 2, 0, pixelData, false);
+            byte[] pixelData = new byte[NUMBER_OF_LEDS * BYTES_PER_PIXEL];
+            pixelData[i * BYTES_PER_PIXEL] = (byte) 0xff; // red
+            helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 0, pixelData, false);
             Thread.sleep(20);
         }
 
         // All white to test load on power supply
         System.out.println("Full RGB");
-        byte[] allWhite = new byte[NUMBER_OF_LEDS * 3];
-        for (i = 0; i < NUMBER_OF_LEDS * 3; i++) {
+        byte[] allWhite = new byte[NUMBER_OF_LEDS * BYTES_PER_PIXEL];
+        for (i = 0; i < NUMBER_OF_LEDS * BYTES_PER_PIXEL; i++) {
             allWhite[i] = (byte) 0xff;
         }         
-        helper.sendColors(CHANNEL, 3, 1, 0, 2, 0, allWhite, false);
+        helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 0, allWhite, false);
         Thread.sleep(5000);
 
         // Output all defined images
@@ -92,7 +93,7 @@ public class PixelblazeOutputExpanderImageMatrix {
             byte[] pixelData = imageToMatrix(getImageData("data/" + testImage.getFileName()));
 
             // Show the image on the LED matrix
-            helper.sendColors(CHANNEL, 3, 1, 0, 2, 1, pixelData, false);
+            helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 1, pixelData, false);
 
             Thread.sleep(testImage.getDuration());
         }
@@ -100,9 +101,9 @@ public class PixelblazeOutputExpanderImageMatrix {
         // Random colors
         Random rd = new Random();
         for (i = 0; i < 100; i++) {
-            byte[] random = new byte[8 * 32 * 3];
+            byte[] random = new byte[8 * 32 * BYTES_PER_PIXEL];
             rd.nextBytes(random);
-            helper.sendColors(CHANNEL, 3, 1, 0, 2, 0, random, false);
+            helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 0, random, false);
             Thread.sleep(50);
         }
 
@@ -117,7 +118,7 @@ public class PixelblazeOutputExpanderImageMatrix {
      * Loads the given image into a byte array with RGB colors, 3 bytes per pixel.
      */
     private static byte[] getImageData(String imagePath) throws IOException {
-        byte[] imageData = new byte[NUMBER_OF_LEDS * 3];
+        byte[] imageData = new byte[NUMBER_OF_LEDS * BYTES_PER_PIXEL];
 
         // Open image
         File imgPath = new File(imagePath);
@@ -128,9 +129,9 @@ public class PixelblazeOutputExpanderImageMatrix {
         for (int y = 0; y < 8; y++) {
             for (int x = 0; x < 32; x++) {
                 int color = bufferedImage.getRGB(x, y);
-                imageData[pixelCounter * 3] = (byte) ((color & 0xff0000) >> 16); // Red
-                imageData[(pixelCounter * 3) + 1] = (byte) ((color & 0xff00) >> 8); // Green
-                imageData[(pixelCounter * 3) + 2] = (byte) (color & 0xff); // Blue
+                imageData[pixelCounter * BYTES_PER_PIXEL] = (byte) ((color & 0xff0000) >> 16); // Red
+                imageData[(pixelCounter * BYTES_PER_PIXEL) + 1] = (byte) ((color & 0xff00) >> 8); // Green
+                imageData[(pixelCounter * BYTES_PER_PIXEL) + 2] = (byte) (color & 0xff); // Blue
                 pixelCounter++;
             }
         }
@@ -152,9 +153,9 @@ public class PixelblazeOutputExpanderImageMatrix {
             for (int column = 0; column < 32; column++) {
                 int indexInMatrix = (column * 8) + (column % 2 == 0 ? row : 7 - row);
                 //System.out.println("Row : " + row + " / column: " + column + " / index image : " + indexInImage + " / index matrix: " + indexInMatrix);
-                matrixData[indexInMatrix * 3] = imageData[indexInImage * 3];
-                matrixData[(indexInMatrix * 3) + 1] = imageData[(indexInImage * 3) + 1];
-                matrixData[(indexInMatrix * 3) + 2] = imageData[(indexInImage * 3) + 2];
+                matrixData[indexInMatrix * BYTES_PER_PIXEL] = imageData[indexInImage * BYTES_PER_PIXEL];
+                matrixData[(indexInMatrix * BYTES_PER_PIXEL) + 1] = imageData[(indexInImage * BYTES_PER_PIXEL) + 1];
+                matrixData[(indexInMatrix * BYTES_PER_PIXEL) + 2] = imageData[(indexInImage * BYTES_PER_PIXEL) + 2];
                 indexInImage++;
             }
         }

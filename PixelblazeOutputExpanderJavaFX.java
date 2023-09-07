@@ -34,6 +34,8 @@ import java.util.List;
  */
 public class PixelblazeOutputExpanderJavaFX extends Application {
 
+    private static final int BYTES_PER_PIXEL = 3;
+
     private static final int CHANNEL = 0;
     private static final int NUMBER_OF_LEDS = 11;
 
@@ -75,14 +77,14 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
     }
 
     private void sendColors() {
-        byte[] colors = new byte[NUMBER_OF_LEDS * 3];
+        byte[] colors = new byte[NUMBER_OF_LEDS * BYTES_PER_PIXEL];
         for (int led = 0; led < NUMBER_OF_LEDS; led++) {
             Color c = colorPickers.get(led).getValue();
-            colors[3 * led] = (byte) (255 * c.getRed());
-            colors[(3 * led) + 1] = (byte) (255 * c.getGreen());
-            colors[(3 * led) + 2] = (byte) (255 * c.getBlue());
+            colors[BYTES_PER_PIXEL * led] = (byte) (255 * c.getRed());
+            colors[(BYTES_PER_PIXEL * led) + 1] = (byte) (255 * c.getGreen());
+            colors[(BYTES_PER_PIXEL * led) + 2] = (byte) (255 * c.getBlue());
         }
-        Thread t = new Thread(() -> helper.sendColors(CHANNEL, 3, 1, 0, 2, 0, colors, true));
+        Thread t = new Thread(() -> helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 0, colors, true));
         t.start();
     }
 
