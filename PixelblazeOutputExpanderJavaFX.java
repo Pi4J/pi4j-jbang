@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Example code to use a Pixelblaze Output Expander to send an 8*32 image to a LED matrix.
+ * Example code to change the colors of a LED strip with a JavaFX User Interface.
  * This example is based on PixelblazeOutputExpander.java, so please check its documentation first!
  *
  * Also based on this video: https://www.youtube.com/watch?v=9q-_QhT1fj4
