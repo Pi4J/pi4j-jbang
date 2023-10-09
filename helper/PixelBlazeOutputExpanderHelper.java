@@ -20,11 +20,20 @@ public class PixelBlazeOutputExpanderHelper {
     }
 
     public void sendAllOff(int channel, int numberOfLeds) {
-        System.out.println("All off");
+        System.out.println("All off on channel " + channel + " with " + numberOfLeds);
         sendColors(channel, 3, 1, 0, 2, 0, new byte[numberOfLeds * 3], false);
     }
 
-    public void sendColors(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex, byte[] pixelData, boolean debug) {
+    public void sendColors(int channel, byte[] rgbPerPixel, boolean debug) {
+        sendColors(channel, 3, rgbPerPixel, debug);
+    }
+
+    public void sendColors(int channel, int bytesPerPixel, byte[] rgbPerPixel, boolean debug) {
+        sendColors(channel, bytesPerPixel, 1, 0, 2, 0, rgbPerPixel, debug);
+    }
+
+    public void sendColors(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex,
+            byte[] rgbPerPixel, boolean debug) {
         if (debug) {
             System.out.println("Sending colors on channel " + channel);
         }
@@ -37,25 +46,25 @@ public class PixelBlazeOutputExpanderHelper {
             System.out.println("one or more indexes not within expected range");
             return;
         }
-        if (pixelData == null) {
-            System.out.println("pixelData can not be null");
+        if (rgbPerPixel == null) {
+            System.out.println("rgbPerPixel can not be null");
             return;
         }
 
-        int pixels = pixelData.length / bytesPerPixel;
+        int pixels = rgbPerPixel.length / bytesPerPixel;
         CRC32 crc = new CRC32();
         crc.reset();
-        ByteBuffer buffer = initHeaderBuffer(10, (byte) channel, CH_WS2812_DATA);
-        buffer.put((byte) bytesPerPixel);
-        buffer.put((byte) (rIndex | (gIndex << 2) | (bIndex << 4) | (wIndex << 6)));
-        buffer.putShort((short) pixels);
-        byte[] bytes = buffer.array();
+        ByteBuffer headerBuffer = initHeaderBuffer(10, (byte) channel, CH_WS2812_DATA);
+        headerBuffer.put((byte) bytesPerPixel);
+        headerBuffer.put((byte) (rIndex | (gIndex << 2) | (bIndex << 4) | (wIndex << 6)));
+        headerBuffer.putShort((short) pixels);
+        byte[] header = headerBuffer.array();
 
         if (debug) {
             // Output the RGB byte array for testing
             // This slows down the execution of the application!
-            for (int i = 0; i < pixelData.length; i++) {
-                System.out.printf("%02x ", pixelData[i]);
+            for (int i = 0; i < rgbPerPixel.length; i++) {
+                System.out.printf("%02x ", rgbPerPixel[i]);
                 if (i % 12 == 11) {
                     System.out.print("\n");
                 } else if (i % 4 == 3) {
@@ -65,11 +74,11 @@ public class PixelBlazeOutputExpanderHelper {
             System.out.print("\n");
         }
 
-        crc.update(bytes);
-        adapter.write(bytes);
+        crc.update(header);
+        adapter.write(header);
 
-        crc.update(pixelData);
-        adapter.write(pixelData);
+        crc.update(rgbPerPixel);
+        adapter.write(rgbPerPixel);
 
         writeCrc(crc);
 
@@ -97,9 +106,12 @@ public class PixelBlazeOutputExpanderHelper {
     }
 
     private void packInt(byte[] outgoing, int index, int val) {
-        outgoing[index++] = (byte) (val & 0xFF); val = val >> 8;
-        outgoing[index++] = (byte) (val & 0xFF); val = val >> 8;
-        outgoing[index++] = (byte) (val & 0xFF); val = val >> 8;
+        outgoing[index++] = (byte) (val & 0xFF);
+        val = val >> 8;
+        outgoing[index++] = (byte) (val & 0xFF);
+        val = val >> 8;
+        outgoing[index++] = (byte) (val & 0xFF);
+        val = val >> 8;
         outgoing[index] = (byte) (val & 0xFF);
     }
 
@@ -116,12 +128,12 @@ public class PixelBlazeOutputExpanderHelper {
         return buffer;
     }
 
-    private class ExpanderDataWriteAdapter {
+    private static class ExpanderDataWriteAdapter {
 
         private SerialPort port = null;
         private final String portPath;
 
-        public ExpanderDataWriteAdapter (String portPath) {
+        public ExpanderDataWriteAdapter(String portPath) {
             this.portPath = portPath;
             openPort();
         }
