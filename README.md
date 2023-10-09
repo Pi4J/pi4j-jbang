@@ -47,7 +47,8 @@ When an application needs dependencies, they are defined inside the file itself 
 * `Pi4JTempHumPressI2C.java`: Reading temperature, humidity and pressure from a BME280 sensor via I2C.
 * `Pi4JTempHumPressSpi.java`: Reading temperature, humidity and pressure from a BME280 sensor via SPI.
 * `PixelblazeOutputExpander.java`: Controlling LED strips via serial commands to the Pixelblaze Output Expander.
-* `PixelblazeOutputExpanderImageMatrix.java`: Similar to `PixelblazeOutputExpander.java` to output 8*32 images onto an RGB LED matrix.
+* `PixelblazeOutputExpanderImageMatrix8x8.java`: Similar to `PixelblazeOutputExpander.java` to output 8*8 images onto an RGB LED matrix.
+* `PixelblazeOutputExpanderImageMatrix8x32.java`: Similar to `PixelblazeOutputExpander.java` to output 8*32 images onto an RGB LED matrix.
 
 ### GET FROM GITHUB
 
