@@ -15,21 +15,26 @@ public class ImageHelper {
 		return getImageData(imagePath, bytesPerPixel, width, height, 0, 0);
 	}
 
-	public static byte[] getImageData(String imagePath, int bytesPerPixel, int width, int height, int rotation,
-			int roundsOfDarkness) throws IOException {
+	/**
+	 * Loads the given image into a byte array with RGB colors. The loaded image can be rotated and darkened.
+	 */
+	public static byte[] getImageData(String imagePath, int bytesPerPixel, int width, int height,
+									  int rotation, int roundsOfDarkness) throws IOException {
 		byte[] imageData = new byte[width * height * bytesPerPixel];
 
 		// Open image
 		File imgPath = new File(imagePath);
 		BufferedImage bufferedImage = ImageIO.read(imgPath);
-		if (bufferedImage.getWidth() > width || bufferedImage.getHeight() > height)
+		if (bufferedImage.getWidth() > width || bufferedImage.getHeight() > height) {
 			throw new IllegalStateException(
 					"Image " + imgPath.getName() + " (" + bufferedImage.getWidth() + "x" + bufferedImage.getHeight() +
 							")" + " is larger than " + width + "x" + height + "!");
+		}
 
 		// rotate
-		if (rotation != 0)
+		if (rotation != 0) {
 			bufferedImage = rotateImage(bufferedImage, rotation);
+		}
 
 		// Read color values for each pixel
 		int pixelCounter = 0;
@@ -57,8 +62,8 @@ public class ImageHelper {
 	}
 
 	/**
-	 * Image is read to byte array pixel per pixel for each row to get one continuous line of data. But the matrix is
-	 * wired in columns, first column down, second column up, third column down,...
+	 * Image is read to byte array pixel per pixel for each row to get one continuous line of data. But a different ordering
+	 * is needed in case a matrix is wired in columns, first column down, second column up, third column down,...
 	 * <p>
 	 * So we need to "mix up" the image byte array to one that matches the coordinates on the matrix.
 	 */
@@ -80,6 +85,9 @@ public class ImageHelper {
 		return matrixData;
 	}
 
+	/**
+	 * Helper method to rotate an image for a given angle.
+	 */
 	public static BufferedImage rotateImage(BufferedImage buffImage, double angle) {
 		double radian = Math.toRadians(angle);
 		double sin = Math.abs(Math.sin(radian));
@@ -98,7 +106,7 @@ public class ImageHelper {
 		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
 		graphics.translate((nWidth - width) / 2, (nHeight - height) / 2);
-		// rotation around the center point
+		// Rotation around the center point
 		graphics.rotate(radian, (double) (width / 2), (double) (height / 2));
 		graphics.drawImage(buffImage, 0, 0, null);
 		graphics.dispose();
