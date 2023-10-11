@@ -16,7 +16,8 @@ import static helper.ImageHelper.imageToMatrix;
  * Example code to use a Pixelblaze Output Expander to send an 8*32 image to a LED matrix. This example is based on
  * PixelblazeOutputExpander.java, so please check its documentation first!
  * <p>
- * This example can be executed without sudo: jbang PixelblazeOutputExpanderImageMatrix.java
+ * This example can be executed without sudo:
+ * jbang PixelblazeOutputExpanderImageMatrix8x32.java
  */
 public class PixelblazeOutputExpanderImageMatrix8x32 {
 

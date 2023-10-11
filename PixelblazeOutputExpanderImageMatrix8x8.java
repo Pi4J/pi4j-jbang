@@ -12,6 +12,13 @@ import java.io.IOException;
 import static helper.ImageHelper.getImageData;
 import static helper.ImageHelper.imageToMatrix;
 
+/**
+ * Example code to use a Pixelblaze Output Expander to send an 8*8 image to a LED matrix. This example is based on
+ * PixelblazeOutputExpander.java, so please check its documentation first!
+ * <p>
+ * This example can be executed without sudo:
+ * jbang PixelblazeOutputExpanderImageMatrix8x8.java
+ */
 public class PixelblazeOutputExpanderImageMatrix8x8 {
 
 	private static final int CHANNEL_MATRIX = 1;
@@ -32,11 +39,8 @@ public class PixelblazeOutputExpanderImageMatrix8x8 {
 				System.err.println("Image does not exist at " + imagePath);
 				System.exit(1);
 			}
-
 			showImage(helper, imagePath, 5000);
-
 		} else {
-
 			for (TestImage testImage : TestImage.values()) {
 				showImage(helper, "data/" + testImage.fileName, testImage.duration);
 			}
