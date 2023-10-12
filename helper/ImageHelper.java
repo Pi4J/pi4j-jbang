@@ -31,6 +31,8 @@ public class ImageHelper {
 							")" + " is larger than " + width + "x" + height + "!");
 		}
 
+		System.out.println("Image " + imagePath + " loaded with W " + bufferedImage.getWidth() + " and H " + bufferedImage.getHeight());
+
 		// rotate
 		if (rotation != 0) {
 			bufferedImage = rotateImage(bufferedImage, rotation);
@@ -38,23 +40,28 @@ public class ImageHelper {
 
 		// Read color values for each pixel
 		int pixelCounter = 0;
-		for (int y = 0; y < width; y++) {
-			for (int x = 0; x < height; x++) {
-				int rgb = bufferedImage.getRGB(x, y);
-				Color color = new Color(rgb, false);
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				try {
+					int rgb = bufferedImage.getRGB(x, y);
+					Color color = new Color(rgb, false);
 
-				// darken the color
-				for (int i = 0; i < roundsOfDarkness; i++) {
-					color = color.darker();
+					// darken the color
+					for (int i = 0; i < roundsOfDarkness; i++) {
+						color = color.darker();
+					}
+
+					int blue = color.getBlue();
+					int green = color.getGreen();
+					int red = color.getRed();
+					imageData[(pixelCounter * bytesPerPixel)] = (byte) red;
+					imageData[(pixelCounter * bytesPerPixel) + 1] = (byte) green;
+					imageData[(pixelCounter * bytesPerPixel) + 2] = (byte) blue;
+					pixelCounter++;
+				} catch (Exception e) {
+					System.err.println("Error with x " + x + " and y " + y + ": " + e.getMessage());
 				}
-
-				int blue = color.getBlue();
-				int green = color.getGreen();
-				int red = color.getRed();
-				imageData[(pixelCounter * bytesPerPixel)] = (byte) red;
-				imageData[(pixelCounter * bytesPerPixel) + 1] = (byte) green;
-				imageData[(pixelCounter * bytesPerPixel) + 2] = (byte) blue;
-				pixelCounter++;
+				
 			}
 		}
 
@@ -71,8 +78,8 @@ public class ImageHelper {
 		byte[] matrixData = new byte[imageData.length];
 
 		int indexInImage = 0;
-		for (int row = 0; row < width; row++) {
-			for (int column = 0; column < height; column++) {
+		for (int row = 0; row < height; row++) {
+			for (int column = 0; column < width; column++) {
 				int indexInMatrix = (column * 8) + (column % 2 == 0 ? row : 7 - row);
 				//System.out.println("Row : " + row + " / column: " + column + " / index image : " + indexInImage + " / index matrix: " + indexInMatrix);
 				matrixData[indexInMatrix * bytesPerPixel] = imageData[indexInImage * bytesPerPixel];

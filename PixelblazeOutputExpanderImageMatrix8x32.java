@@ -89,7 +89,7 @@ public class PixelblazeOutputExpanderImageMatrix8x32 {
 
 		// Output all defined images
 		for (TestImage testImage : TestImage.values()) {
-			System.out.println("Image: " + testImage);
+			// System.out.println("Image: " + testImage);
 
 			// Get the bytes from the given image
 			byte[] pixelData = imageToMatrix(
