@@ -49,12 +49,14 @@ public class PixelblazeOutputExpander {
     public static void main(String[] args) throws InterruptedException {
         helper = new PixelBlazeOutputExpanderHelper("/dev/ttyS0");
 
-        // All off, short LED strip
+        // All off
         helper.sendAllOff(CHANNEL_STRIP_SHORT, NUMBER_OF_LEDS_STRIP_SHORT);
+        helper.sendAllOff(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG);
+        helper.sendAllOff(CHANNEL_MATRIX, NUMBER_OF_LEDS_MATRIX);
         Thread.sleep(500);
 
         // One by one red, short LED strip
-        sendOneByOne(CHANNEL_STRIP_SHORT, NUMBER_OF_LEDS_STRIP_SHORT, (byte) 0xff, (byte) 0x00, (byte) 0x00);
+        sendOneByOne(CHANNEL_STRIP_SHORT, NUMBER_OF_LEDS_STRIP_SHORT, (byte) 0xff, (byte) 0x00, (byte) 0x00, 250);
 
         // All the same color red, green, blue, short LED strip
         for (int color = 0; color < BYTES_PER_PIXEL; color++) {
@@ -93,9 +95,9 @@ public class PixelblazeOutputExpander {
         }
 
         // One by one red/green/blue on long strip, 5 meter with 60 LEDs/meter
-        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0xff, (byte) 0x00, (byte) 0x00);
-        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0x00, (byte) 0xff, (byte) 0x00);
-        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0x00, (byte) 0x00, (byte) 0xff);
+        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0xff, (byte) 0x00, (byte) 0x00, 20);
+        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0x00, (byte) 0xff, (byte) 0x00, 20);
+        sendOneByOne(CHANNEL_STRIP_LONG, NUMBER_OF_LEDS_STRIP_LONG, (byte) 0x00, (byte) 0x00, (byte) 0xff, 20);
 
         // Flash all red/white on long strip, 5 meter with 60 LEDs/meter
         byte[] fiveMeterRed = new byte[NUMBER_OF_LEDS_STRIP_LONG * BYTES_PER_PIXEL];
@@ -135,8 +137,8 @@ public class PixelblazeOutputExpander {
         helper.closePort();
     }
 
-    private static void sendOneByOne(int channel, int numberOfLeds, byte red, byte green, byte blue) throws InterruptedException {
-        System.out.println("One by one on channel " + channel);
+    private static void sendOneByOne(int channel, int numberOfLeds, byte red, byte green, byte blue, long duration) throws InterruptedException {
+        System.out.println("One by one on channel " + channel + ", will take " + Math.round((numberOfLeds * duration) / 1000) + "s");
         for (int i = 0; i < numberOfLeds; i++) {
             // System.out.println("One by one on channel " + channel + ", LED " + i);
             byte[] oneLed = new byte[numberOfLeds * BYTES_PER_PIXEL];
@@ -144,7 +146,7 @@ public class PixelblazeOutputExpander {
             oneLed[(i * BYTES_PER_PIXEL) + 1] = green;
             oneLed[(i * BYTES_PER_PIXEL) + 2] = blue;
             helper.sendColors(channel, BYTES_PER_PIXEL, 1, 0, 2, 0, oneLed, false);
-            Thread.sleep(50);
+            Thread.sleep(duration);
         }
     }
 }
