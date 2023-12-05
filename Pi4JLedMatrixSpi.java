@@ -113,9 +113,8 @@ public class Pi4JLedMatrixSpi {
                 var log = "Row 1 - ";
                 for (int led = 0; led < 8; led++) {
                     allOff();
-                    var columnValue = (byte) (1 << led);
-                    spi.write((byte) row, columnValue);
-                    log += "LED " + led + " (" + Integer.toHexString(columnValue) + ") ";
+                    spi.write((byte) row, (byte) (1 << led));
+                    log += "LED " + led;
                     Thread.sleep(waitBetween);
                 }
                 System.out.println(log);
