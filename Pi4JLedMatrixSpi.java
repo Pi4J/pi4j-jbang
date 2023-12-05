@@ -96,10 +96,10 @@ public class Pi4JLedMatrixSpi {
         try {
             for (int row = 1; row <= 8; row++) {
                 for (int led = 0; led < 8; led++) {
-                    spi.write((byte) row, (byte) 2^led);
+                    spi.write((byte) row, (byte) (2^led));
+                    System.out.println("LED " + led + " on row " + row + " is on");
                     Thread.sleep(waitBetween);
                 }
-                System.out.println("LED " + led + " on row " + row + " is on");
             }
         } catch (Exception ex) {
             System.err.println("Error during row demo: " + ex.getMessage());
