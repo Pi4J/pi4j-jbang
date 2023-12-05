@@ -8,12 +8,9 @@
 //DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
 
 import com.pi4j.Pi4J;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.*;
 import com.pi4j.util.Console;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -33,12 +30,6 @@ public class Pi4JLedMatrixSpi {
 
     private static final Console console = new Console(); // Pi4J Logger helper
 
-    private static final String SPI_PROVIDER_NAME = "BME280 SPI Provider";
-    private static final String SPI_PROVIDER_ID = "BME280-spi";
-
-    private static final SpiChipSelect chipSelect = SpiChipSelect.CS_0;
-    private static final SpiBus spiBus = SpiBus.BUS_0;
-
     private static Spi spi;
 
     public static void main(String[] args) throws Exception {
@@ -48,10 +39,10 @@ public class Pi4JLedMatrixSpi {
         console.println("Initializing the matrix via SPI");
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
-                .id(SPI_PROVIDER_ID)
-                .name(SPI_PROVIDER_NAME)
-                .bus(spiBus)
-                .chipSelect(chipSelect)
+                .id("Matrix SPI Provider")
+                .name("matrix-spi")
+                .bus(SpiBus.BUS_0)
+                .chipSelect(SpiChipSelect.CS_0)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
                 .provider("pigpio-spi")
@@ -79,13 +70,14 @@ public class Pi4JLedMatrixSpi {
         spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
         System.out.println("Woke up the MAX7219, is off on startup");
 
-        showRows(spi, 250);
-        showCols(spi, 250);
-        showRandomOutput(spi, 5, 500);
+        showRows( 250);
+        showCols( 250);
 
-        showAllImages(spi, 2000);
-        showAllAsciiCharacters(spi, 750);
-        scrollAllAsciiCharacters(spi, 50);
+        showRandomOutput( 5, 500);
+
+        showAllImages( 2000);
+        showAllAsciiCharacters( 750);
+        scrollAllAsciiCharacters( 50);
 
         pi4j.shutdown();
 
@@ -96,10 +88,9 @@ public class Pi4JLedMatrixSpi {
     /**
      * Highlight all rows one by one.
      *
-     * @param spi SpiDevice
      * @param waitBetween Number of milliseconds to wait between every row output
      */
-    public static void showRows(Spi spi, int waitBetween) {
+    public static void showRows(int waitBetween) {
         try {
             for (int onRow = 1; onRow <= 8; onRow++) {
                 for (int row = 1; row <= 8; row++) {
@@ -116,10 +107,9 @@ public class Pi4JLedMatrixSpi {
     /**
      * Highlight all columns one by one.
      *
-     * @param spi SpiDevice
      * @param waitBetween Number of milliseconds to wait between every column output
      */
-    public static void showCols(Spi spi, int waitBetween) {
+    public static void showCols(int waitBetween) {
         try {
             for (int onColumn = 0; onColumn < 8; onColumn++) {
                 for (int row = 1; row <= 8; row++) {
@@ -136,11 +126,10 @@ public class Pi4JLedMatrixSpi {
     /**
      * Demo mode which generates specified number of cycles of random enabled LEDs.
      *
-     * @param spi SpiDevice
      * @param numberOfLoops Number of random outputs to be generated
      * @param waitBetween Number of milliseconds to wait between random screens
      */
-    public static void showRandomOutput(Spi spi, int numberOfLoops, int waitBetween) {
+    public static void showRandomOutput(int numberOfLoops, int waitBetween) {
         try {
             Random r = new Random();
             int min = 0;
@@ -161,13 +150,12 @@ public class Pi4JLedMatrixSpi {
     /**
      * Show all the images as defined in the enum.
      *
-     * @param spi SpiDevice
      * @param waitBetween Number of milliseconds to wait between every image output
      */
-    public static void showAllImages(Spi spi, int waitBetween) {
+    public static void showAllImages(int waitBetween) {
         try {
             for (Image image : Image.values()) {
-                showImage(spi, image);
+                showImage(image);
                 System.out.println("Showing image " + image.name());
                 Thread.sleep(waitBetween);
             }
@@ -179,10 +167,9 @@ public class Pi4JLedMatrixSpi {
     /**
      * Output the given image to the matrix.
      *
-     * @param spi SpiDevice
      * @param image Image to be shown
      */
-    public static void showImage(Spi spi, Image image) {
+    public static void showImage(Image image) {
         try {
             for (int i = 0; i < 8; i++) {
                 spi.write((byte) (i + 1), image.getRows().get(i));
@@ -195,15 +182,14 @@ public class Pi4JLedMatrixSpi {
     /**
      * Show all the characters as defined in the alphabet enum.
      *
-     * @param spi SpiDevice
      * @param waitBetween Milliseconds between every AsciiCharacter
      */
-    public static void showAllAsciiCharacters(Spi spi, int waitBetween) {
+    public static void showAllAsciiCharacters(int waitBetween) {
         try {
             for (int ascii = 32; ascii <= 126; ascii++) {
                 AsciiCharacter asciiCharacter = AsciiCharacter.getByAscii(ascii);
                 if (asciiCharacter != null) {
-                    showAsciiCharacter(spi, asciiCharacter);
+                    showAsciiCharacter(asciiCharacter);
                     System.out.println("Written to SPI : " + asciiCharacter.name());
                     Thread.sleep(waitBetween);
                 }
@@ -216,10 +202,9 @@ public class Pi4JLedMatrixSpi {
     /**
      * Output the given alphabet character to the display.
      *
-     * @param spi SpiDevice
      * @param asciiCharacter AsciiCharacter to be shown
      */
-    public static void showAsciiCharacter(Spi spi, AsciiCharacter asciiCharacter) {
+    public static void showAsciiCharacter(AsciiCharacter asciiCharacter) {
         try {
             for (int row = 0; row < 8; row++) {
                 spi.write((byte) (row + 1), asciiCharacter.getRows().get(row));
@@ -232,15 +217,14 @@ public class Pi4JLedMatrixSpi {
     /**
      * Show all the characters as defined in the alphabet enum.
      *
-     * @param spi SpiDevice
      * @param waitBetweenMove Milliseconds between every column move
      */
-    public static void scrollAllAsciiCharacters(Spi spi, int waitBetweenMove) {
+    public static void scrollAllAsciiCharacters(int waitBetweenMove) {
         try {
             for (int ascii = 32; ascii <= 126; ascii++) {
                 AsciiCharacter asciiCharacter = AsciiCharacter.getByAscii(ascii);
                 if (asciiCharacter != null) {
-                    scrollAsciiCharacter(spi, asciiCharacter, waitBetweenMove);
+                    scrollAsciiCharacter(asciiCharacter, waitBetweenMove);
                     System.out.println("Scrolled : " + asciiCharacter.name());
                     Thread.sleep(250);
                 }
@@ -253,11 +237,10 @@ public class Pi4JLedMatrixSpi {
     /**
      * Scroll a character over the screen.
      *
-     * @param spi SpiDevice
      * @param asciiCharacter AsciiCharacter to be scrolled
      * @param waitBetweenMove Milliseconds between every column move
      */
-    public static void scrollAsciiCharacter(Spi spi, AsciiCharacter asciiCharacter, int waitBetweenMove) {
+    public static void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitBetweenMove) {
         try {
             for (int move = 0; move < (8 * 2); move++) {
                 for (int row = 0; row < 8; row++) {
