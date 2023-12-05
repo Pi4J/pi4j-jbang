@@ -70,6 +70,8 @@ public class Pi4JLedMatrixSpi {
         spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
         System.out.println("Woke up the MAX7219, is off on startup");
 
+        showOneByOne(25);
+
         showRows( 250);
         showCols( 250);
 
@@ -83,6 +85,25 @@ public class Pi4JLedMatrixSpi {
 
         console.println("**************************************");
         console.println("Finished");
+    }
+
+    /**
+     * Highlight all LEDs one by one.
+     *
+     * @param waitBetween Number of milliseconds to wait between every LED output
+     */
+    public static void showOneByOne(int waitBetween) {
+        try {
+            for (int row = 1; row <= 8; row++) {
+                for (int led = 0; led < 8; led++) {
+                    spi.write((byte) row, (byte) 2^led);
+                    Thread.sleep(waitBetween);
+                }
+                System.out.println("LED " + led + " on row " + row + " is on");
+            }
+        } catch (Exception ex) {
+            System.err.println("Error during row demo: " + ex.getMessage());
+        }
     }
 
     /**
@@ -180,19 +201,16 @@ public class Pi4JLedMatrixSpi {
     }
 
     /**
-     * Show all the characters as defined in the alphabet enum.
+     * Show all the configured characters.
      *
      * @param waitBetween Milliseconds between every AsciiCharacter
      */
     public static void showAllAsciiCharacters(int waitBetween) {
         try {
-            for (int ascii = 32; ascii <= 126; ascii++) {
-                AsciiCharacter asciiCharacter = AsciiCharacter.getByAscii(ascii);
-                if (asciiCharacter != null) {
-                    showAsciiCharacter(asciiCharacter);
-                    System.out.println("Written to SPI : " + asciiCharacter.name());
-                    Thread.sleep(waitBetween);
-                }
+            for (AsciiCharacter asciiCharacter : AsciiCharacter.values()) {
+                showAsciiCharacter(asciiCharacter);
+                System.out.println("Written to SPI : " + asciiCharacter.name());
+                Thread.sleep(waitBetween);
             }
         } catch (Exception ex) {
             System.err.println("Error during Ascii: " + ex.getMessage());
@@ -215,19 +233,16 @@ public class Pi4JLedMatrixSpi {
     }
 
     /**
-     * Show all the characters as defined in the alphabet enum.
+     * Show all the configured characters.
      *
      * @param waitBetweenMove Milliseconds between every column move
      */
     public static void scrollAllAsciiCharacters(int waitBetweenMove) {
         try {
-            for (int ascii = 32; ascii <= 126; ascii++) {
-                AsciiCharacter asciiCharacter = AsciiCharacter.getByAscii(ascii);
-                if (asciiCharacter != null) {
-                    scrollAsciiCharacter(asciiCharacter, waitBetweenMove);
-                    System.out.println("Scrolled : " + asciiCharacter.name());
-                    Thread.sleep(250);
-                }
+            for (AsciiCharacter asciiCharacter : AsciiCharacter.values()) {
+                scrollAsciiCharacter(asciiCharacter, waitBetweenMove);
+                System.out.println("Scrolled : " + asciiCharacter.name());
+                Thread.sleep(250);
             }
         } catch (Exception ex) {
             System.err.println("Error during Ascii: " + ex.getMessage());
@@ -242,7 +257,7 @@ public class Pi4JLedMatrixSpi {
      */
     public static void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitBetweenMove) {
         try {
-            for (int move = 0; move < (8 * 2); move++) {
+            for (int move = 0; move < ((8 * 2) + 1); move++) {
                 for (int row = 0; row < 8; row++) {
                     int rowValue = 0xFF & asciiCharacter.getRows().get(row);
                     if (move < 8) {
@@ -318,7 +333,7 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("111111", 2)
         )),
-        I(0x45, 3, Arrays.asList(
+        I(0x49, 3, Arrays.asList(
                 (byte) Integer.parseInt("111", 2),
                 (byte) Integer.parseInt("010", 2),
                 (byte) Integer.parseInt("010", 2),
