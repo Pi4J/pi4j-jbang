@@ -41,14 +41,22 @@ To tell JBang that it must handle the file as a Java application and do some upf
 
 When an application needs dependencies, they are defined inside the file itself in a line starting with `//DEPS`. For instance, to use the Pi4J Core library: `//DEPS com.pi4j:pi4j-core:2.3.0`.
 
-* `HelloWorld.java`: Basic Java example.
-* `JsonParsing.java`: Shows how to use dependencies, can be executed on any computer.
-* `Pi4JMinimalExample.java`: Basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput).
-* `Pi4JTempHumPressI2C.java`: Reading temperature, humidity and pressure from a BME280 sensor via I2C.
-* `Pi4JTempHumPressSpi.java`: Reading temperature, humidity and pressure from a BME280 sensor via SPI.
-* `PixelblazeOutputExpander.java`: Controlling LED strips via serial commands to the Pixelblaze Output Expander.
-* `PixelblazeOutputExpanderImageMatrix8x8.java`: Similar to `PixelblazeOutputExpander.java` to output 8*8 images onto an RGB LED matrix.
-* `PixelblazeOutputExpanderImageMatrix8x32.java`: Similar to `PixelblazeOutputExpander.java` to output 8*32 images onto an RGB LED matrix.
+Provided examples
+* Basic introduction
+  * `HelloWorld.java`: Basic Java example.
+* Using dependencies
+  * `JsonParsing.java`: Shows how to use dependencies, can be executed on any computer.
+* Pi4J Basics
+  * `Pi4JMinimalExample.java`: Basic example with Pi4J and a LED (DigitalOutput) and button (DigitalInput).
+* Pi4J with SPI
+  * `Pi4JLedMatrixSpi.java`: Controlling an 8x8 LED Matrix display with an MAX7219.
+  * `Pi4JTempHumPressSpi.java`: Reading temperature, humidity and pressure from a BME280 sensor via SPI.
+* Pi4J with I2C
+  * `Pi4JTempHumPressI2C.java`: Reading temperature, humidity and pressure from a BME280 sensor via I2C.
+* LED strips via serial connection to PixelBlaze Output Expander
+  * `PixelblazeOutputExpander.java`: Controlling LED strips via serial commands to the Pixelblaze Output Expander.
+  * `PixelblazeOutputExpanderImageMatrix8x8.java`: Similar to `PixelblazeOutputExpander.java` to output 8*8 images onto an RGB LED matrix.
+  * `PixelblazeOutputExpanderImageMatrix8x32.java`: Similar to `PixelblazeOutputExpander.java` to output 8*32 images onto an RGB LED matrix.
 
 ### GET FROM GITHUB
 

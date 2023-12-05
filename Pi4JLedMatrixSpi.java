@@ -12,7 +12,6 @@ import com.pi4j.io.spi.*;
 import com.pi4j.util.Console;
 
 import java.util.Arrays;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -73,7 +72,7 @@ public class Pi4JLedMatrixSpi {
 
         allOff();
 
-        showOneByOne(25);
+        showOneByOne(100);
 
         showRows( 250);
         showCols( 250);
