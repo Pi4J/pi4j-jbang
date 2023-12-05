@@ -12,6 +12,7 @@ import com.pi4j.io.spi.*;
 import com.pi4j.util.Console;
 
 import java.util.Arrays;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Random;
 
@@ -96,7 +97,6 @@ public class Pi4JLedMatrixSpi {
             for (int row = 1; row <= 8; row++) {
                 spi.write((byte) row, (byte) 0x00);
             }
-            System.out.println("All rows are put off");
         } catch (Exception ex) {
             System.err.println("Error during row demo: " + ex.getMessage());
         }
@@ -110,13 +110,15 @@ public class Pi4JLedMatrixSpi {
     public static void showOneByOne(int waitBetween) {
         try {
             for (int row = 1; row <= 8; row++) {
+                var log = "Row 1 - ";
                 for (int led = 0; led < 8; led++) {
                     allOff();
                     var columnValue = (byte) (1 << (8 - led));
                     spi.write((byte) row, columnValue);
-                    System.out.println("LED " + led + " on row " + row + " is on");
+                    log += "LED " + led + " (" + Integer.toHexString(columnValue) + ") ";
                     Thread.sleep(waitBetween);
                 }
+                System.out.println(log);
             }
         } catch (Exception ex) {
             System.err.println("Error during row demo: " + ex.getMessage());
