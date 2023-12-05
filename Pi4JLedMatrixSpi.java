@@ -87,7 +87,6 @@ public class Pi4JLedMatrixSpi {
 
         pi4j.shutdown();
 
-        console.println("**************************************");
         console.println("Finished");
     }
 
