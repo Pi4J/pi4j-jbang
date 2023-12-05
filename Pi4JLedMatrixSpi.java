@@ -70,6 +70,8 @@ public class Pi4JLedMatrixSpi {
         spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
         System.out.println("Woke up the MAX7219, is off on startup");
 
+        allOff();
+
         showOneByOne(25);
 
         showRows( 250);
@@ -81,10 +83,23 @@ public class Pi4JLedMatrixSpi {
         showAllAsciiCharacters( 750);
         scrollAllAsciiCharacters( 50);
 
+        allOff();
+
         pi4j.shutdown();
 
         console.println("**************************************");
         console.println("Finished");
+    }
+
+    public static void allOff() {
+        try {
+            for (int row = 1; row <= 8; row++) {
+                spi.write((byte) row, (byte) 0x00);
+            }
+            System.out.println("All rows are put off");
+        } catch (Exception ex) {
+            System.err.println("Error during row demo: " + ex.getMessage());
+        }
     }
 
     /**
@@ -96,7 +111,9 @@ public class Pi4JLedMatrixSpi {
         try {
             for (int row = 1; row <= 8; row++) {
                 for (int led = 0; led < 8; led++) {
-                    spi.write((byte) row, (byte) (2^led));
+                    allOff();
+                    var columnValue = (byte) (1 << (8 - led));
+                    spi.write((byte) row, columnValue);
                     System.out.println("LED " + led + " on row " + row + " is on");
                     Thread.sleep(waitBetween);
                 }
