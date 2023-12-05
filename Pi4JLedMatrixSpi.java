@@ -289,54 +289,64 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("00", 2)
         )),
         A(0x41, 6, Arrays.asList(
-                (byte) Integer.parseInt("00110000", 2),
-                (byte) Integer.parseInt("00110000", 2),
-                (byte) Integer.parseInt("01001000", 2),
-                (byte) Integer.parseInt("01001000", 2),
-                (byte) Integer.parseInt("01111000", 2),
-                (byte) Integer.parseInt("11111100", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("10000100", 2)
+                (byte) Integer.parseInt("001100", 2),
+                (byte) Integer.parseInt("001100", 2),
+                (byte) Integer.parseInt("010010", 2),
+                (byte) Integer.parseInt("010010", 2),
+                (byte) Integer.parseInt("011110", 2),
+                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("100001", 2)
         )),
         B(0x42, 6, Arrays.asList(
-                (byte) Integer.parseInt("11111000", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("11111000", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("11111000", 2)
+                (byte) Integer.parseInt("111110", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("111110", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("111110", 2)
         )),
         E(0x45, 6, Arrays.asList(
-                (byte) Integer.parseInt("11111100", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("11111100", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("11111100", 2)
+                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("111111", 2)
+        )),
+        I(0x45, 3, Arrays.asList(
+                (byte) Integer.parseInt("111", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("010", 2),
+                (byte) Integer.parseInt("111", 2)
         )),
         S(0x53, 6, Arrays.asList(
-                (byte) Integer.parseInt("01111000", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("10000000", 2),
-                (byte) Integer.parseInt("01111000", 2),
-                (byte) Integer.parseInt("00000100", 2),
-                (byte) Integer.parseInt("00000100", 2),
-                (byte) Integer.parseInt("10000100", 2),
-                (byte) Integer.parseInt("01111000", 2)
+                (byte) Integer.parseInt("011110", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("011110", 2),
+                (byte) Integer.parseInt("000001", 2),
+                (byte) Integer.parseInt("000001", 2),
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("011110", 2)
         )),
         T(0x54, 5, Arrays.asList(
-                (byte) Integer.parseInt("11111000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2),
-                (byte) Integer.parseInt("00100000", 2)
+                (byte) Integer.parseInt("11111", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2),
+                (byte) Integer.parseInt("00100", 2)
         ));
 
         private final int ascii;
