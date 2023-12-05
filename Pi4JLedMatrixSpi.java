@@ -110,14 +110,12 @@ public class Pi4JLedMatrixSpi {
     public static void showOneByOne(int waitBetween) {
         try {
             for (int row = 1; row <= 8; row++) {
-                var log = "Row 1 - ";
+                System.out.println("One by one on row " + row);
                 for (int led = 0; led < 8; led++) {
                     allOff();
                     spi.write((byte) row, (byte) (1 << led));
-                    log += "LED " + led;
                     Thread.sleep(waitBetween);
                 }
-                System.out.println(log);
             }
         } catch (Exception ex) {
             System.err.println("Error during row demo: " + ex.getMessage());
