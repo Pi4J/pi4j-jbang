@@ -23,7 +23,7 @@ import java.util.Random;
  * https://github.com/FDelporte/JavaOnRaspberryPi/tree/master/Chapter_09_Pi4J/java-pi4j-spi
  *
  * This example must be executed with sudo as it uses PiGpio with:
- * sudo `which jbang` Pi4JTempHumPressSpi.java
+ * sudo `which jbang` Pi4JLedMatrixSpi.java
  *
  */
 public class Pi4JLedMatrixSpi {
