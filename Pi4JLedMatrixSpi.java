@@ -22,6 +22,9 @@ import java.util.Random;
  * This example is based on the following project that was created with Pi4J V1:
  * https://github.com/FDelporte/JavaOnRaspberryPi/tree/master/Chapter_09_Pi4J/java-pi4j-spi
  *
+ * The full description is available on:
+ * https://pi4j.com/examples/jbang/jbang_pi4j_spi_led_matrix/
+ *
  * This example must be executed with sudo as it uses PiGpio with:
  * sudo `which jbang` Pi4JLedMatrixSpi.java
  *
