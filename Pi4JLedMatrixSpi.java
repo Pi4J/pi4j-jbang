@@ -321,14 +321,14 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("00", 2)
         )),
         N_0(0x30, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
-                (byte) Integer.parseInt("110001", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("111111", 2)
+                (byte) Integer.parseInt("100001", 2),
+                (byte) Integer.parseInt("011110", 2)
         )),
         N_1(0x31, 6, Arrays.asList(
                 (byte) Integer.parseInt("111100", 2),
@@ -441,14 +441,14 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("111110", 2)
         )),
         C(0x43, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("111111", 2)
+                (byte) Integer.parseInt("011110", 2)
         )),
         D(0x44, 6, Arrays.asList(
                 (byte) Integer.parseInt("111110", 2),
@@ -531,14 +531,14 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100001", 2)
         )),
         L(0x4C, 6, Arrays.asList(
-                (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("100010", 2),
-                (byte) Integer.parseInt("100010", 2),
-                (byte) Integer.parseInt("101100", 2),
-                (byte) Integer.parseInt("110010", 2),
-                (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("100001", 2)
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("100000", 2),
+                (byte) Integer.parseInt("111111", 2)
         )),
         M(0x4D, 7, Arrays.asList(
                 (byte) Integer.parseInt("1100011", 2),
@@ -561,37 +561,37 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100011", 2)
         )),
         O(0x4F, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("111111", 2)
+                (byte) Integer.parseInt("011110", 2)
         )),
         P(0x50, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("111110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("111110", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2)
         )),
         Q(0x51, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100101", 2),
                 (byte) Integer.parseInt("100101", 2),
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("000001", 2)
         )),
         R(0x52, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("111110", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100010", 2),
@@ -601,14 +601,14 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100001", 2)
         )),
         S(0x53, 6, Arrays.asList(
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011111", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
-                (byte) Integer.parseInt("111111", 2),
+                (byte) Integer.parseInt("011110", 2),
                 (byte) Integer.parseInt("000001", 2),
                 (byte) Integer.parseInt("000001", 2),
                 (byte) Integer.parseInt("000001", 2),
-                (byte) Integer.parseInt("111111", 2)
+                (byte) Integer.parseInt("111110", 2)
         )),
         T(0x54, 5, Arrays.asList(
                 (byte) Integer.parseInt("11111", 2),
@@ -628,7 +628,7 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
                 (byte) Integer.parseInt("100001", 2),
-                (byte) Integer.parseInt("111111", 2)
+                (byte) Integer.parseInt("011110", 2)
         )),
         V(0x56, 7, Arrays.asList(
                 (byte) Integer.parseInt("1000001", 2),
