@@ -170,9 +170,10 @@ public class PixelBlazeOutputExpanderHelper {
 
         public void write(byte[] data) {
             int lastErrorCode = port != null ? port.getLastErrorCode() : 0;
+            int lastErrorLocation = port != null ? port.getLastErrorLocation() : 0;
             boolean isOpen = port != null && port.isOpen();
             if (port == null || !isOpen || lastErrorCode != 0) {
-                System.out.println("Port was open:" + isOpen + ", last error:" + lastErrorCode);
+                System.out.println("Port was open:" + isOpen + ", last error:" + lastErrorCode + " " + lastErrorLocation);
                 openPort();
             }
             port.writeBytes(data, data.length);
