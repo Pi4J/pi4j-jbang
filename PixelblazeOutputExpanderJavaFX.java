@@ -29,7 +29,7 @@ import java.util.List;
  * An SDK with bundled JavaFX is needed for this example, use SDKMAN to use a specific version:
  * curl -s "https://get.sdkman.io" | bash
  * source "$HOME/.sdkman/bin/sdkman-init.sh"
- * sdk install java 20.0.2.fx-librca 
+ * sdk install java 22.0.1.fx-zulu
  * 
  * This example can be executed without sudo:
  * jbang PixelblazeOutputExpanderJavaFX.java
