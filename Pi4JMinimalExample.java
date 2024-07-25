@@ -45,7 +45,7 @@ public class Pi4JMinimalExample {
                 .name("LED Flasher")
                 .address(PIN_LED)
                 .shutdown(DigitalState.LOW)
-                .initial(DigitalState.LOW)
+                .initial(DigitalState.LOW);
         var led = pi4j.create(ledConfig);
 
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
@@ -53,7 +53,7 @@ public class Pi4JMinimalExample {
                 .name("Press button")
                 .address(PIN_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
-                .debounce(3000L)
+                .debounce(3000L);
         var button = pi4j.create(buttonConfig);
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
