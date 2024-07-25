@@ -1,10 +1,10 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:1.7.35
-//DEPS org.slf4j:slf4j-simple:1.7.35
-//DEPS com.pi4j:pi4j-core:2.3.0
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
-//DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
+//DEPS org.slf4j:slf4j-api:2.0.12
+//DEPS org.slf4j:slf4j-simple:2.0.12
+//DEPS com.pi4j:pi4j-core:2.6.0
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.6.0
+//DEPS com.pi4j:pi4j-plugin-gpiod:2.6.0
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
@@ -46,7 +46,6 @@ public class Pi4JMinimalExample {
                 .address(PIN_LED)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
-                .provider("pigpio-digital-output");
         var led = pi4j.create(ledConfig);
 
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
@@ -55,7 +54,6 @@ public class Pi4JMinimalExample {
                 .address(PIN_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
                 .debounce(3000L)
-                .provider("pigpio-digital-input");
         var button = pi4j.create(buttonConfig);
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
