@@ -62,6 +62,10 @@ public class PixelblazeOutputExpanderImageMatrix8x32 {
 	}
 
 	public static void main(String[] args) throws IOException, InterruptedException {
+		// Depending on the type of board and the connection you are using
+		// (GPIO pin, or other serial connection), this can be a different port.
+		// Most probably it will be `/dev/ttyS0` (Raspberry Pi 4 or earlier),
+		// or `/dev/ttyAMA0` (Raspberry Pi 5).
 		PixelBlazeOutputExpanderHelper helper = new PixelBlazeOutputExpanderHelper("/dev/ttyS0");
 		int i;
 

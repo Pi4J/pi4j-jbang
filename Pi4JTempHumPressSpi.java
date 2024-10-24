@@ -1,11 +1,11 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:1.7.35
-//DEPS org.slf4j:slf4j-simple:1.7.35
-//DEPS com.pi4j:pi4j-core:2.3.0
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.3.0
-//DEPS com.pi4j:pi4j-plugin-linuxfs:2.3.0
-//DEPS com.pi4j:pi4j-plugin-pigpio:2.3.0
+//DEPS org.slf4j:slf4j-api:2.0.12
+//DEPS org.slf4j:slf4j-simple:2.0.12
+//DEPS com.pi4j:pi4j-core:2.7.0
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.7.0
+//DEPS com.pi4j:pi4j-plugin-linuxfs:2.70
+//DEPS com.pi4j:pi4j-plugin-pigpio:2.7.0
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
