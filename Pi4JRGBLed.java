@@ -32,9 +32,6 @@ public class Pi4JRGBLed {
     private static final int PIN_BLUE = 13;
 
     public static void main(String[] args) throws Exception {
-
-        final var console = new Console();
-
         var pi4j = Pi4J.newAutoContext();
 
         var ledRed = pi4j.digitalOutput().create(PIN_RED);
@@ -47,26 +44,33 @@ public class Pi4JRGBLed {
 
             for (int i = 0; i < 10; i++) {
                 useLed.toggle();
-                Thread.sleep(150);
+                Thread.sleep(250);
 
-                System.out.println("State of the LED " + useLed.getName() + " has been toggled");
+                System.out.println("State of the LED " + useLed.getAddress() + " has been toggled");
             }
 
             // Make sure the led is off
             useLed.low();
-            System.out.println("LED " + useLed.getName() + " is off");
+            System.out.println("LED " + useLed.getAddress() + " is off");
         }
 
         Thread.sleep(1000);
 
-        // All three on, should be white
+        // All three on, should be (close to) white
         ledRed.high();
         ledGreen.high();
         ledBlue.high();
 
-        System.out.println("All three on, check if this looks like white...");
+        System.out.println("All three on, check if this looks like white or close to white...");
 
         Thread.sleep(5000);
+
+        // All three off
+        ledRed.low();
+        ledGreen.low();
+        ledBlue.low();
+
+        System.out.println("All three off");
 
         pi4j.shutdown();
     }
