@@ -6,12 +6,13 @@
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:2.7.0
 //DEPS com.pi4j:pi4j-plugin-gpiod:2.7.0
 
+import java.util.concurrent.TimeUnit;
+
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
-import com.pi4j.util.Console;
 
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
@@ -31,9 +32,10 @@ public class Pi4JDistanceSensor {
     public static void main(String[] args) {
         System.out.println("Starting distance sensor example...");
 
+        // Initialize Pi4J context
+        var pi4j = Pi4J.newAutoContext();
+
         try {
-            // Initialize Pi4J context
-            var pi4j = Pi4J.newAutoContext();
 
             // Initialize the pins
             trigger = pi4j.digitalOutput().create(PIN_TRIGGER); 
@@ -51,13 +53,16 @@ public class Pi4JDistanceSensor {
             }
         } catch (Exception ex) {
             System.err.println("Error: " + ex.getMessage());
+        } finally {
+            // Shut down the Pi4J context
+            pi4j.shutdown();
         }
     }
 
     private static void measureDistance() {
         try {
             // Set trigger high for 0.01ms
-            trigger.pulse(10, PinState.HIGH, true, TimeUnit.NANOSECONDS);
+            trigger.pulse(10, TimeUnit.NANOSECONDS, DigitalState.HIGH);
 
             // Start the measurement
             while (echo.isLow()) {
@@ -72,9 +77,9 @@ public class Pi4JDistanceSensor {
 		    long end = System.nanoTime();
             
             // Output the distance
-            float measuredSeconds = Calculation.getSecondsDifference(start, end);
+            float measuredSeconds = getSecondsDifference(start, end);
             System.out.println("Measured distance is: "
-                    + Calculation.getDistance(measuredSeconds, true) + "cm"
+                    + getDistance(measuredSeconds, true) + "cm"
                     + " for " + measuredSeconds + "s");
         } catch (Exception ex) {
             System.err.println("Error: " + ex.getMessage());

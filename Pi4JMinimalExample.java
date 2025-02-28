@@ -1,10 +1,12 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
+//REPOS mavencentral,mavensnapshot=https://oss.sonatype.org/content/groups/public
+
 //DEPS org.slf4j:slf4j-api:2.0.12
 //DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:2.7.0
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.7.0
-//DEPS com.pi4j:pi4j-plugin-gpiod:2.7.0
+//DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;

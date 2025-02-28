@@ -9,7 +9,8 @@
 //DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
-import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.pwm.Pwm;
+import com.pi4j.io.pwm.PwmType;
 
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
@@ -42,26 +43,17 @@ public class Pi4JPWMLed {
                 .build();
             var pwm = pi4j.create(pwmConfig);
 
-            // You can optionally use these wiringPi methods to further customize 
-            // the PWM generator see: 
-            // http://wiringpi.com/reference/raspberry-pi-specifics/
-            //com.pi4j.wiringpi.Gpio.pwmSetMode(com.pi4j.wiringpi.Gpio.PWM_MODE_MS);
-            //com.pi4j.wiringpi.Gpio.pwmSetRange(1000);
-            //com.pi4j.wiringpi.Gpio.pwmSetClock(50);
-
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
-                for (int useValue = MAX_PMW_VALUE; useValue >= 0; 
-                    useValue-=MAX_PMW_VALUE/FADE_STEPS) {
+                for (int useValue = MAX_PMW_VALUE; useValue >= 0; useValue-=MAX_PMW_VALUE/FADE_STEPS) {
                     pwm.on(useValue);
-                    System.out.println("PWM rate is: " + pwm.getPwm());
-                    
+                    System.out.println("PWM duty cycle is: " + pwm.getDutyCycle());
                     Thread.sleep(200);
                 }
             }
 
-            // Shut down the GPIO controller
-            gpio.shutdown();
+            // Shut down the Pi4J context
+            pi4j.shutdown();
 
             System.out.println("Done");
         } catch (Exception ex) {
