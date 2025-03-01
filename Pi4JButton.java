@@ -29,8 +29,10 @@ public class Pi4JButton {
 
     public static void main(String[] args) throws Exception {
 
+        // Initialize the Pi4J context
         var pi4j = Pi4J.newAutoContext();
 
+        // Initialize the button configuration
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
                 .id("button")
                 .name("Press button")
@@ -38,12 +40,15 @@ public class Pi4JButton {
                 .pull(PullResistance.PULL_DOWN) // disable this line to compare with and without pull down resistor
                 //.pull(PullResistance.PULL_UP) // try this instead of PULL_DOWN
                 .debounce(3000L);
-                
+
+        // Initialize the button (digital input)
         var button = pi4j.create(buttonConfig);
         System.out.println("Button is initialized");
 
+        // Add a listener to the button
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
+                // Each time the button changes to the low state, increment the counter
                 pressCount++;
                 System.out.println("Button was pressed for the " + pressCount + "th time");
             }
@@ -54,6 +59,7 @@ public class Pi4JButton {
             Thread.sleep(10);
         }
 
+        // Shutdown the Pi4J context
         pi4j.shutdown();
     }
 }

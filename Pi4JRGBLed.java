@@ -28,13 +28,16 @@ public class Pi4JRGBLed {
     private static final int PIN_BLUE = 13;
 
     public static void main(String[] args) throws Exception {
+
+        // Initialize the Pi4J context
         var pi4j = Pi4J.newAutoContext();
 
+        // Initialize the three LEDs
         var ledRed = pi4j.digitalOutput().create(PIN_RED);
         var ledGreen = pi4j.digitalOutput().create(PIN_GREEN);
         var ledBlue = pi4j.digitalOutput().create(PIN_BLUE);
 
-        // Toggle 10 times RED on and off
+        // Toggle 10 times each color on and off
         for (int led = 1; led <= 3; led++) {
             DigitalOutput useLed = led == 1 ? ledRed : (led == 2 ? ledGreen : ledBlue);
 
@@ -68,6 +71,7 @@ public class Pi4JRGBLed {
 
         System.out.println("All three off");
 
+        // Shutdown the Pi4J context
         pi4j.shutdown();
     }
 }
