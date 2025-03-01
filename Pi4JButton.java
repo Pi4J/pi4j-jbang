@@ -10,6 +10,7 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalState;
 
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
@@ -40,7 +41,7 @@ public class Pi4JButton {
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
                 pressCount++;
-                console.println("Button was pressed for the " + pressCount + "th time");
+                System.out.println("Button was pressed for the " + pressCount + "th time");
             }
         });
 
