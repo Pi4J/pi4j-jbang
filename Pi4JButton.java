@@ -11,6 +11,7 @@
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalState;
+import com.pi4j.io.gpio.digital.PullResistance;
 
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
@@ -34,10 +35,13 @@ public class Pi4JButton {
                 .id("button")
                 .name("Press button")
                 .address(PIN_BUTTON)
-                //.pull(PullResistance.PULL_DOWN) // enable this line to compare with and without pull down resistor
+                .pull(PullResistance.PULL_DOWN) // disable this line to compare with and without pull down resistor
+                //.pull(PullResistance.PULL_UP) // try this instead of PULL_DOWN
                 .debounce(3000L);
                 
         var button = pi4j.create(buttonConfig);
+        System.out.println("Button is initialized");
+
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
                 pressCount++;
