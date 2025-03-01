@@ -1,10 +1,12 @@
 ///usr/bin/env jbang "$0" "$@" ; exit $?
 
+//REPOS mavencentral,mavensnapshot=https://oss.sonatype.org/content/groups/public
+
 //DEPS org.slf4j:slf4j-api:2.0.12
 //DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:2.7.0
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:2.7.0
-//DEPS com.pi4j:pi4j-plugin-gpiod:2.7.0
+//DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
 
 import java.util.concurrent.TimeUnit;
 
@@ -36,11 +38,11 @@ public class Pi4JDistanceSensor {
         var pi4j = Pi4J.newAutoContext();
 
         try {
-
-            // Initialize the pins
+            // Initialize the output pin
             trigger = pi4j.digitalOutput().create(PIN_TRIGGER); 
             trigger.low();
 
+            // Initialize the input pin
             var echoConfig = DigitalInput.newConfigBuilder(pi4j)
                 .address(PIN_ECHO)
                 .pull(PullResistance.PULL_UP) ;
@@ -54,7 +56,7 @@ public class Pi4JDistanceSensor {
         } catch (Exception ex) {
             System.err.println("Error: " + ex.getMessage());
         } finally {
-            // Shut down the Pi4J context
+            // Shutdown the Pi4J context
             pi4j.shutdown();
         }
     }
@@ -62,22 +64,29 @@ public class Pi4JDistanceSensor {
     private static void measureDistance() {
         try {
             // Set trigger high for 0.01ms
-            trigger.pulse(10, TimeUnit.NANOSECONDS, DigitalState.HIGH);
+            // Pi4J V2+ only provides a pulse method for milliseconds, but the distance sensor needs a short pulse...
+            // This is reaching the limits of what a programming language on Linux can do, but we can try ;-)
+            trigger.state(DigitalState.HIGH);
+            long startTrigger = System.nanoTime();
+            while (System.nanoTime() - startTrigger < 10) {
+                // Busy wait
+            }
+            trigger.state(DigitalState.LOW);
 
             // Start the measurement
             while (echo.isLow()) {
 			    // Wait until the echo pin is high, indicating the ultrasound was sent
 		    }
-		    long start = System.nanoTime();
+		    long startEcho = System.nanoTime();
 
             // Wait till measurement is finished
 		    while (echo.isHigh()) {
                 // Wait until the echo pin is low, indicating the ultrasound was received back
 		    }
-		    long end = System.nanoTime();
+		    long endEcho = System.nanoTime();
             
             // Output the distance
-            float measuredSeconds = getSecondsDifference(start, end);
+            float measuredSeconds = getSecondsDifference(startEcho, endEcho);
             System.out.println("Measured distance is: "
                     + getDistance(measuredSeconds, true) + "cm"
                     + " for " + measuredSeconds + "s");
