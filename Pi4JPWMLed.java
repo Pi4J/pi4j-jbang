@@ -45,11 +45,14 @@ public class Pi4JPWMLed {
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
+                pwm.on();
                 for (int useValue = 0; useValue <=MAX_PMW_VALUE; useValue+=MAX_PMW_VALUE/FADE_STEPS) {
-                    pwm.on(useValue);
-                    System.out.println("PWM duty cycle is: " + pwm.getDutyCycle());
+                    pwm.setFrequency(useValue);
+                    System.out.println("PWM frequency is: " + pwm.getFrequency());
                     Thread.sleep(200);
                 }
+                pwm.off();
+                Thread.sleep(1000);
             }
 
             // Shut down the Pi4J context
