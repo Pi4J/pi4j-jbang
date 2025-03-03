@@ -6,7 +6,7 @@
 //DEPS org.slf4j:slf4j-simple:2.0.12
 //DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-pigpio:3.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.pwm.Pwm;
@@ -17,13 +17,12 @@ import com.pi4j.io.pwm.PwmType;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
  * This example can be executed without sudo:
- * jbang Pi4JPWMLed.java
+ * sudo `which jbang` Pi4JPWMLed.java
  */
 public class Pi4JPWMLed {
 
-    private static final int MAX_PMW_VALUE = 1000;
-    private static final int FADE_STEPS = 10;
-    private static final int PIN_LED = 19;
+    // BCM 19
+    private static final int PIN = 19;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -36,7 +35,7 @@ public class Pi4JPWMLed {
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
             // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                .address(PIN_LED)
+                .address(PIN)
                 .pwmType(PwmType.HARDWARE)
                 .initial(0)
                 .shutdown(0)
@@ -45,10 +44,9 @@ public class Pi4JPWMLed {
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
-                pwm.on();
-                for (int useValue = 0; useValue <=MAX_PMW_VALUE; useValue+=MAX_PMW_VALUE/FADE_STEPS) {
-                    pwm.setFrequency(useValue);
-                    System.out.println("PWM frequency is: " + pwm.getFrequency());
+                for (int useValue = 0; useValue <= 100; useValue += 5) {
+                    pwm.on(useValue, 1500);
+                    System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
                     Thread.sleep(200);
                 }
                 pwm.off();
