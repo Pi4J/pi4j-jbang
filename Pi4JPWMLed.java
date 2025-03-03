@@ -13,7 +13,7 @@ import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
 
 /**
- * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
+ * Example code to fade a LED with a PWM signal.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
  * This example can be executed without sudo:
