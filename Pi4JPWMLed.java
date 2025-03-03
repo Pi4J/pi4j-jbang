@@ -23,7 +23,7 @@ public class Pi4JPWMLed {
 
     private static final int MAX_PMW_VALUE = 1000;
     private static final int FADE_STEPS = 10;
-    private static final int PIN_LED = 18;
+    private static final int PIN_LED = 19;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -34,7 +34,7 @@ public class Pi4JPWMLed {
 
             // All Raspberry Pi models support a hardware PWM pin on GPIO_01.
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
-            // GPIO_23, GPIO_24, GPIO_26
+            // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
                 .address(PIN_LED)
                 .pwmType(PwmType.HARDWARE)
@@ -45,7 +45,7 @@ public class Pi4JPWMLed {
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
-                for (int useValue = MAX_PMW_VALUE; useValue >= 0; useValue-=MAX_PMW_VALUE/FADE_STEPS) {
+                for (int useValue = 0; useValue <=MAX_PMW_VALUE; useValue+=MAX_PMW_VALUE/FADE_STEPS) {
                     pwm.on(useValue);
                     System.out.println("PWM duty cycle is: " + pwm.getDutyCycle());
                     Thread.sleep(200);
