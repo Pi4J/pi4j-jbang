@@ -9,6 +9,11 @@
 //DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
+//SOURCES helper/lcd/LcdDisplayComponent.java
+//SOURCES helper/lcd/LcdSymbol.java
+//SOURCES helper/lcd/MCP23008.java
+//SOURCES helper/lcd/SleepHelper.java
+
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalState;
@@ -21,6 +26,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import helper.lcd.LcdDisplayComponent;
 
 /**
  * This example gets the weather forecast from https://open-meteo.com/en/docs
@@ -30,26 +36,44 @@ import java.net.URL;
  */
 public class Pi4JLcdWeatherForecast {
 
+    private final static int WAIT_BETWEEN_MESSAGES = 3_000;
+
     public static void main(String[] args) throws Exception {
 
         // Initialize the Pi4J context
         var pi4j = Pi4J.newAutoContext();
+        LcdDisplayComponent lcdDisplay = null;
 
-        while (true) {
+        try {
+            lcdDisplay = new LcdDisplayComponent(pi4j);
+            lcdDisplay.initialize();
+            lcdDisplay.writeLine("Hello", 1);
+            lcdDisplay.writeLine("   World!", 2);
+            System.out.println("The LCD display has been initialized");
+        } catch (Exception ex) {
+            System.err.println("Error while initializing the lcd display: " + ex.getMessage());
+        }
+
+        while (lcdDisplay != null) {
             var forecastContent = getForecast(52.52, 13.41);
             var forecast = convertForecast(forecastContent);
 
             if (forecast == null) {
                 System.err.println("Can't show the forecast, the object is null...");
             } else {
-                showForecast(forecast);
+                for (int i = 0; i < 10; i++) {
+                    showDate(lcdDisplay, forecast);
+                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
+                    showCurrentWeather(lcdDisplay, forecast);
+                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
+                    showSunInfo(lcdDisplay, forecast);
+                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
+                }
             }
-
-            Thread.sleep(60_000);
         }
 
         // Shutdown the Pi4J context
-        //pi4j.shutdown();
+        pi4j.shutdown();
     }
 
     public static String getForecast(Double latitude, Double longitude) {
@@ -97,9 +121,38 @@ public class Pi4JLcdWeatherForecast {
         }
     }
 
-    private static void showForecast(Forecast forecast) {
-      System.out.println("Show the weather for " + forecast.dailyForecast.date[0]);
-      System.out.println("Hours of sunshine: " + ((forecast.dailyForecast.sunshineDurationInSeconds[0] * 1.0) / 60 / 60));
+    private static void showDate(LcdDisplayComponent lcd, Forecast forecast) {
+        lcd.writeLine("Weather for", 1);
+        lcd.writeLine(forecast.dailyForecast.date[0], 2);
+    }
+
+    private static void showCurrentWeather(LcdDisplayComponent lcd, Forecast forecast) {
+        var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
+
+        if (text.length() > 16) {
+            lcd.writeLine(text.substring(0, 15), 1);
+            lcd.writeLine(text.substring(15), 2);
+        } else {
+            lcd.writeLine(text, 1);
+            lcd.writeLine("", 2);
+        }
+    }
+
+    private static void showSunInfo(LcdDisplayComponent lcd, Forecast forecast) {
+        var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
+        var hours = (seconds * 1.0) / 60 / 60;
+        String roundedToTwoNumbers = String.format("%.2f", hours);
+        lcd.writeLine("Hours sun: " + roundedToTwoNumbers, 1);
+        lcd.writeLine(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
+                + " till "
+                + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]), 2);
+    }
+
+    private static String getTimeFromTimestamp(String timestamp) {
+        if (timestamp.contains("T")) {
+            return timestamp.substring(timestamp.indexOf("T") + 1);
+        }
+        return timestamp;
     }
 
     private static class Forecast {
