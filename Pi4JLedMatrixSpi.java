@@ -11,7 +11,6 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.spi.*;
-import com.pi4j.util.Console;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,15 +32,13 @@ import java.util.Random;
  */
 public class Pi4JLedMatrixSpi {
 
-    private static final Console console = new Console(); // Pi4J Logger helper
-
     private static Spi spi;
 
     public static void main(String[] args) throws Exception {
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize SPI
-        console.println("Initializing the matrix via SPI");
+        System.out.println("Initializing the matrix via SPI");
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
                 .id("Matrix SPI Provider")
@@ -95,6 +92,9 @@ public class Pi4JLedMatrixSpi {
         console.println("Finished");
     }
 
+    /**
+     * Loop through all the rows and put all the LEDs off.
+     */
     public static void allOff() {
         try {
             for (int row = 1; row <= 8; row++) {
