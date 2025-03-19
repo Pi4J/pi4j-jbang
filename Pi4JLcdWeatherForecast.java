@@ -39,8 +39,9 @@ public class Pi4JLcdWeatherForecast {
 
         // Initialize the Pi4J context
         var pi4j = Pi4J.newAutoContext();
-        LcdDisplayComponent lcdDisplay = null;
 
+        // Initialize the LCD
+        LcdDisplayComponent lcdDisplay = null;
         try {
             lcdDisplay = new LcdDisplayComponent(pi4j);
             lcdDisplay.initialize();
@@ -51,21 +52,23 @@ public class Pi4JLcdWeatherForecast {
             System.err.println("Error while initializing the lcd display: " + ex.getMessage());
         }
 
-        while (lcdDisplay != null) {
-            var forecastContent = getForecast(52.52, 13.41);
-            var forecast = convertForecast(forecastContent);
+        // Get the weather forecast as JSON String
+        var forecastContent = getForecast(52.52, 13.41);
 
-            if (forecast == null) {
-                System.err.println("Can't show the forecast, the object is null...");
-            } else {
-                for (int i = 0; i < 10; i++) {
-                    showDate(lcdDisplay, forecast);
-                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
-                    showCurrentWeather(lcdDisplay, forecast);
-                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
-                    showSunInfo(lcdDisplay, forecast);
-                    Thread.sleep(WAIT_BETWEEN_MESSAGES);
-                }
+        // Convert to Java object
+        var forecast = convertForecast(forecastContent);
+
+        if (forecast == null) {
+            System.err.println("Can't show the forecast, the object is null...");
+        } else {
+            // Show the data of the received forecast 10 times
+            for (int i = 0; i < 10; i++) {
+                showDate(lcdDisplay, forecast);
+                Thread.sleep(WAIT_BETWEEN_MESSAGES);
+                showCurrentWeather(lcdDisplay, forecast);
+                Thread.sleep(WAIT_BETWEEN_MESSAGES);
+                showSunInfo(lcdDisplay, forecast);
+                Thread.sleep(WAIT_BETWEEN_MESSAGES);
             }
         }
 
@@ -153,6 +156,12 @@ public class Pi4JLcdWeatherForecast {
     }
 
     private static class Forecast {
+        @JsonProperty("timezone")
+        public String timezone;
+
+        @JsonProperty("elevation")
+        public Float elevation;
+
         @JsonProperty("daily")
         public DailyForecast dailyForecast;
 
