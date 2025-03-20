@@ -31,7 +31,7 @@ import helper.lcd.LcdDisplayComponent;
  *
  * jbang Pi4JLcdWeatherForecast.java
  */
-public class Pi4JLcdWeatherForecast {
+public class Pi4JLcdWeatherForecastI2C {
 
     private final static int WAIT_BETWEEN_MESSAGES = 3_000;
 
