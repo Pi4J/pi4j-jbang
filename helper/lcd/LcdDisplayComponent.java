@@ -80,6 +80,16 @@ public class LcdDisplayComponent {
      * Creates a new LCD Display component with custom bus, device address
      *
      * @param pi4j   Pi4J context
+     * @param device Custom device address on I2C
+     */
+    public LcdDisplayComponent(Context pi4j, int device) {
+        this(pi4j, DEFAULT_BUS, device);
+    }
+
+    /**
+     * Creates a new LCD Display component with custom bus, device address
+     *
+     * @param pi4j   Pi4J context
      * @param bus    Custom I2C bus address
      * @param device Custom device address on I2C
      */

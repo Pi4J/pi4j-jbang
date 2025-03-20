@@ -6,7 +6,7 @@
 //DEPS org.slf4j:slf4j-simple:2.0.12
 //DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
 //SOURCES helper/lcd/LcdDisplayComponent.java
@@ -43,7 +43,7 @@ public class Pi4JLcdWeatherForecast {
         // Initialize the LCD
         LcdDisplayComponent lcdDisplay = null;
         try {
-            lcdDisplay = new LcdDisplayComponent(pi4j);
+            lcdDisplay = new LcdDisplayComponent(pi4j, 0x27);
             lcdDisplay.initialize();
             lcdDisplay.writeLine("Hello", 1);
             lcdDisplay.writeLine("   World!", 2);

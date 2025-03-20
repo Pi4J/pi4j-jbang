@@ -6,7 +6,7 @@
 //DEPS org.slf4j:slf4j-simple:2.0.12
 //DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-pigpio:3.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.pwm.Pwm;

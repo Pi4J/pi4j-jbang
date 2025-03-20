@@ -7,7 +7,6 @@
 //DEPS com.pi4j:pi4j-core:3.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-pigpio:3.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.spi.*;
@@ -47,7 +46,6 @@ public class Pi4JLedMatrixSpi {
                 .chipSelect(SpiChipSelect.CS_0)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
                 .build();
         spi = pi4j.create(spiConfig);
 
@@ -89,7 +87,7 @@ public class Pi4JLedMatrixSpi {
 
         pi4j.shutdown();
 
-        console.println("Finished");
+        System.out.println("Finished");
     }
 
     /**
