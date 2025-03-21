@@ -21,8 +21,9 @@ import com.pi4j.io.pwm.PwmType;
  */
 public class Pi4JPWMLed {
 
+    // BCM 19 on Raspberry Pi 4 = PWM Channel 4
     // BCM 19 on Raspberry Pi 5 = PWM Channel 3
-    private static final int CHANNEL = 3;
+    private static final int CHANNEL = 1;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
