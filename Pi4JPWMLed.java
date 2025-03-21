@@ -21,8 +21,8 @@ import com.pi4j.io.pwm.PwmType;
  */
 public class Pi4JPWMLed {
 
-    // BCM 19
-    private static final int PIN = 19;
+    // BCM 19 on Raspberry Pi 5 = PWM Channel 3
+    private static final int CHANNEL = 3;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -35,7 +35,7 @@ public class Pi4JPWMLed {
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
             // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                .address(PIN)
+                .address(CHANNEL)
                 .pwmType(PwmType.HARDWARE)
                 .initial(0)
                 .shutdown(0)
