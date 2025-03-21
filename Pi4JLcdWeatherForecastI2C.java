@@ -51,6 +51,8 @@ public class Pi4JLcdWeatherForecastI2C {
         if (forecast == null) {
             System.err.println("Can't show the forecast, the object is null...");
         } else {
+            System.out.println("Forecast received for " + forecast.dailyForecast.date[0]);
+
             // Show the data of the received forecast 10 times
             for (int i = 0; i < 10; i++) {
                 showDate(lcdDisplay, forecast);
@@ -112,13 +114,14 @@ public class Pi4JLcdWeatherForecastI2C {
     }
 
     private static void showDate(LcdDisplay lcd, Forecast forecast) {
+        System.out.println("Showing date");
         lcd.displayLineOfText("Weather for", 0);
         lcd.displayLineOfText(forecast.dailyForecast.date[0], 1);
     }
 
     private static void showCurrentWeather(LcdDisplay lcd, Forecast forecast) {
+        System.out.println("Showing current weather");
         var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
-
         if (text.length() > 16) {
             lcd.displayLineOfText(text.substring(0, 15), 0);
             lcd.displayLineOfText(text.substring(15), 1);
@@ -129,6 +132,7 @@ public class Pi4JLcdWeatherForecastI2C {
     }
 
     private static void showSunInfo(LcdDisplay lcd, Forecast forecast) {
+        System.out.println("Showing sun duration");
         var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
         var hours = (seconds * 1.0) / 60 / 60;
         String roundedToTwoNumbers = String.format("%.2f", hours);
