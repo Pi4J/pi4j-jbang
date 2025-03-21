@@ -112,19 +112,19 @@ public class Pi4JLcdWeatherForecastI2C {
     }
 
     private static void showDate(LcdDisplay lcd, Forecast forecast) {
-        lcd.displayLineOfText("Weather for", 1);
-        lcd.displayLineOfText(forecast.dailyForecast.date[0], 2);
+        lcd.displayLineOfText("Weather for", 0);
+        lcd.displayLineOfText(forecast.dailyForecast.date[0], 1);
     }
 
     private static void showCurrentWeather(LcdDisplay lcd, Forecast forecast) {
         var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
 
         if (text.length() > 16) {
-            lcd.displayLineOfText(text.substring(0, 15), 1);
-            lcd.displayLineOfText(text.substring(15), 2);
+            lcd.displayLineOfText(text.substring(0, 15), 0);
+            lcd.displayLineOfText(text.substring(15), 1);
         } else {
-            lcd.displayLineOfText(text, 1);
-            lcd.displayLineOfText("", 2);
+            lcd.displayLineOfText(text, 0);
+            lcd.displayLineOfText("", 1);
         }
     }
 
@@ -145,15 +145,15 @@ public class Pi4JLcdWeatherForecastI2C {
         return timestamp;
     }
 
-    private static class Forecast {
+    private record Forecast(
         @JsonProperty("timezone")
-        public String timezone;
+        String timezone,
 
         @JsonProperty("elevation")
-        public Float elevation;
+        Float elevation,
 
         @JsonProperty("daily")
-        public DailyForecast dailyForecast;
+        DailyForecast dailyForecast) {
 
         /*
         {
@@ -186,27 +186,27 @@ public class Pi4JLcdWeatherForecastI2C {
         */
     }
 
-    private static class DailyForecast {
+    private record DailyForecast (
         @JsonProperty("time")
-        public String[] date;
+        String[] date,
 
         @JsonProperty("weather_code")
-        public Integer[] weatherCode;
+        Integer[] weatherCode,
 
         @JsonProperty("apparent_temperature_max")
-        public Double[] tempMax;
+        Double[] tempMax,
 
         @JsonProperty("apparent_temperature_min")
-        public Double[] tempMin;
+        Double[] tempMin,
 
         @JsonProperty("sunrise")
-        public String[] sunrise;
+        String[] sunrise,
 
         @JsonProperty("sunset")
-        public String[] sunset;
+        String[] sunset,
 
         @JsonProperty("sunshine_duration")
-        public Long[] sunshineDurationInSeconds;
+        Long[] sunshineDurationInSeconds) {
 
         /*
         "time": [

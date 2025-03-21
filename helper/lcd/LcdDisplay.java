@@ -175,39 +175,39 @@ public class LcdDisplay extends I2CDevice {
      * Write a line of text on the LCD
      *
      * @param text Text to be displayed
-     * @param line linenumber of display, range: 0 .. rows-1
+     * @param lineIndex linenumber of display, range: 0 .. rows-1
      */
-    public void displayLineOfText(String text, int line) {
-        displayLineOfText(text, line, 0);
+    public void displayLineOfText(String text, int lineIndex) {
+        displayLineOfText(text, lineIndex, 0);
     }
 
     /**
      * Center specified text in specified line
      *
      * @param text Text to be displayed
-     * @param line linenumber of display, range: 0 .. rows-1
+     * @param lineIndex linenumber of display, range: 0 .. rows-1
      */
-    public void centerTextInLine(String text, int line) {
-        displayLineOfText(text, line, (int) ((columns - text.length()) * 0.5));
+    public void centerTextInLine(String text, int lineIndex) {
+        displayLineOfText(text, lineIndex, (int) ((columns - text.length()) * 0.5));
     }
 
     /**
      * Write a line of text on the LCD
      *
      * @param text     text to be displayed
-     * @param line     line number of display, range: 0..rows-1
+     * @param lineIndex     line number of display, range: 0..rows-1
      * @param position start position, range: 0..columns-1
      */
-    public void displayLineOfText(String text, int line, int position) {
+    public void displayLineOfText(String text, int lineIndex, int position) {
         if (text.length() + position > columns) {
             logInfo("Text '%s' too long, cut to %d characters", text, (columns - position));
             text = text.substring(0, (columns - position));
         }
 
-        if (line > rows || line < 0) {
-            logError("Wrong line id '%d'. Only %d lines possible", line, rows);
+        if (lineIndex > rows || lineIndex < 0) {
+            logError("Wrong line id '%d'. Only %d lines possible", lineIndex, rows);
         } else {
-            setCursorToPosition(line, 0);
+            setCursorToPosition(lineIndex, 0);
             for (int i = 0; i < position; i++) {
                 writeCharacter(' ');
             }
@@ -273,11 +273,11 @@ public class LcdDisplay extends I2CDevice {
      * write a character to lcd at a specific position
      *
      * @param character char that is written
-     * @param line      row-position, Range 0 .. rows-1
+     * @param lineIndex      row-position, Range 0 .. rows-1
      * @param pos       col-position, Range 0 .. columns-1
      */
-    public void writeCharacter(char character, int line, int pos) {
-        setCursorToPosition(line, pos);
+    public void writeCharacter(char character, int lineIndex, int pos) {
+        setCursorToPosition(lineIndex, pos);
         sendLcdTwoPartsCommand((byte) character, Rs);
     }
 
@@ -298,30 +298,30 @@ public class LcdDisplay extends I2CDevice {
     /**
      * Clears a line of the display
      *
-     * @param line line number of line to be cleared
+     * @param lineIndex line number of line to be cleared
      */
-    public void clearLine(int line) {
-        if (line > rows || line < 1) {
+    public void clearLine(int lineIndex) {
+        if (lineIndex > rows || lineIndex < 0) {
             throw new IllegalArgumentException("Wrong line id. Only " + rows + " lines possible");
         }
-        displayLine(" ".repeat(columns), LCD_ROW_OFFSETS[line - 1]);
+        displayLine(" ".repeat(columns), LCD_ROW_OFFSETS[lineIndex - 1]);
     }
 
     /**
      * Sets the cursor to a target destination
      *
-     * @param line Selects the line of the display. Range: 0 - ROWS-1
+     * @param lineIndex Selects the line of the display. Range: 0 - ROWS-1
      * @param pos  Selects the character of the line. Range: 0 - Columns-1
      */
-    public void setCursorToPosition(int line, int pos) {
-        if (line > rows - 1 || line < 0) {
+    public void setCursorToPosition(int lineIndex, int pos) {
+        if (lineIndex > rows - 1 || lineIndex < 0) {
             throw new IllegalArgumentException("Line out of range. Display has only " + rows + "x" + columns + " Characters!");
         }
 
         if (pos < 0 || pos > columns - 1) {
             throw new IllegalArgumentException("Line out of range. Display has only " + rows + "x" + columns + " Characters!");
         }
-        sendLcdTwoPartsCommand((byte) (LCD_SET_DDRAM_ADDR | pos + LCD_ROW_OFFSETS[line]));
+        sendLcdTwoPartsCommand((byte) (LCD_SET_DDRAM_ADDR | pos + LCD_ROW_OFFSETS[lineIndex]));
     }
 
     /**
