@@ -115,6 +115,7 @@ public class Pi4JLcdWeatherForecastI2C {
 
     private static void showDate(LcdDisplay lcd, Forecast forecast) {
         System.out.println("Showing date");
+        lcd.clearDisplay();
         lcd.displayLineOfText("Weather for", 0);
         lcd.displayLineOfText(forecast.dailyForecast.date[0], 1);
     }
@@ -122,6 +123,7 @@ public class Pi4JLcdWeatherForecastI2C {
     private static void showCurrentWeather(LcdDisplay lcd, Forecast forecast) {
         System.out.println("Showing current weather");
         var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
+        lcd.clearDisplay();
         if (text.length() > 16) {
             lcd.displayLineOfText(text.substring(0, 15), 0);
             lcd.displayLineOfText(text.substring(15), 1);
@@ -136,6 +138,7 @@ public class Pi4JLcdWeatherForecastI2C {
         var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
         var hours = (seconds * 1.0) / 60 / 60;
         String roundedToTwoNumbers = String.format("%.2f", hours);
+        lcd.clearDisplay();
         lcd.displayLineOfText("Hours sun: " + roundedToTwoNumbers, 0);
         lcd.displayLineOfText(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
                 + " till "
