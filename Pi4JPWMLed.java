@@ -17,7 +17,7 @@ import com.pi4j.io.pwm.PwmType;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
  * This example can be executed without sudo:
- * sudo `which jbang` Pi4JPWMLed.java
+ * jbang Pi4JPWMLed.java
  */
 public class Pi4JPWMLed {
 
