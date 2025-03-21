@@ -132,10 +132,10 @@ public class Pi4JLcdWeatherForecastI2C {
         var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
         var hours = (seconds * 1.0) / 60 / 60;
         String roundedToTwoNumbers = String.format("%.2f", hours);
-        lcd.displayLineOfText("Hours sun: " + roundedToTwoNumbers, 1);
+        lcd.displayLineOfText("Hours sun: " + roundedToTwoNumbers, 0);
         lcd.displayLineOfText(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
                 + " till "
-                + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]), 2);
+                + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]), 1);
     }
 
     private static String getTimeFromTimestamp(String timestamp) {
