@@ -9,10 +9,9 @@
 //DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
-//SOURCES helper/lcd/LcdDisplayComponent.java
-//SOURCES helper/lcd/LcdSymbol.java
-//SOURCES helper/lcd/MCP23008.java
-//SOURCES helper/lcd/SleepHelper.java
+//SOURCES helper/lcd/Component.java
+//SOURCES helper/lcd/I2CDevice.java
+//SOURCES helper/lcd/LcdDisplay.java
 
 import com.pi4j.Pi4J;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,7 +22,7 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import helper.lcd.LcdDisplayComponent;
+import helper.lcd.LcdDisplay;
 
 /**
  * This example gets the weather forecast from https://open-meteo.com/en/docs
@@ -41,16 +40,7 @@ public class Pi4JLcdWeatherForecastI2C {
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize the LCD
-        LcdDisplayComponent lcdDisplay = null;
-        try {
-            lcdDisplay = new LcdDisplayComponent(pi4j, 0x27);
-            lcdDisplay.initialize();
-            lcdDisplay.writeLine("Hello", 1);
-            lcdDisplay.writeLine("   World!", 2);
-            System.out.println("The LCD display has been initialized");
-        } catch (Exception ex) {
-            System.err.println("Error while initializing the lcd display: " + ex.getMessage());
-        }
+        LcdDisplay lcdDisplay = new LcdDisplay(pi4j, 2, 16);
 
         // Get the weather forecast as JSON String
         var forecastContent = getForecast(52.52, 13.41);
@@ -121,29 +111,29 @@ public class Pi4JLcdWeatherForecastI2C {
         }
     }
 
-    private static void showDate(LcdDisplayComponent lcd, Forecast forecast) {
-        lcd.writeLine("Weather for", 1);
-        lcd.writeLine(forecast.dailyForecast.date[0], 2);
+    private static void showDate(LcdDisplay lcd, Forecast forecast) {
+        lcd.displayLineOfText("Weather for", 1);
+        lcd.displayLineOfText(forecast.dailyForecast.date[0], 2);
     }
 
-    private static void showCurrentWeather(LcdDisplayComponent lcd, Forecast forecast) {
+    private static void showCurrentWeather(LcdDisplay lcd, Forecast forecast) {
         var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
 
         if (text.length() > 16) {
-            lcd.writeLine(text.substring(0, 15), 1);
-            lcd.writeLine(text.substring(15), 2);
+            lcd.displayLineOfText(text.substring(0, 15), 1);
+            lcd.displayLineOfText(text.substring(15), 2);
         } else {
-            lcd.writeLine(text, 1);
-            lcd.writeLine("", 2);
+            lcd.displayLineOfText(text, 1);
+            lcd.displayLineOfText("", 2);
         }
     }
 
-    private static void showSunInfo(LcdDisplayComponent lcd, Forecast forecast) {
+    private static void showSunInfo(LcdDisplay lcd, Forecast forecast) {
         var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
         var hours = (seconds * 1.0) / 60 / 60;
         String roundedToTwoNumbers = String.format("%.2f", hours);
-        lcd.writeLine("Hours sun: " + roundedToTwoNumbers, 1);
-        lcd.writeLine(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
+        lcd.displayLineOfText("Hours sun: " + roundedToTwoNumbers, 1);
+        lcd.displayLineOfText(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
                 + " till "
                 + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]), 2);
     }
