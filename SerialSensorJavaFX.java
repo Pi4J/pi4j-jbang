@@ -9,14 +9,29 @@
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fazecast.jSerialComm.SerialPort;
+import com.fazecast.jSerialComm.SerialPortDataListener;
+import com.fazecast.jSerialComm.SerialPortEvent;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
+import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.io.Serial;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +47,7 @@ import java.util.List;
  * jbang PixelblazeOutputExpanderJavaFX.java
  */
 public class SerialSensorJavaFX extends Application {
+    final XYChart.Series<String, Integer> data = new XYChart.Series<>();
 
     @Override
     public void start(Stage stage) {
@@ -39,11 +55,13 @@ public class SerialSensorJavaFX extends Application {
         // (GPIO pin, or other serial connection), this can be a different port.
         // Most probably it will be `/dev/ttyS0` (Raspberry Pi 4 or earlier),
         // or `/dev/ttyAMA0` (Raspberry Pi 5).
+
+        SerialHelper serialHelper = new SerialHelper("dev/ttyS0");
+        Thread t = new Thread(serialHelper);
+        t.start();
         
-
-
-        Scene scene = new Scene(new Label("Test"), 400, 700);
-        stage.setTitle("Pixelblaze Test");
+        Scene scene = new Scene(new MeasurementChart(), 400, 700);
+        stage.setTitle("Arduino sensor chart");
         stage.setScene(scene);
         stage.show();
     }
@@ -55,6 +73,33 @@ public class SerialSensorJavaFX extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    class MeasurementChart extends VBox {
+        /**
+         * Constructor which will build the UI with the chart
+         * and start the serial communication
+         *
+         * @param serialDevice the serial device
+         */
+        public MeasurementChart() {
+            // Initialize the data holder for the chart
+            XYChart.Series<String, Integer> data = new XYChart.Series<>();
+            data.setName("Value");
+
+            // Initialize the chart
+            CategoryAxis xAxis = new CategoryAxis();
+            xAxis.setLabel("Time");
+            NumberAxis yAxis = new NumberAxis();
+            yAxis.setLabel("Value");
+
+            LineChart lineChart = new LineChart(xAxis, yAxis);
+            lineChart.setTitle("Light measurement");
+
+            lineChart.getData().add(data);
+
+            this.getChildren().add(lineChart);            
+        }
     }
 
     class ArduinoMessage {
@@ -95,18 +140,33 @@ public class SerialSensorJavaFX extends Application {
         }
     }
 
-    class SerialSender implements Runnable {
+    class SerialHelper implements Runnable {
         private static int INTERVAL_SEND_SECONDS = 5;
 
-        final Serial serial;
+        private SerialPort port = null;
+        private final String portPath;
 
-        /**
-         * Constructor which gets the serial object to be used to send data.
-         *
-         * @param serial
-         */
-        public SerialSender(Serial serial) {
-            this.serial = serial;
+        public SerialHelper(String portPath) {
+            this.portPath = portPath;
+            openPort();
+        }
+
+        private void openPort() {
+            if (port != null) {
+                System.out.println("Closing " + portPath);
+                port.closePort();
+            }
+            try {
+                port = null; //set to null in case getCommPort throws, port will remain null.
+                port = SerialPort.getCommPort(this.portPath);
+                port.setBaudRate(38400);
+                port.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, 0, 0);
+                port.openPort(0, 8192, 8192);
+                port.addDataListener(new SerialListener());
+                System.out.println("Opening " + portPath);
+            } catch (Exception e) {
+                System.err.println("Could not open serial port " + e.getMessage());
+            }
         }
 
         @Override
@@ -116,7 +176,7 @@ public class SerialSensorJavaFX extends Application {
             while (keepRunning) {
                 try {
                     // Write a text to the Arduino, as demo
-                    this.serial.writeln("Timestamp: " + System.currentTimeMillis());
+                    write("Timestamp: " + System.currentTimeMillis());
 
                     // Wait predefined time for next loop
                     Thread.sleep(INTERVAL_SEND_SECONDS * 1000);
@@ -126,47 +186,67 @@ public class SerialSensorJavaFX extends Application {
                 }
             }
         }
+
+        public void write(String data) {
+            write(data.getBytes());
+        }
+
+        public void write(byte[] data) {
+            int lastErrorCode = port != null ? port.getLastErrorCode() : 0;
+            int lastErrorLocation = port != null ? port.getLastErrorLocation() : 0;
+            boolean isOpen = port != null && port.isOpen();
+            if (port == null || !isOpen || lastErrorCode != 0) {
+                System.out.println("Port was open:" + isOpen + ", last error:" + lastErrorCode + " " + lastErrorLocation);
+                openPort();
+            }
+            port.writeBytes(data, data.length);
+        }
     }
 
-    class SerialListener implements SerialDataEventListener {
+    class SerialListener implements SerialPortDataListener {
         private final DateTimeFormatter formatter;
-        private final XYChart.Series<String, Integer> data;
 
         /**
          * Constructor which initializes the date formatter.
          *
          * @param data The data series to which the light values must be added
          */
-        public SerialListener(XYChart.Series<String, Integer> data) {
-            this.data = data;
+        public SerialListener() {
             this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
         }
 
-        /**
-         * Called by Serial when new data is received.
-         */
         @Override
-        public void dataReceived(SerialDataEvent event) {
+        public int getListeningEvents() {
+            return SerialPort.LISTENING_EVENT_DATA_RECEIVED;
+        }
+
+        @Override
+        public void serialEvent(SerialPortEvent event) {
+            if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_RECEIVED) {
+                return;
+            }
+
             try {
-                String received = event.getAsciiString()
+                byte[] newData = event.getReceivedData();
+                String received = new String(newData)
                         .replace("\t", "")
                         .replace("\n", "");
 
                 ArduinoMessage arduinoMessage = ArduinoMessageMapper.map(received);
                 String timestamp = LocalTime.now().format(formatter);
 
-                if (arduinoMessage.type.equals("light")) {
+                if (arduinoMessage != null && arduinoMessage.type.equals("light")) {
                     // We need to use the runLater approach as this data is handled
                     // in another thread as the UI-component
                     Platform.runLater(() -> {
                         data.getData().add(
-                                new XYChart.Data(timestamp, arduinoMessage.getIntValue())
+                                new XYChart.Data<>(timestamp, arduinoMessage.getIntValue())
                         );
                     });
                 }
 
                 System.out.println(timestamp + " - Received: " + received);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 System.err.println("Serial error: " + ex.getMessage());
             }
         }
