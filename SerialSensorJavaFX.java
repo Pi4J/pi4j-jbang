@@ -48,4 +48,119 @@ public class SerialSensorJavaFX extends Application {
     public static void main(String[] args) {
         launch();
     }
+
+    class ArduinoMessage {
+        @JsonProperty("type")
+        public String type;
+
+        @JsonProperty("value")
+        public String value;
+
+        public Integer getIntValue() {
+            if (this.value.matches("-?(0|[1-9]\\d*)")) {
+                return Integer.parseInt(this.value);
+            }
+            return null;
+        }
+
+        public Float getFloatValue() {
+            if (this.value.matches("[-+]?[0-9]*\\.?[0-9]+")) {
+                return Float.parseFloat(this.value);
+            }
+            return null;
+        }
+    }
+
+    class ArduinoMessageMapper {
+        public static ArduinoMessage map(String jsonString) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(
+                        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false
+                );
+                return mapper.readValue(jsonString, ArduinoMessage.class);
+            } catch (IOException ex) {
+                System.err.println("Unable to parse string to Forecast: "
+                        + ex.getMessage());
+                return null;
+            }
+        }
+    }
+
+    class SerialSender implements Runnable {
+        private static int INTERVAL_SEND_SECONDS = 5;
+
+        final Serial serial;
+
+        /**
+         * Constructor which gets the serial object to be used to send data.
+         *
+         * @param serial
+         */
+        public SerialSender(Serial serial) {
+            this.serial = serial;
+        }
+
+        @Override
+        public void run() {
+            // Keep looping until an error occurs
+            boolean keepRunning = true;
+            while (keepRunning) {
+                try {
+                    // Write a text to the Arduino, as demo
+                    this.serial.writeln("Timestamp: " + System.currentTimeMillis());
+
+                    // Wait predefined time for next loop
+                    Thread.sleep(INTERVAL_SEND_SECONDS * 1000);
+                } catch (Exception ex) {
+                    System.err.println("Error: " + ex.getMessage());
+                    keepRunning = false;
+                }
+            }
+        }
+    }
+
+    class SerialListener implements SerialDataEventListener {
+        private final DateTimeFormatter formatter;
+        private final XYChart.Series<String, Integer> data;
+
+        /**
+         * Constructor which initializes the date formatter.
+         *
+         * @param data The data series to which the light values must be added
+         */
+        public SerialListener(XYChart.Series<String, Integer> data) {
+            this.data = data;
+            this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+        }
+
+        /**
+         * Called by Serial when new data is received.
+         */
+        @Override
+        public void dataReceived(SerialDataEvent event) {
+            try {
+                String received = event.getAsciiString()
+                        .replace("\t", "")
+                        .replace("\n", "");
+
+                ArduinoMessage arduinoMessage = ArduinoMessageMapper.map(received);
+                String timestamp = LocalTime.now().format(formatter);
+
+                if (arduinoMessage.type.equals("light")) {
+                    // We need to use the runLater approach as this data is handled
+                    // in another thread as the UI-component
+                    Platform.runLater(() -> {
+                        data.getData().add(
+                                new XYChart.Data(timestamp, arduinoMessage.getIntValue())
+                        );
+                    });
+                }
+
+                System.out.println(timestamp + " - Received: " + received);
+            } catch (IOException ex) {
+                System.err.println("Serial error: " + ex.getMessage());
+            }
+        }
+    }
 }
