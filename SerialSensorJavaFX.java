@@ -3,6 +3,14 @@
 //DEPS com.fazecast:jSerialComm:2.10.2
 //DEPS org.openjfx:javafx-controls:20.0.2
 //DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
+//DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javafx.application.Application;
 import javafx.scene.control.Label;
@@ -34,7 +42,7 @@ public class SerialSensorJavaFX extends Application {
         
 
 
-        Scene scene = new Scene(new Labe("Test"), 400, 700);
+        Scene scene = new Scene(new Label("Test"), 400, 700);
         stage.setTitle("Pixelblaze Test");
         stage.setScene(scene);
         stage.show();
