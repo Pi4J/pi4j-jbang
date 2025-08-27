@@ -58,6 +58,7 @@ public class Pi4JPWMBuzzer {
             };
 
             for (int frequency : frequencies) {
+                System.out.println("Playing tone with frequency " + frequency + " Hz");
                 playTone(frequency, 150);
             }
 
