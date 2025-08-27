@@ -22,8 +22,8 @@ public class Pi4JPWMBuzzer {
 
     // BCM 19 on Raspberry Pi 4 = PWM Channel 1
     // BCM 19 on Raspberry Pi 5 = PWM Channel 3
-    // Buzzer in CrowPi is connected to BCM 18
-    private static final int CHANNEL = 1;
+    // Buzzer in CrowPi is connected to BCM 18 = on RPi 5 is Channel 2
+    private static final int CHANNEL = 2;
     private static Pwm pwm;
 
     public static void main(String[] args) {
@@ -59,7 +59,7 @@ public class Pi4JPWMBuzzer {
 
             for (int frequency : frequencies) {
                 System.out.println("Playing tone with frequency " + frequency + " Hz");
-                playTone(frequency, 150);
+                playTone(frequency, 500);
             }
 
             // Shut down the Pi4J contextq
