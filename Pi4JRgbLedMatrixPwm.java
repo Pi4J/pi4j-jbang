@@ -85,6 +85,16 @@ public class Pi4JRgbLedMatrixPwm {
                 .shutdown(0)
                 .build();
         this.pwm = pi4j.create(pwmConfig);
+
+        // Test PWM is working
+        System.out.println("Testing PWM...");
+        pwm.on(50, 1000); // 50% duty cycle at 1kHz for testing
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        pwm.off();
     }
 
     public static void main(String[] args) {
@@ -98,14 +108,17 @@ public class Pi4JRgbLedMatrixPwm {
 
         // Display something on the LED Matrix
         matrix.fill(Color.RED);
+        matrix.refresh();
         System.out.println("Filling with red...");
         sleep(1000);
 
         matrix.fill(Color.BLUE);
+        matrix.refresh();
         System.out.println("Filling with blue...");
         sleep(1000);
 
         matrix.setPixel(2, 3, Color.GREEN);
+        matrix.refresh();
         System.out.println("Set one pixel green...");
         sleep(1000);
 
