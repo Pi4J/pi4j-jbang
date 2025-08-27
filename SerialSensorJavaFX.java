@@ -44,7 +44,7 @@ import java.util.List;
  * sdk install java 22.0.1.fx-zulu
  * 
  * This example can be executed without sudo:
- * jbang PixelblazeOutputExpanderJavaFX.java
+ * jbang SerialSensorJavaFX.java
  */
 public class SerialSensorJavaFX extends Application {
     final XYChart.Series<String, Integer> data = new XYChart.Series<>();
