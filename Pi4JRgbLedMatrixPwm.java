@@ -13,6 +13,7 @@
 //DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
 
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
 import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
@@ -32,27 +33,22 @@ import java.util.function.Consumer;
 public class Pi4JRgbLedMatrixPwm {
 
     /**
+     * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 = on RPi 5 is Channel 0
+     */
+    private static final int CHANNEL = 0;
+
+    /**
      * Width and height of the LED matrix
      */
-    public static final int WIDTH = 8;
-    public static final int HEIGHT = 8;
-    public static final int TOTAL_LEDS = WIDTH * HEIGHT;
-    /**
-     * Default GPIO pin for CrowPi2 RGB matrix (GPIO26/BCM12/PWM0)
-     */
-    protected static final int DEFAULT_GPIO_PIN = 26;
+    private static final int WIDTH = 8;
+    private static final int HEIGHT = 8;
+    private static final int TOTAL_LEDS = WIDTH * HEIGHT;
+
     /**
      * PWM frequency for WS2812B timing (800kHz)
      */
-    protected static final int PWM_FREQUENCY = 800000;
-    /**
-     * Default delay between scroll operations in milliseconds
-     */
-    protected static final long DEFAULT_SCROLL_DELAY = 50;
-    // BCM 19 on Raspberry Pi 4 = PWM Channel 1
-    // BCM 19 on Raspberry Pi 5 = PWM Channel 3
-    // RGB LED in CrowPi 2 is connected to WPI 26 = BCM 12 = on RPi 5 is Channel 0
-    private static final int CHANNEL = 0;
+    private static final int PWM_FREQUENCY = 800000;
+
     /**
      * RGB color buffer for the matrix (3 bytes per LED: R, G, B)
      */
@@ -76,20 +72,14 @@ public class Pi4JRgbLedMatrixPwm {
     /**
      * Creates a new RGB LED matrix component with a custom GPIO pin.
      *
-     * @param pi4j    Pi4J context
-     * @param gpioPin GPIO pin number
+     * @param pi4j Pi4J context
      */
-    public Pi4JRgbLedMatrixPwm() {
+    public Pi4JRgbLedMatrixPwm(Context pi4j) {
         this.colorBuffer = new Color[HEIGHT][WIDTH];
         this.monoBuffer = new boolean[HEIGHT][WIDTH];
 
         // Initialize buffers
         clear();
-
-        // Initialize the Pi4J context
-        var pi4j = Pi4J.newContextBuilder()
-                .add(new LinuxFsPwmProviderImpl("/sys/class/pwm/", 0))
-                .build();
 
         // Create PWM configuration for WS2812B
         // Note: WS2812B requires precise timing that's difficult with Pi4J PWM
@@ -105,8 +95,45 @@ public class Pi4JRgbLedMatrixPwm {
     }
 
     public static void main(String[] args) {
-        var matrix = new Pi4JRgbLedMatrixPwm();
+        // Initialize the Pi4J context
+        var pi4j = Pi4J.newContextBuilder()
+                .add(new LinuxFsPwmProviderImpl("/sys/class/pwm/", 0))
+                .build();
+
+        // Initialize the RGB LED Matrix
+        var matrix = new Pi4JRgbLedMatrixPwm(pi4j);
+
+        // Display something on the LED Matrix
         matrix.fill(Color.RED);
+        System.out.println("Filling with red...");
+        sleep(1000);
+
+        matrix.fill(Color.BLUE);
+        System.out.println("Filling with blue...");
+        sleep(1000);
+
+        matrix.setPixel(2, 3, Color.GREEN);
+        System.out.println("Set one pixel green...");
+        sleep(1000);
+
+        // Shut down the Pi4J contextq
+        pi4j.shutdown();
+
+        System.out.println("Done");
+    }
+
+    /**
+     * Utility function to sleep for the specified amount of milliseconds.
+     * An {@link InterruptedException} will be catched and ignored while setting the interrupt flag again.
+     *
+     * @param milliseconds Time in milliseconds to sleep
+     */
+    private static void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
