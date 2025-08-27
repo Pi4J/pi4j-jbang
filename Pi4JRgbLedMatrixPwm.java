@@ -4,19 +4,11 @@
 //DEPS org.slf4j:slf4j-simple:2.0.12
 //DEPS com.pi4j:pi4j-core:3.0.1
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
-
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS com.pi4j:pi4j-plugin-pigpio:3.0.1
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.pwm.Pwm;
-import com.pi4j.io.pwm.PwmType;
-import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -33,9 +25,9 @@ import java.util.function.Consumer;
 public class Pi4JRgbLedMatrixPwm {
 
     /**
-     * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 = on RPi 5 is Channel 0
+     * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> using PiGpio library
      */
-    private static final int CHANNEL = 0;
+    private static final int ADDRESS = 12;
 
     /**
      * Width and height of the LED matrix
@@ -85,8 +77,8 @@ public class Pi4JRgbLedMatrixPwm {
         // Note: WS2812B requires precise timing that's difficult with Pi4J PWM
         // This is a conceptual implementation - real usage would need native library
         var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                .address(CHANNEL)
-                .pwmType(PwmType.HARDWARE)
+                .address(ADDRESS)
+                .provider("pigpio-pwm")
                 .initial(0)
                 .shutdown(0)
                 .build();
@@ -96,9 +88,7 @@ public class Pi4JRgbLedMatrixPwm {
 
     public static void main(String[] args) {
         // Initialize the Pi4J context
-        var pi4j = Pi4J.newContextBuilder()
-                .add(new LinuxFsPwmProviderImpl("/sys/class/pwm/", 0))
-                .build();
+        var pi4j = Pi4J.newContext();
 
         // Initialize the RGB LED Matrix
         var matrix = new Pi4JRgbLedMatrixPwm(pi4j);
