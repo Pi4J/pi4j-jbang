@@ -113,6 +113,18 @@ public class HelloJavaFXWorld extends Application {
             new Label(javaInfo.getVendorVersion())
         );
 
+        var boardModelHeader = new Label("BOARD");
+        boardModelHeader.setFont(Font.font("System", FontWeight.BOLD, 14));
+        boardModelHeader.setTextFill(Color.BLUE);
+        holder.getChildren().add(boardModelHeader);
+
+        var boardModel = pi4j.boardInfo().getBoardModel();
+        holder.getChildren().addAll(
+                new Label(boardModel.getName()),
+                new Label(boardModel.getLabel()),
+                new Label(boardModel.getCpu().getLabel())
+        );
+
         return holder;
     }
 
