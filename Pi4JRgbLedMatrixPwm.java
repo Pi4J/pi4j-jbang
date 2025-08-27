@@ -29,7 +29,7 @@ public class Pi4JRgbLedMatrixPwm {
     /**
      * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> needs to be configure!
      */
-    private static final int CHANNEL = 1;
+    private static final int CHANNEL = 0;
 
     /**
      * Width and height of the LED matrix
