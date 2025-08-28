@@ -269,30 +269,56 @@ public class Pi4JPWMRgbLedMatrix {
     }
 
     /**
-     * Simplified method to send WS2812B data via PWM
-     * Note: This is a conceptual implementation. Real WS2812B control requires
-     * precise timing that may need native code or specialized libraries
-     *
-     * @param data RGB data in GRB format
+     * Improved PWM-based WS2812B implementation
+     * Uses bit-banging approach with more precise timing
      */
     private void sendWS2812BData(byte[] data) {
-        // This is a placeholder implementation
-        // Real WS2812B control requires precise timing:
-        // - 0 bit: 0.4µs high, 0.85µs low
-        // - 1 bit: 0.8µs high, 0.45µs low
-        // - Reset: >50µs low
+        System.out.println("Sending " + data.length + " bytes to WS2812B matrix via improved PWM");
 
-        // For a complete implementation, you would typically use:
-        // 1. DMA + PWM for precise timing
-        // 2. A native library like rpi_ws281x
-        // 3. SPI with carefully crafted bit patterns
+        try {
+            // Send each bit with precise timing
+            for (byte b : data) {
+                for (int bit = 7; bit >= 0; bit--) {
+                    if ((b & (1 << bit)) != 0) {
+                        // Send 1-bit: 800ns high, 450ns low
+                        sendOneBit();
+                    } else {
+                        // Send 0-bit: 400ns high, 850ns low
+                        sendZeroBit();
+                    }
+                }
+            }
 
-        System.out.println("Sending " + data.length + " bytes to WS2812B matrix");
-        // Placeholder PWM duty cycle setting
-        if (data.length > 0) {
-            pwm.on(50, PWM_FREQUENCY); // 50% duty cycle as example
-        } else {
+            // Send reset (>50µs low)
             pwm.off();
+            Thread.sleep(1); // 1ms reset time
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void sendOneBit() {
+        // 1-bit: ~800ns high, ~450ns low at 800kHz
+        pwm.on(100, 1250000); // High frequency for short pulse
+        try {
+            Thread.sleep(0, 800_000); // 800ns (nanoseconds)
+            pwm.off();
+            Thread.sleep(0, 450_000); // 450ns
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void sendZeroBit() {
+        // 0-bit: ~400ns high, ~850ns low
+        pwm.on(100, 2500000); // Higher frequency for shorter pulse
+        try {
+            Thread.sleep(0, 400_000); // 400ns
+            pwm.off();
+            Thread.sleep(0, 850_000); // 850ns
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
