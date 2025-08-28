@@ -1,4 +1,4 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS org.openjfx:javafx-controls:20.0.2
 //DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
@@ -30,7 +30,7 @@ import java.util.Random;
 /**
  * Example code to illustrate how a JavaFX UI can be executed with JBang.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example can be executed with:
  * jbang HelloJavaFXWorld.java
  */
@@ -39,7 +39,7 @@ public class HelloJavaFXWorld extends Application {
     private final int CANVAS_WIDTH = 400;
     private final int CANVAS_HEIGHT = 300;
 
-    private Random r = new Random();
+    private final Random r = new Random();
     private Scene scene;
 
     public static void main(String[] args) {
@@ -51,8 +51,8 @@ public class HelloJavaFXWorld extends Application {
         var holder = new BorderPane();
 
         holder.setTop(getHeader());
-        holder.setLeft(getJavaInfo());
-        holder.setCenter(getBouncingBall());
+        holder.setLeft(getInfo());
+        holder.setCenter(getBouncingBalls());
 
         scene = new Scene(holder, 700, 400);
         stage.setTitle("JavaFX Demo");
@@ -61,7 +61,7 @@ public class HelloJavaFXWorld extends Application {
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         System.out.println("Stage is closing");
     }
 
@@ -79,7 +79,7 @@ public class HelloJavaFXWorld extends Application {
         return header;
     }
 
-    private VBox getJavaInfo() {
+    private VBox getInfo() {
         var pi4j = Pi4J.newAutoContext();
 
         var holder = new VBox();
@@ -107,10 +107,10 @@ public class HelloJavaFXWorld extends Application {
 
         var javaInfo = pi4j.boardInfo().getJavaInfo();
         holder.getChildren().addAll(
-            new Label(javaInfo.getVersion()),
-            new Label(javaInfo.getRuntime()),
-            new Label(javaInfo.getVendor()),
-            new Label(javaInfo.getVendorVersion())
+                new Label(javaInfo.getVersion()),
+                new Label(javaInfo.getRuntime()),
+                new Label(javaInfo.getVendor()),
+                new Label(javaInfo.getVendorVersion())
         );
 
         var boardModelHeader = new Label("BOARD");
@@ -128,7 +128,7 @@ public class HelloJavaFXWorld extends Application {
         return holder;
     }
 
-    private Canvas getBouncingBall() {
+    private Canvas getBouncingBalls() {
         var canvas = new Canvas(CANVAS_WIDTH, CANVAS_HEIGHT);
 
         var context = canvas.getGraphicsContext2D();
@@ -158,7 +158,7 @@ public class HelloJavaFXWorld extends Application {
         for (BallDrawing ballDrawing : bouncingBalls) {
             ballDrawing.move();
             context.setFill(ballDrawing.getFill());
-            context.fillOval(ballDrawing.getX(), ballDrawing.getY(), ballDrawing.getSize(),  ballDrawing.getSize());
+            context.fillOval(ballDrawing.getX(), ballDrawing.getY(), ballDrawing.getSize(), ballDrawing.getSize());
         }
     }
 
@@ -178,12 +178,12 @@ public class HelloJavaFXWorld extends Application {
             size = r.nextInt(10, 30);
 
             // Random starting position within the canvas
-             x = r.nextInt(CANVAS_WIDTH - size);
-             y = r.nextInt(CANVAS_HEIGHT - size);
+            x = r.nextInt(CANVAS_WIDTH - size);
+            y = r.nextInt(CANVAS_HEIGHT - size);
 
-             // Random move direction, these will be reverted if the ball hits the edge of the canvas
-             moveX = r.nextInt(-5, 5);
-             moveY = r.nextInt(-5, 5);
+            // Random move direction, these will be reverted if the ball hits the edge of the canvas
+            moveX = r.nextInt(-5, 5);
+            moveY = r.nextInt(-5, 5);
         }
 
         public void move() {
