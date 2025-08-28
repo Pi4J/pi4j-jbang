@@ -17,12 +17,24 @@ import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
 /**
+ * <p>
  * Example code to control an 8x8 RGB LED Matrix via PWM, as found in the CrowPi 2.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ * </p>
  * <p>
- * This example must be executed with sudo as it uses PiGpio with:
- * jbang Pi4JRgbLedMatrixPwm.java
- *
+ * This is an experimental implementation that uses a simplified PWM approach and at this moment
+ * doesn't work correctly. A LED strip requires precise timing that may need native code or specialized libraries.
+ * So this is just a placeholder implementation, hoping to find a better approach in the future.
+ * </p>
+ * <p>
+ * Add the following to `/boot/firmware/config.txt`, e.g. on Raspberry Pi 5 for a CrowPi 2:<br/>
+ * <code>dtoverlay=pwm-2chan,pin=18,func=2,pin2=12,func2=4</code><br/>
+ * See <a href="https://www.pi4j.com/documentation/io-examples/pwm/#raspberry-pi-5">the Pi4J PWM documentation</a> for more details.
+ * </p>
+ * <p>
+ * This example can be executed without sudo:<br/>
+ * <code>jbang Pi4JRgbLedMatrixPwm.java</code>
+ * </p>
  */
 public class Pi4JRgbLedMatrixPwm {
 

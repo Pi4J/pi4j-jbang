@@ -12,11 +12,18 @@ import com.pi4j.io.pwm.PwmType;
 import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 
 /**
- * Example code to fade a LED with a PWM signal.
- * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed without sudo:
- * jbang Pi4JPWMLed.java
+ * Example code to play notes on a buzzer.
+ * Make sure to follow the README of this project to learn more about JBang and how to install it.
+ * </p>
+ * <p>
+ * You need to modify `config.txt` on your Raspberry Pi to configure the PWM channels.
+ * See <a href="https://www.pi4j.com/documentation/io-examples/pwm/">the Pi4J PWM documentation</a> for more details.
+ * </p>
+ * <p>
+ * This example can be executed without sudo:<br/>
+ * <code>jbang Pi4JRgbLedMatrixPwm.java</code>
+ * </p>
  */
 public class Pi4JPWMBuzzer {
 
