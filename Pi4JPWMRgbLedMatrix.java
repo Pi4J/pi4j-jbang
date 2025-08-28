@@ -39,7 +39,7 @@ import java.util.function.Consumer;
 public class Pi4JPWMRgbLedMatrix {
 
     /**
-     * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> needs to be configure!
+     * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> needs to be configured, see above!
      */
     private static final int CHANNEL = 0;
 
