@@ -18,11 +18,7 @@ import java.lang.invoke.VarHandle;
  * precise timing which can be achieved with native code.
  * </p>
  * <p>
- * Make sure the required library is installed:<br/>
- * <code>
- * sudo apt-get update<br/>
- * sudo apt-get install librpi-ws281x-dev
- * </code>
+ * Make sure the required library is installed, see <code>script/build-rpi_ws281x.sh</code>.
  * </p>
  * <p>
  * This example needs Java 22 or newer:<br/>
@@ -96,8 +92,31 @@ public class Pi4JFFMRgbLedMatrix {
 
     static {
         try {
-            // Load native library symbols
-            SymbolLookup libws281x = SymbolLookup.libraryLookup("libws2811.so", Arena.global());
+            // Try different possible library locations
+            SymbolLookup libws281x = null;
+            String[] libraryPaths = {
+                    "libws2811.so.1",     // System-wide installation
+                    "libws2811.so",       // Symlink
+                    "/usr/local/lib/libws2811.so.1",  // Direct path
+                    "./libws2811.so.1"    // Local build directory
+            };
+
+            RuntimeException lastException = null;
+            for (String path : libraryPaths) {
+                try {
+                    libws281x = SymbolLookup.libraryLookup(path, Arena.global());
+                    System.out.println("Successfully loaded library from: " + path);
+                    break;
+                } catch (Exception e) {
+                    lastException = new RuntimeException("Failed to load from " + path, e);
+                }
+            }
+
+            if (libws281x == null) {
+                throw new RuntimeException("Could not load rpi_ws281x library from any location. " +
+                        "Make sure it's built and installed. Last error: " +
+                        (lastException != null ? lastException.getMessage() : "unknown"));
+            }
 
             // Create method handles for native functions
             ws2811_init = linker.downcallHandle(
@@ -117,8 +136,8 @@ public class Pi4JFFMRgbLedMatrix {
 
         } catch (Throwable e) {
             throw new RuntimeException("Failed to load rpi_ws281x library. " +
-                    "Make sure librpi-ws281x-dev is installed and you're running with " +
-                    "--enable-native-access=ALL-UNNAMED --enable-preview", e);
+                    "Make sure to build and install it from source: " +
+                    "https://github.com/jgarff/rpi_ws281x", e);
         }
     }
 
