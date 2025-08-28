@@ -3,8 +3,8 @@ sudo apt update
 sudo apt install scons git build-essential
 sudo apt install raspberrypi-kernel-headers
 
-# Clone the repository
-git clone https://github.com/jgarff/rpi_ws281x.git
+# Clone the repository, using a community fork with RPi 5 support
+git clone https://github.com/richardghirst/rpi_ws281x.git
 cd rpi_ws281x
 
 # Build the library
