@@ -1,4 +1,4 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS org.slf4j:slf4j-api:2.0.12
 //DEPS org.slf4j:slf4j-simple:2.0.12
@@ -14,9 +14,9 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  *
  * This example can be executed without sudo:
- * jbang PI4JRGBLed.java
+ * jbang Pi4JRgbLed.java
  */
-public class Pi4JRGBLed {
+public class Pi4JRgbLed {
 
     // Connect a button to PIN 23 = BCM 11
     private static final int PIN_RED = 11;

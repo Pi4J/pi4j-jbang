@@ -33,10 +33,10 @@ import java.util.function.Consumer;
  * </p>
  * <p>
  * This example can be executed without sudo:<br/>
- * <code>jbang Pi4JRgbLedMatrixPwm.java</code>
+ * <code>jbang Pi4JPWMRgbLedMatrix.java</code>
  * </p>
  */
-public class Pi4JRgbLedMatrixPwm {
+public class Pi4JPWMRgbLedMatrix {
 
     /**
      * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> needs to be configure!
@@ -80,7 +80,7 @@ public class Pi4JRgbLedMatrixPwm {
      *
      * @param pi4j Pi4J context
      */
-    public Pi4JRgbLedMatrixPwm(Context pi4j) {
+    public Pi4JPWMRgbLedMatrix(Context pi4j) {
         this.colorBuffer = new Color[HEIGHT][WIDTH];
         this.monoBuffer = new boolean[HEIGHT][WIDTH];
 
@@ -116,7 +116,7 @@ public class Pi4JRgbLedMatrixPwm {
                 .build();
 
         // Initialize the RGB LED Matrix
-        var matrix = new Pi4JRgbLedMatrixPwm(pi4j);
+        var matrix = new Pi4JPWMRgbLedMatrix(pi4j);
 
         // Display something on the LED Matrix
         matrix.fill(Color.RED);
