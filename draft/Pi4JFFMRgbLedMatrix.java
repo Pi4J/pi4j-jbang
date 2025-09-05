@@ -1,4 +1,4 @@
-/// usr/bin/env jbang "$0" "$@" ; exit $?
+package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS org.slf4j:slf4j-api:2.0.12
 //DEPS org.slf4j:slf4j-simple:2.0.12
@@ -22,7 +22,7 @@ import java.lang.invoke.VarHandle;
  * </p>
  * <p>
  * This example needs Java 22 or newer:<br/>
- * <code>jbang --javaopt='--enable-native-access=ALL-UNNAMED' Pi4JFFMRgbLedMatrix.java</code>
+ * <code>jbang --javaopt='--enable-native-access=ALL-UNNAMED' draft.Pi4JFFMRgbLedMatrix.java</code>
  * </p>
  */
 public class Pi4JFFMRgbLedMatrix {
