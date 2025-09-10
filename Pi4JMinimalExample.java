@@ -1,10 +1,10 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-gpiod:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
@@ -16,10 +16,10 @@ import com.pi4j.util.Console;
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example must be executed with sudo as it uses PiGpio with:
  * sudo `which jbang` Pi4JMinimalExample.java
- *
+ * <p>
  * More information and a video explaining this example is available on:
  * https://pi4j.com/documentation/building/jbang/
  */
@@ -30,7 +30,7 @@ public class Pi4JMinimalExample {
     // Connect a button to PIN 18 = BCM 24
     private static final int PIN_BUTTON = 24;
     // Connect a LED to PIN 15 = BCM 22
-    private static final int PIN_LED = 22; 
+    private static final int PIN_LED = 22;
 
     private static int pressCount = 0;
 

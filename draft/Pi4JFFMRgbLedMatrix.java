@@ -1,7 +1,7 @@
 package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
 
 import java.awt.*;
 import java.lang.foreign.*;

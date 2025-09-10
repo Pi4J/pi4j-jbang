@@ -1,33 +1,33 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
-import com.pi4j.util.Console;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CProvider;
+import com.pi4j.util.Console;
 
 import java.text.DecimalFormat;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
- *
+ * <p>
  * This example can be executed without sudo with:
  * jbang Pi4JTempHumPressI2C.java
- *
+ * <p>
  * Based on:
- * 
+ *
  * <ul>
  *  <li>https://github.com/Pi4J/pi4j-example-devices/blob/master/src/main/java/com/pi4j/devices/bmp280/README.md</li>
  *  <li>https://www.adafruit.com/product/2652</li>
  *  <li>https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts</li>
  * </ul>
- * 
+ * <p>
  * I2C Wiring
  *
  * <ul>
@@ -37,22 +37,22 @@ import java.text.DecimalFormat;
  *  <li>SDI to I2C data SDA (pin 3)</li>
  *  <li>CS to 3.3V</li>
  * </ul>
- * 
+ * <p>
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
- * 
+ * <p>
  * Check that the sensor is detected on address 0x77 with ``.
- * 
+ * <p>
  * $ i2cdetect -y 1
  *      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
- * 00:                         -- -- -- -- -- -- -- -- 
- * 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- 
- * 70: -- -- -- -- -- -- -- 77  
- * 
+ * 00:                         -- -- -- -- -- -- -- --
+ * 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 70: -- -- -- -- -- -- -- 77
+ *
  */
 public class Pi4JTempHumPressI2C {
 
@@ -101,16 +101,17 @@ public class Pi4JTempHumPressI2C {
      * The chip will be reset, forcing the POR (PowerOnReset)
      * steps to occur. Once completes the chip will be configured
      * to operate 'forced' mode and single sample.
+     *
      * @param device
      * @throws Exception
      */
     private static void resetSensor(I2C device) throws Exception {
 
         int rc = device.writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
-       // The sensor needs some time to complete POR steps
+        // The sensor needs some time to complete POR steps
         Thread.sleep(300);
         int id = device.readRegister(BMP280Declares.chipId);
-        if(id != BMP280Declares.idValueMskBME)  {
+        if (id != BMP280Declares.idValueMskBME) {
             console.println("Incorrect chip ID, NOT BME280");
             System.exit(42);
         }
@@ -131,7 +132,7 @@ public class Pi4JTempHumPressI2C {
         ctlReg |= BMP280Declares.ctl_pressSamp1;   //  Pressure oversample 1
 
         byte[] regVal = new byte[1];
-        regVal[0] = (byte)(BMP280Declares.ctrl_meas);
+        regVal[0] = (byte) (BMP280Declares.ctrl_meas);
         byte[] ctlVal = new byte[1];
         ctlVal[0] = (byte) ctlReg;
 
@@ -142,13 +143,14 @@ public class Pi4JTempHumPressI2C {
      * Three register sets containing the readings are read, then all factory
      * compensation registers are read. The compensated reading are calculated and
      * displayed.
+     *
      * @param device
      */
     private static void getMeasurements(I2C device) {
         byte[] buff = new byte[6];
         device.readRegister(BMP280Declares.press_msb, buff);
-        long adc_T =  (long)  ((buff[3] & 0xFF) << 12) |  (long)  ((buff[4] & 0xFF) << 4) |  (long) ((buff[5] & 0x0F) >> 4);
-        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F)>> 4);
+        long adc_T = (long) ((buff[3] & 0xFF) << 12) | (long) ((buff[4] & 0xFF) << 4) | (long) ((buff[5] & 0x0F) >> 4);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F) >> 4);
 
         byte[] buffHum = new byte[2];
         device.readRegister(BMP280Declares.hum_msb, buffHum);
@@ -177,7 +179,7 @@ public class Pi4JTempHumPressI2C {
         double temperature = (var1 + var2) / 5120.0;
 
         console.println("Temperature: " + df.format(temperature) + " °C");
-        console.println("Temperature: " + df.format(temperature* 1.8 + 32) + " °F ");
+        console.println("Temperature: " + df.format(temperature * 1.8 + 32) + " °F ");
 
         // Pressure
         device.readRegister(BMP280Declares.reg_dig_p1, compVal);
@@ -208,8 +210,7 @@ public class Pi4JTempHumPressI2C {
         int dig_p9 = signedInt(compVal);
 
 
-
-        var1 = ((double) t_fine / 2.0) - 64000.0;
+        var1 = (t_fine / 2.0) - 64000.0;
         var2 = var1 * var1 * ((double) dig_p6) / 32768.0;
         var2 = var2 + var1 * ((double) dig_p5) * 2.0;
         var2 = (var2 / 4.0) + (((double) dig_p4) * 65536.0);
@@ -224,7 +225,7 @@ public class Pi4JTempHumPressI2C {
             var2 = pressure * ((double) dig_p8) / 32768.0;
             pressure = pressure + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
-        
+
         console.println("Pressure: " + df.format(pressure) + " Pa");
         // 1 Pa = 0.00001 bar or 1 bar = 100,000 Pa
         console.println("Pressure: " + df.format(pressure / 100_000) + " bar");
@@ -240,33 +241,32 @@ public class Pi4JTempHumPressI2C {
         long dig_h1 = castOffSignByte(charVal[0]);
 
         device.readRegister(BMP280Declares.reg_dig_h2, compVal);
-        int dig_h2 =  signedInt(compVal);
+        int dig_h2 = signedInt(compVal);
 
         device.readRegister(BMP280Declares.reg_dig_h3, charVal);
         long dig_h3 = castOffSignByte(charVal[0]);
 
         device.readRegister(BMP280Declares.reg_dig_h4, compVal);
         // get the bits
-        int dig_h4 = ((compVal[0]&0xff) << 4)  | (compVal[1] & 0x0f) ;
+        int dig_h4 = ((compVal[0] & 0xff) << 4) | (compVal[1] & 0x0f);
 
         device.readRegister(BMP280Declares.reg_dig_h5, compVal);
         // get the bits
-        int dig_h5 = (compVal[0]&0x0f) | ((compVal[1] & 0xff) << 4);
+        int dig_h5 = (compVal[0] & 0x0f) | ((compVal[1] & 0xff) << 4);
 
         device.readRegister(BMP280Declares.reg_dig_h6, charVal);
         long dig_h6 = signedByte(charVal);
 
-        double humidity = (double)t_fine - 76800.0;
-        humidity = (adc_H -(((double)dig_h4) * 64.0 + ((double)dig_h5)/16384.0  * humidity)) * (((double)dig_h2)/65536.0 * (1.0 + ((double)dig_h6) /67108864.0 * humidity * (1.0 + ((double)dig_h3)/67108864.0 * humidity)));
-        humidity = humidity * (1.0 - ((double) dig_h1) * humidity/524288.0);
-        if(humidity > 100.0){
+        double humidity = t_fine - 76800.0;
+        humidity = (adc_H - (((double) dig_h4) * 64.0 + ((double) dig_h5) / 16384.0 * humidity)) * (((double) dig_h2) / 65536.0 * (1.0 + ((double) dig_h6) / 67108864.0 * humidity * (1.0 + ((double) dig_h3) / 67108864.0 * humidity)));
+        humidity = humidity * (1.0 - ((double) dig_h1) * humidity / 524288.0);
+        if (humidity > 100.0) {
             humidity = 100.0;
-        }else if(humidity < 0.0){
-                humidity = 0.0;
-            }
+        } else if (humidity < 0.0) {
+            humidity = 0.0;
+        }
 
         console.println("Humidity: " + df.format(humidity) + " %");
-
 
 
     }
@@ -285,7 +285,7 @@ public class Pi4JTempHumPressI2C {
      * @return signed value
      */
     private static int signedByte(byte[] read) {
-        return ((int)read[0] );
+        return read[0];
     }
 
     /**
@@ -352,7 +352,6 @@ public class Pi4JTempHumPressI2C {
         static int reg_dig_h4 = 0xE4;  // 11:4  3:0
         static int reg_dig_h5 = 0xE5;    // 3:0   11:4
         static int reg_dig_h6 = 0xE7;    // 3:0   11:4
-
 
 
         // register contents

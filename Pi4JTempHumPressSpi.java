@@ -1,11 +1,11 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-linuxfs:2.70
-//DEPS com.pi4j:pi4j-plugin-pigpio:3.0.1
+//DEPS com.pi4j:pi4j-plugin-pigpio:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
@@ -18,18 +18,18 @@ import java.text.DecimalFormat;
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example must be executed with sudo as it uses PiGpio with:
  * sudo `which jbang` Pi4JTempHumPressSpi.java
- *
+ * <p>
  * Based on:
- * 
+ *
  * <ul>
  *  <li>https://github.com/Pi4J/pi4j-example-devices/blob/master/src/main/java/com/pi4j/devices/bmp280/README.md</li>
  *  <li>https://www.adafruit.com/product/2652</li>
  *  <li>https://learn.adafruit.com/adafruit-bme280-humidity-barometric-pressure-temperature-sensor-breakout/pinouts</li>
  * </ul>
- * 
+ * <p>
  * SPI Wiring
  *
  * <ul>
@@ -54,6 +54,7 @@ public class Pi4JTempHumPressSpi {
     private static final int csPin = 21; // BCM 21 = physical pin 40
     private static DigitalOutput csGpio;
     private static Spi spi;
+
     public static void main(String[] args) throws Exception {
         var pi4j = Pi4J.newAutoContext();
 
@@ -105,14 +106,16 @@ public class Pi4JTempHumPressSpi {
      * The chip will be reset, forcing the POR (PowerOnReset)
      * steps to occur. Once completes the chip will be configured
      * to operate 'forced' mode and single sample.
-      * @throws Exception
-     */ private static void resetSensor()  throws Exception {
+     *
+     * @throws Exception
+     */
+    private static void resetSensor() throws Exception {
 
         int rc = writeRegister(BMP280Declares.reset, BMP280Declares.reset_cmd);
         // The sensor needs some time to complete POR steps
         Thread.sleep(300);
         int id = readRegister(BMP280Declares.chipId);
-        if(id != BMP280Declares.idValueMskBME)  {
+        if (id != BMP280Declares.idValueMskBME) {
             console.println("Incorrect chip ID, NOT BME280");
             System.exit(42);
         }
@@ -131,23 +134,23 @@ public class Pi4JTempHumPressSpi {
         ctlReg |= BMP280Declares.ctl_pressSamp1;   //  Pressure oversample 1
 
         byte[] regVal = new byte[1];
-        regVal[0] = (byte)(BMP280Declares.ctrl_meas);
+        regVal[0] = (byte) (BMP280Declares.ctrl_meas);
         byte[] ctlVal = new byte[1];
         ctlVal[0] = (byte) ctlReg;
 
-        writeRegister(BMP280Declares.ctrl_meas,ctlVal[0]);
+        writeRegister(BMP280Declares.ctrl_meas, ctlVal[0]);
     }
 
     /**
      * Three register sets containing the readings are read, then all factory
      * compensation registers are read. The compensated reading are calculated and
      * displayed.
-      */
+     */
     private static void getMeasurements() {
         byte[] buff = new byte[6];
         readRegister(BMP280Declares.press_msb, buff);
-        long adc_T =  (long)  ((buff[3] & 0xFF) << 12) |  (long)  ((buff[4] & 0xFF) << 4) |  (long) ((buff[5] & 0x0F) >> 4);
-        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F)>> 4);
+        long adc_T = (long) ((buff[3] & 0xFF) << 12) | (long) ((buff[4] & 0xFF) << 4) | (long) ((buff[5] & 0x0F) >> 4);
+        long adc_P = (long) ((buff[0] & 0xFF) << 12) | (long) ((buff[1] & 0xFF) << 4) | (long) ((buff[2] & 0x0F) >> 4);
 
         byte[] buffHum = new byte[2];
         readRegister(BMP280Declares.hum_msb, buffHum);
@@ -174,7 +177,7 @@ public class Pi4JTempHumPressSpi {
         double temperature = (var1 + var2) / 5120.0;
 
         console.println("Temperature: " + df.format(temperature) + " °C");
-        console.println("Temperature: " + df.format(temperature* 1.8 + 32) + " °F ");
+        console.println("Temperature: " + df.format(temperature * 1.8 + 32) + " °F ");
 
         // Pressure
         readRegister(BMP280Declares.reg_dig_p1, compVal);
@@ -203,8 +206,8 @@ public class Pi4JTempHumPressSpi {
 
         readRegister(BMP280Declares.reg_dig_p9, compVal);
         int dig_p9 = signedInt(compVal);
-        
-        var1 = ((double) t_fine / 2.0) - 64000.0;
+
+        var1 = (t_fine / 2.0) - 64000.0;
         var2 = var1 * var1 * ((double) dig_p6) / 32768.0;
         var2 = var2 + var1 * ((double) dig_p5) * 2.0;
         var2 = (var2 / 4.0) + (((double) dig_p4) * 65536.0);
@@ -219,7 +222,7 @@ public class Pi4JTempHumPressSpi {
             var2 = pressure * ((double) dig_p8) / 32768.0;
             pressure = pressure + (var1 + var2 + ((double) dig_p7)) / 16.0;
         }
-        
+
         console.println("Pressure: " + df.format(pressure) + " Pa");
         // 1 Pa = 0.00001 bar or 1 bar = 100,000 Pa
         console.println("Pressure: " + df.format(pressure / 100_000) + " bar");
@@ -233,29 +236,29 @@ public class Pi4JTempHumPressSpi {
         long dig_h1 = castOffSignByte(charVal[0]);
 
         readRegister(BMP280Declares.reg_dig_h2, compVal);
-        int dig_h2 =  signedInt(compVal);
+        int dig_h2 = signedInt(compVal);
 
         readRegister(BMP280Declares.reg_dig_h3, charVal);
         long dig_h3 = castOffSignByte(charVal[0]);
 
         readRegister(BMP280Declares.reg_dig_h4, compVal);
         // get the bits
-        int dig_h4 = (compVal[0] << 4)  | (compVal[1] & 0x0f) ;
+        int dig_h4 = (compVal[0] << 4) | (compVal[1] & 0x0f);
 
         readRegister(BMP280Declares.reg_dig_h5, compVal);
         // get the bits
-        int dig_h5 = (compVal[0]&0x0f) | ((compVal[1] & 0xff) << 4);
+        int dig_h5 = (compVal[0] & 0x0f) | ((compVal[1] & 0xff) << 4);
 
         readRegister(BMP280Declares.reg_dig_h6, charVal);
         long dig_h6 = signedByte(charVal);
 
 
-        double humidity = (double)t_fine - 76800.0;
-        humidity = (adc_H -(((double)dig_h4) * 64.0 + ((double)dig_h5)/16384.0  * humidity)) * (((double)dig_h2)/65536.0 * (1.0 + ((double)dig_h6) /67108864.0 * humidity * (1.0 + ((double)dig_h3)/67108864.0 * humidity)));
-        humidity = humidity * (1.0 - ((double) dig_h1) * humidity/524288.0);
-        if(humidity > 100.0){
+        double humidity = t_fine - 76800.0;
+        humidity = (adc_H - (((double) dig_h4) * 64.0 + ((double) dig_h5) / 16384.0 * humidity)) * (((double) dig_h2) / 65536.0 * (1.0 + ((double) dig_h6) / 67108864.0 * humidity * (1.0 + ((double) dig_h3) / 67108864.0 * humidity)));
+        humidity = humidity * (1.0 - ((double) dig_h1) * humidity / 524288.0);
+        if (humidity > 100.0) {
             humidity = 100.0;
-        }else if(humidity < 0.0){
+        } else if (humidity < 0.0) {
             humidity = 0.0;
         }
 
@@ -271,9 +274,9 @@ public class Pi4JTempHumPressSpi {
     private static int readRegister(int register) {
         //console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
         csGpio.low();
-        byte data[] = new byte[]{(byte) (0b10000000 | register)};
+        byte[] data = new byte[]{(byte) (0b10000000 | register)};
         int bytesWritten = spi.write(data);
-        byte value[] = new byte[1];
+        byte[] value = new byte[1];
         byte rval = spi.readByte();
         csGpio.high();
         //console.println("<<< Exit readRegister   : " + String.format("0X%02x: ", rval));
@@ -287,7 +290,7 @@ public class Pi4JTempHumPressSpi {
      */
     private static int readRegister(int register, byte[] buffer) {
         //console.println(">>> Enter readRegister   : " + String.format("0X%02x: ", register));
-        byte data[] = new byte[]{(byte) (0b10000000 | register)};
+        byte[] data = new byte[]{(byte) (0b10000000 | register)};
         csGpio.low();
         int bytesWritten = spi.write(data);
         int bytesRead = spi.read(buffer);
@@ -305,10 +308,10 @@ public class Pi4JTempHumPressSpi {
         // console.println(">>> Enter writeRegister   : " + String.format("0X%02x: ", register));
         int rval = 0;
         int byteswritten = -1;
-        byte buffer[] = new byte[]{(byte) (0b01111111 & register),
+        byte[] buffer = new byte[]{(byte) (0b01111111 & register),
                 (byte) data
         };
-        byte dummy[] = new byte[2];
+        byte[] dummy = new byte[2];
         // send read request to BMP chip via SPI channel
         csGpio.low();
         byteswritten = spi.write(buffer);
@@ -346,16 +349,17 @@ public class Pi4JTempHumPressSpi {
         temp += (((long) read[1] & 0xff)) << 8;
         return (temp);
     }
+
     /**
      *
      * @param read 8 bits data
      * @return signed value
      */
     private static int signedByte(byte[] read) {
-        return ((int)read[0] );
+        return read[0];
     }
 
-    private static class BMP280Declares  {
+    private static class BMP280Declares {
         /*  Begin device register definitions.        */
         static int temp_xlsb = 0xFC;
         static int temp_lsb = 0xFB;

@@ -1,10 +1,10 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.spi.*;
@@ -16,13 +16,13 @@ import java.util.Random;
 /**
  * Example code to control an 8x8 LED Matrix via SPI.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example is based on the following project that was created with Pi4J V1:
  * https://github.com/FDelporte/JavaOnRaspberryPi/tree/master/Chapter_09_Pi4J/java-pi4j-spi
- *
+ * <p>
  * The full description is available on:
  * https://pi4j.com/examples/jbang/jbang_pi4j_spi_led_matrix/
- *
+ * <p>
  * This example must be executed with sudo as it uses PiGpio with:
  * sudo `which jbang` Pi4JLedMatrixSpi.java
  *
@@ -72,14 +72,14 @@ public class Pi4JLedMatrixSpi {
 
         showOneByOne(100);
 
-        showRows( 250);
-        showCols( 250);
+        showRows(250);
+        showCols(250);
 
-        showRandomOutput( 5, 500);
+        showRandomOutput(5, 500);
 
-        showAllImages( 2000);
-        showAllAsciiCharacters( 750);
-        scrollAllAsciiCharacters( 50);
+        showAllImages(2000);
+        showAllAsciiCharacters(750);
+        scrollAllAsciiCharacters(50);
 
         allOff();
 
@@ -163,7 +163,7 @@ public class Pi4JLedMatrixSpi {
      * Demo mode which generates specified number of cycles of random enabled LEDs.
      *
      * @param numberOfLoops Number of random outputs to be generated
-     * @param waitBetween Number of milliseconds to wait between random screens
+     * @param waitBetween   Number of milliseconds to wait between random screens
      */
     public static void showRandomOutput(int numberOfLoops, int waitBetween) {
         try {
@@ -267,7 +267,7 @@ public class Pi4JLedMatrixSpi {
     /**
      * Scroll a character over the screen.
      *
-     * @param asciiCharacter AsciiCharacter to be scrolled
+     * @param asciiCharacter  AsciiCharacter to be scrolled
      * @param waitBetweenMove Milliseconds between every column move
      */
     public static void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitBetweenMove) {
@@ -677,7 +677,8 @@ public class Pi4JLedMatrixSpi {
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("100000", 2),
                 (byte) Integer.parseInt("111111", 2)
-        )),        ;
+        )),
+        ;
 
         private final int ascii;
         private final int numberOfColumns;
@@ -687,18 +688,6 @@ public class Pi4JLedMatrixSpi {
             this.ascii = ascii;
             this.numberOfColumns = numberOfColumns;
             this.rows = rows;
-        }
-
-        public int getAscii() {
-            return ascii;
-        }
-
-        public int getNumberOfColumns() {
-            return numberOfColumns;
-        }
-
-        public List<Byte> getRows() {
-            return rows;
         }
 
         public static AsciiCharacter getByAscii(int ascii) {
@@ -712,6 +701,18 @@ public class Pi4JLedMatrixSpi {
 
         public static AsciiCharacter getByChar(char character) {
             return getByAscii(character);
+        }
+
+        public int getAscii() {
+            return ascii;
+        }
+
+        public int getNumberOfColumns() {
+            return numberOfColumns;
+        }
+
+        public List<Byte> getRows() {
+            return rows;
         }
     }
 

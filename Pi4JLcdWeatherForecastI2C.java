@@ -1,31 +1,32 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
 //SOURCES helper/lcd/Component.java
 //SOURCES helper/lcd/I2CDevice.java
 //SOURCES helper/lcd/LcdDisplay.java
 
-import com.pi4j.Pi4J;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pi4j.Pi4J;
+import helper.lcd.LcdDisplay;
+
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import helper.lcd.LcdDisplay;
 
 /**
  * This example gets the weather forecast from https://open-meteo.com/en/docs
  * Free for non-commercial use and less than 10.000 daily API calls.
- *
+ * <p>
  * jbang Pi4JLcdWeatherForecast.java
  */
 public class Pi4JLcdWeatherForecastI2C {
@@ -150,15 +151,49 @@ public class Pi4JLcdWeatherForecastI2C {
         return timestamp;
     }
 
+    private static String getWmoDescription(int code) {
+        return switch (code) {
+            case 0 -> "Clear sky";
+            case 1 -> "Mainly clear";
+            case 2 -> "Partly cloudy";
+            case 3 -> "Overcast";
+            case 45 -> "Fog";
+            case 48 -> "Fog and depositing rime fog";
+            case 51 -> "Light drizzle";
+            case 53 -> "Moderate drizzle";
+            case 55 -> "Dense intensity drizzle";
+            case 56 -> "Freezing light rizzle";
+            case 57 -> "Freezing dense rizzle";
+            case 61 -> "Slight rain";
+            case 63 -> "Moderate rain";
+            case 65 -> "Heavy intensity rain";
+            case 66 -> "Freezing light rain";
+            case 67 -> "Freezing heavy rain";
+            case 71 -> "Slight snow fall";
+            case 73 -> "Moderate snow fall";
+            case 75 -> "Heavy snow fall";
+            case 77 -> "Snow grains";
+            case 80 -> "Slight rain showers";
+            case 81 -> "Moderate rain showers";
+            case 82 -> "Violent rain showers";
+            case 85 -> "Slight snow showers";
+            case 86 -> "Heavy snow showers";
+            case 95 -> "Thunderstorm";
+            case 96 -> "Thunderstorm with slight hail";
+            case 99 -> "Thunderstorm with heavy hail";
+            default -> "Unknown";
+        };
+    }
+
     private record Forecast(
-        @JsonProperty("timezone")
-        String timezone,
+            @JsonProperty("timezone")
+            String timezone,
 
-        @JsonProperty("elevation")
-        Float elevation,
+            @JsonProperty("elevation")
+            Float elevation,
 
-        @JsonProperty("daily")
-        DailyForecast dailyForecast) {
+            @JsonProperty("daily")
+            DailyForecast dailyForecast) {
 
         /*
         {
@@ -191,27 +226,27 @@ public class Pi4JLcdWeatherForecastI2C {
         */
     }
 
-    private record DailyForecast (
-        @JsonProperty("time")
-        String[] date,
+    private record DailyForecast(
+            @JsonProperty("time")
+            String[] date,
 
-        @JsonProperty("weather_code")
-        Integer[] weatherCode,
+            @JsonProperty("weather_code")
+            Integer[] weatherCode,
 
-        @JsonProperty("apparent_temperature_max")
-        Double[] tempMax,
+            @JsonProperty("apparent_temperature_max")
+            Double[] tempMax,
 
-        @JsonProperty("apparent_temperature_min")
-        Double[] tempMin,
+            @JsonProperty("apparent_temperature_min")
+            Double[] tempMin,
 
-        @JsonProperty("sunrise")
-        String[] sunrise,
+            @JsonProperty("sunrise")
+            String[] sunrise,
 
-        @JsonProperty("sunset")
-        String[] sunset,
+            @JsonProperty("sunset")
+            String[] sunset,
 
-        @JsonProperty("sunshine_duration")
-        Long[] sunshineDurationInSeconds) {
+            @JsonProperty("sunshine_duration")
+            Long[] sunshineDurationInSeconds) {
 
         /*
         "time": [
@@ -254,39 +289,5 @@ public class Pi4JLcdWeatherForecastI2C {
           11.3
         ]
         */
-    }
-
-    private static String getWmoDescription(int code) {
-        return switch (code) {
-            case 0 -> "Clear sky";
-            case 1 -> "Mainly clear";
-            case 2 -> "Partly cloudy";
-            case 3 -> "Overcast";
-            case 45 -> "Fog";
-            case 48 -> "Fog and depositing rime fog";
-            case 51 -> "Light drizzle";
-            case 53 -> "Moderate drizzle";
-            case 55 -> "Dense intensity drizzle";
-            case 56 -> "Freezing light rizzle";
-            case 57 -> "Freezing dense rizzle";
-            case 61 -> "Slight rain";
-            case 63 -> "Moderate rain";
-            case 65 -> "Heavy intensity rain";
-            case 66 -> "Freezing light rain";
-            case 67 -> "Freezing heavy rain";
-            case 71 -> "Slight snow fall";
-            case 73 -> "Moderate snow fall";
-            case 75 -> "Heavy snow fall";
-            case 77 -> "Snow grains";
-            case 80 -> "Slight rain showers";
-            case 81 -> "Moderate rain showers";
-            case 82 -> "Violent rain showers";
-            case 85 -> "Slight snow showers";
-            case 86 -> "Heavy snow showers";
-            case 95 -> "Thunderstorm";
-            case 96 -> "Thunderstorm with slight hail";
-            case 99 -> "Thunderstorm with heavy hail";
-            default -> "Unknown";
-        };
     }
 }

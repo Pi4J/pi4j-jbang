@@ -1,10 +1,10 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-gpiod:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-gpiod:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
@@ -15,7 +15,7 @@ import com.pi4j.io.gpio.digital.PullResistance;
 /**
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example can be executed without sudo:
  * jbang Pi4JDistanceSensor.java
  */
@@ -35,13 +35,13 @@ public class Pi4JDistanceSensor {
 
         try {
             // Initialize the output pin
-            trigger = pi4j.digitalOutput().create(PIN_TRIGGER); 
+            trigger = pi4j.digitalOutput().create(PIN_TRIGGER);
             trigger.low();
 
             // Initialize the input pin
             var echoConfig = DigitalInput.newConfigBuilder(pi4j)
-                .address(PIN_ECHO)
-                .pull(PullResistance.PULL_UP) ;
+                    .address(PIN_ECHO)
+                    .pull(PullResistance.PULL_UP);
             echo = pi4j.create(echoConfig);
 
             // Loop and measure the distance 5 times per second
@@ -71,16 +71,16 @@ public class Pi4JDistanceSensor {
 
             // Start the measurement
             while (echo.isLow()) {
-			    // Wait until the echo pin is high, indicating the ultrasound was sent
-		    }
-		    long startEcho = System.nanoTime();
+                // Wait until the echo pin is high, indicating the ultrasound was sent
+            }
+            long startEcho = System.nanoTime();
 
             // Wait till measurement is finished
-		    while (echo.isHigh()) {
+            while (echo.isHigh()) {
                 // Wait until the echo pin is low, indicating the ultrasound was received back
-		    }
-		    long endEcho = System.nanoTime();
-            
+            }
+            long endEcho = System.nanoTime();
+
             // Output the distance
             float measuredSeconds = getSecondsDifference(startEcho, endEcho);
             System.out.println("Measured distance is: "
@@ -96,7 +96,7 @@ public class Pi4JDistanceSensor {
      * The calculation is based on the speed of sound which is 34300 cm/s.
      *
      * @param seconds Number of seconds
-     * @param half Flag to define if the calculated distance must be divided
+     * @param half    Flag to define if the calculated distance must be divided
      */
     private static int getDistance(float seconds, boolean half) {
         float distance = seconds * 34300;
@@ -108,7 +108,7 @@ public class Pi4JDistanceSensor {
      * 1 second = 1000000000 nanoseconds
      *
      * @param start Start timestamp in nanoseconds
-     * @param end End timestamp in nanoseconds
+     * @param end   End timestamp in nanoseconds
      */
     private static float getSecondsDifference(long start, long end) {
         return (end - start) / 1000000000F;

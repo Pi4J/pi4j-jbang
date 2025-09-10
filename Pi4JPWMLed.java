@@ -1,11 +1,11 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.pwm.Pwm;
@@ -14,7 +14,7 @@ import com.pi4j.io.pwm.PwmType;
 /**
  * Example code to fade a LED with a PWM signal.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example can be executed without sudo:
  * jbang Pi4JPWMLed.java
  */
@@ -35,11 +35,11 @@ public class Pi4JPWMLed {
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
             // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                .address(CHANNEL)
-                .pwmType(PwmType.HARDWARE)
-                .initial(0)
-                .shutdown(0)
-                .build();
+                    .address(CHANNEL)
+                    .pwmType(PwmType.HARDWARE)
+                    .initial(0)
+                    .shutdown(0)
+                    .build();
             var pwm = pi4j.create(pwmConfig);
 
             // Loop through PWM values 10 times
