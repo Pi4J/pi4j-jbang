@@ -4,12 +4,11 @@
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
-import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 
 /**
  * <p>
@@ -38,9 +37,7 @@ public class Pi4JPWMBuzzer {
 
         try {
             // Initialize the Pi4J context
-            var pi4j = Pi4J.newContextBuilder()
-                    .add(new LinuxFsPwmProviderImpl("/sys/class/pwm/", 0))
-                    .build();
+            var pi4j = Pi4J.newAutoContext();
 
             // All Raspberry Pi models support a hardware PWM pin on GPIO_01.
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins:
