@@ -41,9 +41,9 @@ public class Pi4JPWMLed {
                     .initial(0)
                     //.shutdown(0)
                     .build();
-            System.out.println("PWM config created");
+            System.out.println("PWM config create");
             var pwm = pi4j.create(pwmConfig);
-            System.out.printlin("PWM initialized");
+            System.out.println("PWM initialized");
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
