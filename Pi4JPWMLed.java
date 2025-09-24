@@ -4,7 +4,6 @@
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
@@ -23,7 +22,7 @@ public class Pi4JPWMLed {
     // BCM 19 on Raspberry Pi 4 = PWM Channel 1
     // BCM 19 on Raspberry Pi 5 = PWM Channel 3
     // Buzzer in CrowPi is connected to BCM 18 = on RPi 5 is Channel 2
-    private static final int CHANNEL = 2;
+    private static final int CHANNEL = 0;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -39,6 +38,8 @@ public class Pi4JPWMLed {
                     .address(CHANNEL)
                     .pwmType(PwmType.HARDWARE)
                     .initial(0)
+                    .frequency(1)
+                    .busNumber(2)
                     //.shutdown(0)
                     .build();
             System.out.println("PWM config create");
@@ -48,7 +49,7 @@ public class Pi4JPWMLed {
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
                 for (int useValue = 0; useValue <= 100; useValue += 5) {
-                    pwm.on(useValue, 1500);
+                    pwm.on(useValue, 1000);
                     System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
                     Thread.sleep(200);
                 }
