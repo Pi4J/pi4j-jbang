@@ -1,11 +1,12 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-linuxfs:2.70
-//DEPS com.pi4j:pi4j-plugin-pigpio:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-mock:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
@@ -66,8 +67,7 @@ public class Pi4JTempHumPressSpi {
                 .name("CS")
                 .address(csPin)
                 .shutdown(DigitalState.HIGH)
-                .initial(DigitalState.HIGH)
-                .provider("pigpio-digital-output");
+                .initial(DigitalState.HIGH);
         csGpio = pi4j.create(csGpioConfig);
 
         var spiConfig = Spi.newConfigBuilder(pi4j)
@@ -77,7 +77,6 @@ public class Pi4JTempHumPressSpi {
                 .chipSelect(chipSelect)
                 .baud(Spi.DEFAULT_BAUD)
                 .mode(SpiMode.MODE_0)
-                .provider("pigpio-spi")
                 .build();
         spi = pi4j.create(spiConfig);
 

@@ -1,10 +1,12 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-mock:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
 //SOURCES helper/lcd/Component.java
