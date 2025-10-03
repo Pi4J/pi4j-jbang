@@ -23,8 +23,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
  */
 public class Pi4JDistanceSensor {
 
-    private static final int PIN_TRIGGER = 18;
-    private static final int PIN_ECHO = 24;
+    private static final int PIN_TRIGGER = 16; //18;
+    private static final int PIN_ECHO = 26; //24;
 
     private static DigitalOutput trigger;
     private static DigitalInput echo;
