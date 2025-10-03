@@ -4,8 +4,6 @@
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-mock:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
@@ -14,7 +12,7 @@ import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
 
 /**
- * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
+ * Example code to use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
