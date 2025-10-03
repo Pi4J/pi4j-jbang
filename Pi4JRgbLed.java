@@ -48,8 +48,6 @@ public class Pi4JRgbLed {
             for (int i = 0; i < 10; i++) {
                 useLed.toggle();
                 Thread.sleep(250);
-
-                //System.out.println("State of the LED " + useLed.getAddress() + " has been toggled");
             }
 
             // Make sure the led is off
