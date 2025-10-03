@@ -20,12 +20,12 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
  */
 public class Pi4JRgbLed {
 
-    // Connect a button to PIN 23 = BCM 11
-    private static final int PIN_RED = 11;
-    // Connect a button to PIN 32 = BCM 12
-    private static final int PIN_GREEN = 12;
-    // Connect a button to PIN 33 = BCM 13
-    private static final int PIN_BLUE = 13;
+    // Connect a LED to PIN 16 = BCM 23
+    private static final int PIN_RED = 23;
+    // Connect a LED to PIN 18 = BCM 24
+    private static final int PIN_GREEN = 24;
+    // Connect a LED to PIN 22 = BCM 25
+    private static final int PIN_BLUE = 25;
 
     public static void main(String[] args) throws Exception {
 
