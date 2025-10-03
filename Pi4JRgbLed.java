@@ -10,7 +10,7 @@ import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 
 /**
- * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
+ * Example code to blink three LEDs (DigitalOutput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
