@@ -37,9 +37,15 @@ public class Pi4JRgbLed {
         var ledGreen = pi4j.digitalOutput().create(PIN_GREEN);
         var ledBlue = pi4j.digitalOutput().create(PIN_BLUE);
 
+        // Start with all off
+        ledRed.low();
+        ledGreen.low();
+        ledBlue.low();
+
         // Toggle 10 times each color on and off
         for (int led = 1; led <= 3; led++) {
             DigitalOutput useLed = led == 1 ? ledRed : (led == 2 ? ledGreen : ledBlue);
+            System.out.println("Start blinking LED " + useLed.getAddress());
 
             for (int i = 0; i < 10; i++) {
                 useLed.toggle();
