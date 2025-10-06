@@ -44,19 +44,24 @@ public class Pi4JRgbLed {
         blink10(ledRed);
         blink10(ledGreen);
         blink10(ledBlue);
-        Thread.sleep(1000);
+        Thread.sleep(2_000);
+
+        // Put all off
+        ledRed.low();
+        ledGreen.low();
+        ledBlue.low();
 
         // Morse
         morseHelloWorld(ledRed);
         System.out.println("Morse message has been sent");
-        Thread.sleep(5000);
+        Thread.sleep(2_000);
 
         // All three on, should be (close to) white
         ledRed.high();
         ledGreen.high();
         ledBlue.high();
         System.out.println("All three on, check if this looks like white or close to white...");
-        Thread.sleep(5000);
+        Thread.sleep(2_000);
 
         // All three off
         ledRed.low();
