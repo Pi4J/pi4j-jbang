@@ -52,6 +52,7 @@ public class Pi4JRgbLed {
         ledBlue.low();
 
         // Morse
+        System.out.println("Starting Morse message");
         morseHelloWorld(ledRed);
         System.out.println("Morse message has been sent");
         Thread.sleep(2_000);
@@ -102,6 +103,7 @@ public class Pi4JRgbLed {
          * gap between words is 7 units
          */
         for (char c : helloWorld.toCharArray()) {
+            System.out.println("Morse: " + c);
             if (c == '.') {
                 led.high();
                 Thread.sleep(100);
