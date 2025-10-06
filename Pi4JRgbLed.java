@@ -25,6 +25,8 @@ public class Pi4JRgbLed {
     // Connect a button to PIN 33 = BCM 13
     private static final int PIN_BLUE = 13;
 
+    private static final String HELLO_WORLD = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
+
     public static void main(String[] args) throws Exception {
 
         // Initialize the Pi4J context
@@ -39,9 +41,30 @@ public class Pi4JRgbLed {
         for (int led = 1; led <= 3; led++) {
             DigitalOutput useLed = led == 1 ? ledRed : (led == 2 ? ledGreen : ledBlue);
 
-            for (int i = 0; i < 10; i++) {
-                useLed.toggle();
-                Thread.sleep(250);
+            /*
+             * Upon reading morse guides:
+             * Dot is 1 unit
+             * dash is 3 units
+             * gap between elements in characters is 1 unit
+             * gap between letters is 3 units
+             * gap between words is 7 units
+             */
+            for (char c : HELLO_WORLD.toCharArray()) {
+                if (c == '.') {
+                    useLed.toggle();
+                    Thread.sleep(100);
+                    useLed.low();
+                    Thread.sleep(100);
+                } else if (c == '-') {
+                    useLed.toggle();
+                    Thread.sleep(300);
+                    useLed.low();
+                    Thread.sleep(100);
+                } if (c == ' ') {
+                    Thread.sleep(200);
+                } if ( c == '/') {
+                    Thread.sleep(300);
+                }
 
                 System.out.println("State of the LED " + useLed.getAddress() + " has been toggled");
             }
