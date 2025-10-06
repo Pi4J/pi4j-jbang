@@ -41,29 +41,21 @@ public class Pi4JRgbLed {
         ledBlue.low();
 
         // Toggle 10 times each color on and off
-        for (int led = 1; led <= 3; led++) {
-            DigitalOutput useLed = led == 1 ? ledRed : (led == 2 ? ledGreen : ledBlue);
-            System.out.println("Start blinking LED " + useLed.getAddress());
-
-            for (int i = 0; i < 10; i++) {
-                useLed.toggle();
-                Thread.sleep(250);
-            }
-
-            // Make sure the led is off
-            useLed.low();
-            System.out.println("LED " + useLed.getAddress() + " is off");
-        }
-
+        blink10(ledRed);
+        blink10(ledGreen);
+        blink10(ledBlue);
         Thread.sleep(1000);
+
+        // Morse
+        morseHelloWorld(ledRed);
+        System.out.println("Morse message has been sent");
+        Thread.sleep(5000);
 
         // All three on, should be (close to) white
         ledRed.high();
         ledGreen.high();
         ledBlue.high();
-
         System.out.println("All three on, check if this looks like white or close to white...");
-
         Thread.sleep(5000);
 
         // All three off
@@ -75,5 +67,51 @@ public class Pi4JRgbLed {
 
         // Shutdown the Pi4J context
         pi4j.shutdown();
+    }
+
+    private static void blink10(DigitalOutput led) throws InterruptedException {
+        System.out.println("Start blinking LED " + led.getAddress());
+
+        for (int i = 0; i < 10; i++) {
+            led.toggle();
+            Thread.sleep(250);
+        }
+
+        // Make sure the led is off
+        led.low();
+        System.out.println("LED " + led.getAddress() + " is off");
+    }
+
+    // Contributed by Jonathan Stronkhorst
+    // Morse translator: https://morsecode.world/international/translator.html
+    // Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
+    private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
+        String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
+
+        /*
+         * Upon reading morse guides:
+         * Dot is 1 unit
+         * dash is 3 units
+         * gap between elements in characters is 1 unit
+         * gap between letters is 3 units
+         * gap between words is 7 units
+         */
+        for (char c : helloWorld.toCharArray()) {
+            if (c == '.') {
+                led.high();
+                Thread.sleep(100);
+                led.low();
+                Thread.sleep(100);
+            } else if (c == '-') {
+                led.high();
+                Thread.sleep(300);
+                led.low();
+                Thread.sleep(100);
+            } else if (c == ' ') {
+                Thread.sleep(200);
+            } else if (c == '/') {
+                Thread.sleep(300);
+            }
+        }
     }
 }
