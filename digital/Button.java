@@ -15,8 +15,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
  * Example code to use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed without sudo:
- * jbang Button.java
+ * From the terminal, in the `digital` directory, start this example with:
+ * <code>jbang Button.java</code>
  */
 public class Button {
 

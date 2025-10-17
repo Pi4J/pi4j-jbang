@@ -16,8 +16,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
  * Example code to measure the distance of an object using a Ultrasonic sensor.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed without sudo:
- * jbang DistanceSensor.java
+ * From the terminal, in the `digital` directory, start this example with:
+ * <code>jbang DistanceSensor.java</code>
  */
 public class DistanceSensor {
 

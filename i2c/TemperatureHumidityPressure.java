@@ -16,8 +16,8 @@ import java.text.DecimalFormat;
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
  * <p>
- * This example can be executed without sudo with:
- * jbang TemperatureHumidityPressure.java
+ * From the terminal, in the `i2c` directory, start this example with:
+ * <code>jbang TemperatureHumidityPressure.java</code>
  * <p>
  * Based on:
  *

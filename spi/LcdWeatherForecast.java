@@ -27,7 +27,8 @@ import java.net.URL;
  * This example gets the weather forecast from https://open-meteo.com/en/docs
  * Free for non-commercial use and less than 10.000 daily API calls.
  * <p>
- * jbang LcdWeatherForecast.java
+ * From the terminal, in the `spi` directory, start this example with:
+ * <code>jbang LcdWeatherForecast.java</code>
  */
 public class LcdWeatherForecast {
 

@@ -20,8 +20,8 @@ import com.pi4j.io.pwm.PwmType;
  * See <a href="https://www.pi4j.com/documentation/io-examples/pwm/">the Pi4J PWM documentation</a> for more details.
  * </p>
  * <p>
- * This example can be executed without sudo:<br/>
- * <code>jbang Pi4JRgbLedMatrixPwm.java</code>
+ * From the terminal, in the `pwm` directory, start this example with:
+ * <code>jbang Buzzer.java</code>
  * </p>
  */
 public class Buzzer {

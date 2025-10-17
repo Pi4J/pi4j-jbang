@@ -35,8 +35,8 @@ import java.time.format.DateTimeFormatter;
  * source "$HOME/.sdkman/bin/sdkman-init.sh"
  * sdk install java 22.0.1.fx-zulu
  * <p>
- * This example can be executed without sudo:
- * jbang SerialSensorJavaFX.java
+ * From the terminal, in the `serial` directory, start this example with:
+ * <code>jbang SerialSensorJavaFX.java</code>
  */
 public class SerialSensorJavaFX extends Application {
     final XYChart.Series<String, Integer> data = new XYChart.Series<>();

@@ -17,8 +17,8 @@ import com.pi4j.util.Console;
  * Example code to blink a LED (DigitalOutput) and use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example must be executed with sudo as it uses PiGpio with:
- * jbang ButtonLed.java
+ * From the terminal, in the `digital` directory, start this example with:
+ * <code>jbang ButtonLed.java</code>
  * <p>
  * More information and a video explaining this example is available on:
  * https://pi4j.com/documentation/building/jbang/

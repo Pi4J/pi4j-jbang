@@ -31,8 +31,8 @@ import java.util.Random;
  * Example code to illustrate how a JavaFX UI can be executed with JBang.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed with:
- * jbang HelloJavaFXWorld.java
+ * From the terminal, in the `javafx` directory, start this example with:
+ * <code>jbang HelloJavaFXWorld.java</code>
  */
 public class HelloJavaFXWorld extends Application {
 

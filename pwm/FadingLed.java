@@ -14,8 +14,8 @@ import com.pi4j.io.pwm.PwmType;
  * Example code to fade a LED with a PWM signal.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed without sudo:
- * jbang pwm.Pi4JPWMLed.java
+ * From the terminal, in the `digital` directory, start this example with:
+ * <code>jbang FadingLed.java</code>
  */
 public class FadingLed {
 

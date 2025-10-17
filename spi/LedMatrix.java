@@ -23,8 +23,8 @@ import java.util.Random;
  * The full description is available on:
  * https://pi4j.com/examples/jbang/jbang_pi4j_spi_led_matrix/
  * <p>
- * This example must be executed with sudo as it uses PiGpio with:
- * jbang LedMatrix.java
+ * From the terminal, in the `spi` directory, start this example with:
+ * <code>jbang LedMatrix.java</code>
  *
  */
 public class LedMatrix {

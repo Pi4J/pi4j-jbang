@@ -28,8 +28,8 @@ import java.util.Arrays;
  * Example code to illustrate how a Java file that needs dependencies can be executed with JBang.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed with:
- * jbang JsonParsing.java
+ * From the terminal, in the `basic` directory, start this example with:
+ * <code>jbang JsonParsing.java</code>
  */
 public class JsonParsing {
 
