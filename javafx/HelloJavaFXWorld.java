@@ -1,7 +1,8 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
-//DEPS org.openjfx:javafx-controls:20.0.2
-//DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
+//DEPS org.openjfx:javafx-controls:25
+//DEPS org.openjfx:javafx-graphics:25:${os.detected.jfxname}
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
