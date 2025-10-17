@@ -1,4 +1,4 @@
-package helper.lcd;
+package i2c.helper;
 
 import java.time.Duration;
 import java.util.logging.ConsoleHandler;

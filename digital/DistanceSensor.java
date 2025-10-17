@@ -17,9 +17,9 @@ import com.pi4j.io.gpio.digital.PullResistance;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
- * jbang Pi4JDistanceSensor.java
+ * jbang DistanceSensor.java
  */
-public class Pi4JDistanceSensor {
+public class DistanceSensor {
 
     // Config for CrowPi 2: trigger on BCM 16 and echo on BCM 26
     private static final int PIN_TRIGGER = 16;

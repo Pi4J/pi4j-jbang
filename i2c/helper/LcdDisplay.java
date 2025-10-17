@@ -1,4 +1,4 @@
-package helper.lcd;
+package i2c.helper;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
@@ -174,7 +174,7 @@ public class LcdDisplay extends I2CDevice {
     /**
      * Write a line of text on the LCD
      *
-     * @param text Text to be displayed
+     * @param text      Text to be displayed
      * @param lineIndex linenumber of display, range: 0 .. rows-1
      */
     public void displayLineOfText(String text, int lineIndex) {
@@ -184,7 +184,7 @@ public class LcdDisplay extends I2CDevice {
     /**
      * Center specified text in specified line
      *
-     * @param text Text to be displayed
+     * @param text      Text to be displayed
      * @param lineIndex linenumber of display, range: 0 .. rows-1
      */
     public void centerTextInLine(String text, int lineIndex) {
@@ -194,9 +194,9 @@ public class LcdDisplay extends I2CDevice {
     /**
      * Write a line of text on the LCD
      *
-     * @param text     text to be displayed
-     * @param lineIndex     line number of display, range: 0..rows-1
-     * @param position start position, range: 0..columns-1
+     * @param text      text to be displayed
+     * @param lineIndex line number of display, range: 0..rows-1
+     * @param position  start position, range: 0..columns-1
      */
     public void displayLineOfText(String text, int lineIndex, int position) {
         if (text.length() + position > columns) {
@@ -273,7 +273,7 @@ public class LcdDisplay extends I2CDevice {
      * write a character to lcd at a specific position
      *
      * @param character char that is written
-     * @param lineIndex      row-position, Range 0 .. rows-1
+     * @param lineIndex row-position, Range 0 .. rows-1
      * @param pos       col-position, Range 0 .. columns-1
      */
     public void writeCharacter(char character, int lineIndex, int pos) {
@@ -311,7 +311,7 @@ public class LcdDisplay extends I2CDevice {
      * Sets the cursor to a target destination
      *
      * @param lineIndex Selects the line of the display. Range: 0 - ROWS-1
-     * @param pos  Selects the character of the line. Range: 0 - Columns-1
+     * @param pos       Selects the character of the line. Range: 0 - Columns-1
      */
     public void setCursorToPosition(int lineIndex, int pos) {
         if (lineIndex > rows - 1 || lineIndex < 0) {

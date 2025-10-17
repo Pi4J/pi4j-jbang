@@ -15,9 +15,9 @@ import com.pi4j.io.pwm.PwmType;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
- * jbang Pi4JPWMLed.java
+ * jbang pwm.Pi4JPWMLed.java
  */
-public class Pi4JPWMLed {
+public class FadingLed {
 
     // BCM 19 on Raspberry Pi 4 = PWM Channel 1
     // BCM 19 on Raspberry Pi 5 = PWM Channel 3

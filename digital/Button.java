@@ -16,9 +16,9 @@ import com.pi4j.io.gpio.digital.PullResistance;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
- * jbang PI4JButton.java
+ * jbang Button.java
  */
-public class Pi4JButton {
+public class Button {
 
     // Connect a button to PIN 18 = BCM 24
     private static final int PIN_BUTTON = 24;

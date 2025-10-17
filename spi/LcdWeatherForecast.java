@@ -7,15 +7,15 @@
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
-//SOURCES helper/lcd/Component.java
-//SOURCES helper/lcd/I2CDevice.java
-//SOURCES helper/lcd/LcdDisplay.java
+//SOURCES i2c.helper/lcd/Component.java
+//SOURCES i2c.helper/lcd/I2CDevice.java
+//SOURCES i2c.helper/lcd/LcdDisplay.java
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pi4j.Pi4J;
-import helper.lcd.LcdDisplay;
+import i2c.helper.LcdDisplay;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,9 +27,9 @@ import java.net.URL;
  * This example gets the weather forecast from https://open-meteo.com/en/docs
  * Free for non-commercial use and less than 10.000 daily API calls.
  * <p>
- * jbang Pi4JLcdWeatherForecast.java
+ * jbang LcdWeatherForecast.java
  */
-public class Pi4JLcdWeatherForecastI2C {
+public class LcdWeatherForecast {
 
     private final static int WAIT_BETWEEN_MESSAGES = 3_000;
 
@@ -52,7 +52,7 @@ public class Pi4JLcdWeatherForecastI2C {
         } else {
             System.out.println("Forecast received for " + forecast.dailyForecast.date[0]);
 
-            // Show the data of the received forecast 10 times
+            // Show the pixelblaze.data of the received forecast 10 times
             for (int i = 0; i < 10; i++) {
                 showDate(lcdDisplay, forecast);
                 Thread.sleep(WAIT_BETWEEN_MESSAGES);

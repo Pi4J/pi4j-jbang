@@ -1,8 +1,8 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 // To be able to execute the code in this example, dependencies are needed.
-// Therefore, you can't run it with `java JsonParsing.java`.
-// But it can be executed with https://www.jbang.dev with `jbang JsonParsing.java`.
+// Therefore, you can't run it with `java basic.JsonParsing.java`.
+// But it can be executed with https://www.jbang.dev with `jbang basic.JsonParsing.java`.
 
 // This example uses a Record, which is available since Java 14.
 // More info about using specific Java versions with jbang is documented on
@@ -27,13 +27,13 @@ import java.util.Arrays;
 /**
  * Example code to illustrate how a Java file that needs dependencies can be executed with JBang.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * This example can be executed with:
  * jbang JsonParsing.java
  */
 public class JsonParsing {
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         var json = """
                 [
                     { 
@@ -59,7 +59,7 @@ public class JsonParsing {
             LogMessage[] logMessages = objectMapper.readValue(json, LogMessage[].class);
 
             System.out.println("Data loaded from JSON:\n");
-            
+
             for (LogMessage logMessage : logMessages) {
                 System.out.println("Log message at " + logMessage.getZonedDateTime()
                         + "\n\tSeverity: " + logMessage.level().getLabel()
@@ -67,16 +67,6 @@ public class JsonParsing {
             }
         } catch (IOException ex) {
             System.err.println("Json processing exception: " + ex.getMessage());
-        }
-    }
-
-    record LogMessage(Level level, Long timestamp, String message) {
-        // If you want to export ZonedDateTime to JSON,
-        // you need to comment '@JsonIgnore', and uncomment '@JsonFormat'.
-        @JsonIgnore
-        //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-        public ZonedDateTime getZonedDateTime() {
-            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp()), ZoneId.of("UTC"));
         }
     }
 
@@ -90,10 +80,18 @@ public class JsonParsing {
         private final String label;
         private final int color;
 
-        private Level(int severity, String label, int color) {
+        Level(int severity, String label, int color) {
             this.severity = severity;
             this.label = label;
             this.color = color;
+        }
+
+        @JsonCreator
+        public static Level fromValue(Integer severity) throws IllegalArgumentException {
+            return Arrays.stream(Level.values()).sequential()
+                    .filter(v -> v.getSeverity() == severity)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("The given severity does not exist:" + severity));
         }
 
         public int getSeverity() {
@@ -107,13 +105,15 @@ public class JsonParsing {
         public int getColor() {
             return color;
         }
+    }
 
-        @JsonCreator
-        public static Level fromValue(Integer severity) throws IllegalArgumentException {
-            return Arrays.stream(Level.values()).sequential()
-                    .filter(v -> v.getSeverity() == severity)
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("The given severity does not exist:" + severity));
+    record LogMessage(Level level, Long timestamp, String message) {
+        // If you want to export ZonedDateTime to JSON,
+        // you need to comment '@JsonIgnore', and uncomment '@JsonFormat'.
+        @JsonIgnore
+        //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+        public ZonedDateTime getZonedDateTime() {
+            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp()), ZoneId.of("UTC"));
         }
     }
 }

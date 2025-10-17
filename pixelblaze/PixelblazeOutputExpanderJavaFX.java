@@ -1,38 +1,38 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+package pixelblaze; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.10.2
 //DEPS org.openjfx:javafx-controls:20.0.2
 //DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
-//SOURCES helper/PixelBlazeOutputExpanderHelper.java
+//SOURCES i2c.helper/PixelBlazeOutputExpanderHelper.java
 
-import helper.PixelBlazeOutputExpanderHelper;
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
-import javafx.scene.paint.Color;
-import javafx.scene.Scene;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import pixelblaze.helper.PixelBlazeOutputExpanderHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Example code to change the colors of a LED strip with a JavaFX User Interface.
- * This example is based on PixelblazeOutputExpander.java, so please check its documentation first!
- *
+ * This example is based on pixelblaze.PixelblazeOutputExpander.java, so please check its documentation first!
+ * <p>
  * Also based on this video: https://www.youtube.com/watch?v=9q-_QhT1fj4
- *
+ * <p>
  * An SDK with bundled JavaFX is needed for this example, use SDKMAN to use a specific version:
  * curl -s "https://get.sdkman.io" | bash
  * source "$HOME/.sdkman/bin/sdkman-init.sh"
  * sdk install java 22.0.1.fx-zulu
- * 
+ * <p>
  * This example can be executed without sudo:
- * jbang PixelblazeOutputExpanderJavaFX.java
+ * jbang pixelblaze.PixelblazeOutputExpanderJavaFX.java
  */
 public class PixelblazeOutputExpanderJavaFX extends Application {
 
@@ -40,8 +40,12 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
     private static final int CHANNEL = 0;
     private static final int NUMBER_OF_LEDS = 11;
 
-    private List<ColorPicker> colorPickers = new ArrayList<>();
+    private final List<ColorPicker> colorPickers = new ArrayList<>();
     private PixelBlazeOutputExpanderHelper helper;
+
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override
     public void start(Stage stage) {
@@ -87,7 +91,7 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         System.out.println("Stage is closing");
         helper.closePort();
     }
@@ -111,9 +115,5 @@ public class PixelblazeOutputExpanderJavaFX extends Application {
             colors[(BYTES_PER_PIXEL * led) + 2] = (byte) (255 * color.getBlue());
         }
         helper.sendColors(CHANNEL, BYTES_PER_PIXEL, 1, 0, 2, 0, colors, true);
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }

@@ -243,7 +243,7 @@ public class Pi4JPWMRgbLedMatrix {
      * This converts the RGB buffer to WS2812B format and sends it via PWM
      */
     public void refresh() {
-        // Convert color buffer to WS2812B data format
+        // Convert color buffer to WS2812B pixelblaze.data format
         byte[] ledData = new byte[TOTAL_LEDS * 3]; // 3 bytes per LED (GRB format for WS2812B)
 
         int dataIndex = 0;
@@ -263,7 +263,7 @@ public class Pi4JPWMRgbLedMatrix {
             }
         }
 
-        // Send data to LEDs via PWM (this is a simplified approach)
+        // Send pixelblaze.data to LEDs via PWM (this is a simplified approach)
         // In a real implementation, you'd need to convert to proper WS2812B timing
         sendWS2812BData(ledData);
     }

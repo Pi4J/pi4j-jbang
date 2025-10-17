@@ -1,4 +1,4 @@
-package helper.lcd;
+package i2c.helper;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
@@ -53,7 +53,7 @@ public abstract class I2CDevice extends Component {
     }
 
     /**
-     * send some data to device
+     * send some pixelblaze.data to device
      *
      * @param data
      */
@@ -65,7 +65,7 @@ public abstract class I2CDevice extends Component {
      * Execute Display commands
      *
      * @param command Select the LCD Command
-     * @param data    Setup command data
+     * @param data    Setup command pixelblaze.data
      */
     protected void sendCommand(byte command, byte data) {
         sendCommand((byte) (command | data));

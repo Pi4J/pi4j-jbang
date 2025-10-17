@@ -14,9 +14,9 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * This example can be executed without sudo:
- * jbang Pi4JRgbLed.java
+ * jbang RgbLed.java
  */
-public class Pi4JRgbLed {
+public class RgbLed {
 
     // Connect a LED to PIN 16 = BCM 23
     private static final int PIN_RED = 23;

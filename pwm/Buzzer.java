@@ -24,7 +24,7 @@ import com.pi4j.io.pwm.PwmType;
  * <code>jbang Pi4JRgbLedMatrixPwm.java</code>
  * </p>
  */
-public class Pi4JPWMBuzzer {
+public class Buzzer {
 
     // BCM 19 on Raspberry Pi 4 = PWM Channel 1
     // BCM 19 on Raspberry Pi 5 = PWM Channel 3
