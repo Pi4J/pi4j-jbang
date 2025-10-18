@@ -1,17 +1,21 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
 
-// To be able to execute the code in this example, dependencies are needed.
-// Therefore, you can't run it with `java basic.JsonParsing.java`.
-// But it can be executed with https://www.jbang.dev with `jbang basic.JsonParsing.java`.
-
-// This example uses a Record, which is available since Java 14.
-// More info about using specific Java versions with jbang is documented on
-// https://www.jbang.dev/documentation/guide/latest/javaversions.html
-//JAVA 14+
-
+/**
+ * To be able to execute the code in this example, dependencies are needed.
+ * Therefore, you can't run it with `java basic.JsonParsing.java`.
+ * But it can be executed with https://www.jbang.dev when you
+ * define the dependencies in the following format:
+ */
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
+
+/**
+ * This example uses a Record, which is available since Java 14.
+ * More info about using specific Java versions with JBang is documented on
+ * https://www.jbang.dev/documentation/guide/latest/javaversions.html
+ */
+//JAVA 14+
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
