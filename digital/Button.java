@@ -41,7 +41,7 @@ public class Button {
 
         // Add a listener to the button
         button.addListener(e -> {
-            System.out.println("Button changed to: " + e.state());
+            System.out.println("Button changed in listener to: " + e.state());
             if (e.state() == DigitalState.LOW) {
                 // Each time the button changes to the low state, increment the counter
                 pressCount++;
@@ -50,7 +50,13 @@ public class Button {
         });
 
         // Loop until the button has been pressed 10 times
+        var buttonState = button.state();
+        System.out.println("Current button state: " + buttonState);
         while (pressCount < 10) {
+            if (buttonState != button.state()) {
+                buttonState = button.state();
+                System.out.println("Button changed in loop to state: " + buttonState);
+            }
             Thread.sleep(10);
         }
 
