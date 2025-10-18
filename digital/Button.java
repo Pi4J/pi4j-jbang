@@ -32,12 +32,8 @@ public class Button {
 
         // Initialize the button configuration
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
-                .id("button")
-                .name("Press button")
                 .address(PIN_BUTTON)
-                .pull(PullResistance.PULL_DOWN) // disable this line to compare with and without pull down resistor
-                //.pull(PullResistance.PULL_UP) // try this instead of PULL_DOWN
-                .debounce(3000L);
+                .pull(PullResistance.PULL_UP);
 
         // Initialize the button (digital input)
         var button = pi4j.create(buttonConfig);
@@ -45,6 +41,7 @@ public class Button {
 
         // Add a listener to the button
         button.addListener(e -> {
+            System.out.println("Button changed to: " + e.state());
             if (e.state() == DigitalState.LOW) {
                 // Each time the button changes to the low state, increment the counter
                 pressCount++;
