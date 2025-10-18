@@ -33,7 +33,7 @@ public class Button {
         // Initialize the button configuration
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
                 .address(PIN_BUTTON)
-                .pull(PullResistance.PULL_UP);
+                .pull(PullResistance.PULL_DOWN);
 
         // Initialize the button (digital input)
         var button = pi4j.create(buttonConfig);
