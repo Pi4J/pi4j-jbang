@@ -20,8 +20,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
  */
 public class Button {
 
-    // Connect a button to PIN 18 = BCM 24
-    private static final int PIN_BUTTON = 24;
+    // Connect a button to PIN 15 = BCM 22
+    private static final int PIN_BUTTON = 22;
 
     private static int pressCount = 0;
 

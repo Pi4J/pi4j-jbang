@@ -27,10 +27,10 @@ public class ButtonLed {
 
     // Wiring see: https://pi4j.com/getting-started/minimal-example-application/
 
-    // Connect a button to PIN 18 = BCM 24
-    private static final int PIN_BUTTON = 24;
-    // Connect a LED to PIN 15 = BCM 22
-    private static final int PIN_LED = 22;
+    // Connect a button to PIN 15 = BCM 22
+    private static final int PIN_BUTTON = 22;
+    // Connect a LED to PIN 18 = BCM 24
+    private static final int PIN_LED = 24;
 
     private static int pressCount = 0;
 
