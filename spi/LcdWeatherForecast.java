@@ -7,15 +7,15 @@
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
 
-//SOURCES i2c.helper/lcd/Component.java
-//SOURCES i2c.helper/lcd/I2CDevice.java
-//SOURCES i2c.helper/lcd/LcdDisplay.java
+//SOURCES helper/Component.java
+//SOURCES helper/I2CDevice.java
+//SOURCES helper/LcdDisplay.java
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pi4j.Pi4J;
-import i2c.helper.LcdDisplay;
+import helper.LcdDisplay;
 
 import java.io.BufferedReader;
 import java.io.IOException;
