@@ -36,10 +36,13 @@ import java.text.DecimalFormat;
  *  <li>SDI to I2C pixelblaze.data SDA (pin 3)</li>
  *  <li>CS to 3.3V</li>
  * </ul>
+ *
  * <p>
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
  * <p>
- * Check that the sensor is detected on address 0x77 with ``.
+ * Check that the sensor is detected on address 0x77 with `i2cdetect -y 1`.
+ * In case your sensor is discovered on a different address, change the I2C address in the code.
+ *
  * <p>
  * $ i2cdetect -y 1
  *      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f

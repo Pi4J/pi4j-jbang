@@ -28,7 +28,35 @@ import java.net.URL;
  * Free for non-commercial use and less than 10.000 daily API calls.
  * <p>
  * From the terminal, in the `spi` directory, start this example with:
- * <code>jbang LcdWeatherForecast.java</code>
+ * <code>jbang i2c.LcdWeatherForecast.java</code>
+ * <p>
+ * I2C Wiring
+ *
+ * <ul>
+ *  <li>Vin to 5V</li>
+ *  <li>GND to GND</li>
+ *  <li>SDA to I2C data SDA (pin 3)</li>
+ *  <li>SCL to I2C clock SCL (pin 5)</li>
+ * </ul>
+ *
+ * <p>
+ * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
+ *
+ * <p>
+ * Check that the LCD display is detected on address 0x27 with `i2cdetect -y 1`.
+ * In case your LCD is discovered on a different address, change the I2C address in the code.
+ *
+ * <p>
+ * $ i2cdetect -y 1
+ *      0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+ * 00:                         -- -- -- -- -- -- -- --
+ * 10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 20: -- -- -- -- -- -- -- 27 -- -- -- -- -- -- -- --
+ * 30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+ * 70: -- -- -- -- -- -- -- --
  */
 public class LcdWeatherForecast {
 

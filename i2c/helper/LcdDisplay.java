@@ -1,4 +1,4 @@
-package i2c.helper;
+package helper;
 
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
