@@ -25,12 +25,16 @@ import java.net.URL;
 
 /**
  * This example gets the weather forecast from https://open-meteo.com/en/docs
- * Free for non-commercial use and less than 10.000 daily API calls.
+ * Free for non-commercial use and less than 10.000 daily API calls. It displays the forecast on an LCD display.
+ * Use an LCD display with an I2C interfact, because that's a lot easier to use, compared to all the wires needed
+ * for direct control of an 1602A display.
+ *
  * <p>
  * From the terminal, in the `spi` directory, start this example with:
  * <code>jbang i2c.LcdWeatherForecast.java</code>
+ *
  * <p>
- * I2C Wiring
+ * I2C Wiring for a 16*2 1602A LCD display with I2C interface:
  *
  * <ul>
  *  <li>Vin to 5V</li>

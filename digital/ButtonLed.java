@@ -53,7 +53,7 @@ public class ButtonLed {
                 .name("Press button")
                 .address(PIN_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
-                .debounce(3000L);
+                .debounce(100_000_000L);
         var button = pi4j.create(buttonConfig);
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
