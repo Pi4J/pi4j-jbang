@@ -9,12 +9,8 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
-import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 import com.pi4j.util.Console;
-
-import java.text.DecimalFormat;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
@@ -60,13 +56,12 @@ import java.text.DecimalFormat;
  */
 public class TemperatureHumidityPressure {
 
-    private static final Console console = new Console(); // Pi4J Logger i2c.helper
+    private static final Console console = new Console(); // Pi4J Logger
 
     private static final int I2C_BUS = 0x01;
-    private static final int I2C_ADDRESS = 0x77; // When connecting SDO to GND = 0x76
+    private static final int I2C_ADDRESS = 0x77;
 
     public static void main(String[] args) {
-
         try {
             var pi4j = Pi4J.newAutoContext();
 
