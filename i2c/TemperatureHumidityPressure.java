@@ -32,16 +32,15 @@ import java.text.DecimalFormat;
  * <ul>
  *  <li>Vin to 3.3V</li>
  *  <li>GND to GND</li>
+ *  <li>SDI to I2C data SDA (pin 3)</li>
  *  <li>SCK to I2C clock SCL (pin 5)</li>
- *  <li>SDI to I2C pixelblaze.data SDA (pin 3)</li>
  *  <li>CS to 3.3V</li>
  * </ul>
  *
  * <p>
  * Make sure I2C is enabled on the Raspberry Pi. Use `sudo raspi-config' > Interface Options > I2C.
  * <p>
- * Check that the sensor is detected on address 0x77 with `i2cdetect -y 1`.
- * In case your sensor is discovered on a different address, change the I2C address in the code.
+ * Check that the sensor is detected on address 0x77 with `i2cdetect -y 1`.0
  *
  * <p>
  * $ i2cdetect -y 1

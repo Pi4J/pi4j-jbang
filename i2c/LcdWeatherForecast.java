@@ -5,17 +5,15 @@
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-drivers:0.0.1-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
-
-//SOURCES helper/Component.java
-//SOURCES helper/I2CDevice.java
-//SOURCES helper/LcdDisplay.java
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pi4j.Pi4J;
-import helper.LcdDisplay;
+import com.pi4j.drivers.display.character.hd44780.Hd44780Driver;
+import com.pi4j.io.i2c.I2C;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,7 +70,12 @@ public class LcdWeatherForecast {
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize the LCD
-        LcdDisplay lcdDisplay = new LcdDisplay(pi4j, 2, 16);
+        var i2c = pi4j.create(I2C.newConfigBuilder(pi4j)
+                .bus(0x1)
+                .device(0x27)
+                .build());
+
+        Hd44780Driver lcdDisplay = Hd44780Driver.withMcp23008Connection(i2c, 16, 2);
 
         // Get the weather forecast as JSON String
         var forecastContent = getForecast(52.52, 13.41);
@@ -145,36 +148,36 @@ public class LcdWeatherForecast {
         }
     }
 
-    private static void showDate(LcdDisplay lcd, Forecast forecast) {
+    private static void showDate(Hd44780Driver lcd, Forecast forecast) {
         System.out.println("Showing date");
         lcd.clearDisplay();
-        lcd.displayLineOfText("Weather for", 0);
-        lcd.displayLineOfText(forecast.dailyForecast.date[0], 1);
+        lcd.writeAt(0, 0, "Weather for");
+        lcd.writeAt(1, 0, forecast.dailyForecast.date[0]);
     }
 
-    private static void showCurrentWeather(LcdDisplay lcd, Forecast forecast) {
+    private static void showCurrentWeather(Hd44780Driver lcd, Forecast forecast) {
         System.out.println("Showing current weather");
         var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
         lcd.clearDisplay();
         if (text.length() > 16) {
-            lcd.displayLineOfText(text.substring(0, 15), 0);
-            lcd.displayLineOfText(text.substring(15), 1);
+            lcd.writeAt(0, 0, text.substring(0, 15));
+            lcd.writeAt(1, 0, text.substring(15));
         } else {
-            lcd.displayLineOfText(text, 0);
-            lcd.displayLineOfText("", 1);
+            lcd.writeAt(0, 0, text);
+            lcd.writeAt(1, 0, "");
         }
     }
 
-    private static void showSunInfo(LcdDisplay lcd, Forecast forecast) {
+    private static void showSunInfo(Hd44780Driver lcd, Forecast forecast) {
         System.out.println("Showing sun duration");
         var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
         var hours = (seconds * 1.0) / 60 / 60;
         String roundedToTwoNumbers = String.format("%.2f", hours);
         lcd.clearDisplay();
-        lcd.displayLineOfText("Hours sun: " + roundedToTwoNumbers, 0);
-        lcd.displayLineOfText(getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
+        lcd.writeAt(0, 0, "Hours sun: " + roundedToTwoNumbers);
+        lcd.writeAt(1, 0, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
                 + " till "
-                + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]), 1);
+                + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]));
     }
 
     private static String getTimeFromTimestamp(String timestamp) {
