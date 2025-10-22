@@ -152,7 +152,7 @@ public class LcdWeatherForecast {
         System.out.println("Showing date");
         lcd.clearDisplay();
         lcd.writeAt(0, 0, "Weather for");
-        lcd.writeAt(1, 0, forecast.dailyForecast.date[0]);
+        lcd.writeAt(0, 1, forecast.dailyForecast.date[0]);
     }
 
     private static void showCurrentWeather(Hd44780Driver lcd, Forecast forecast) {
@@ -161,10 +161,10 @@ public class LcdWeatherForecast {
         lcd.clearDisplay();
         if (text.length() > 16) {
             lcd.writeAt(0, 0, text.substring(0, 15));
-            lcd.writeAt(1, 0, text.substring(15));
+            lcd.writeAt(0, 1, text.substring(15));
         } else {
             lcd.writeAt(0, 0, text);
-            lcd.writeAt(1, 0, "");
+            lcd.writeAt(0, 1, "");
         }
     }
 
@@ -175,7 +175,7 @@ public class LcdWeatherForecast {
         String roundedToTwoNumbers = String.format("%.2f", hours);
         lcd.clearDisplay();
         lcd.writeAt(0, 0, "Hours sun: " + roundedToTwoNumbers);
-        lcd.writeAt(1, 0, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
+        lcd.writeAt(0, 1, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
                 + " till "
                 + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]));
     }
