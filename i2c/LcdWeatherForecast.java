@@ -75,7 +75,7 @@ public class LcdWeatherForecast {
                 .device(0x27)
                 .build());
 
-        Hd44780Driver lcdDisplay = Hd44780Driver.withMcp23008Connection(i2c, 16, 2);
+        Hd44780Driver lcdDisplay = Hd44780Driver.withPcf8574Connection(i2c, 16, 2);
 
         // Get the weather forecast as JSON String
         var forecastContent = getForecast(52.52, 13.41);
