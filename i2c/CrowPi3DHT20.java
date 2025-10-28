@@ -53,9 +53,10 @@ public class CrowPi3DHT20 {
             Thread.sleep(500);
             byte[] statusData = new byte[1];
             i2c.readRegister(0x71, statusData, 0, 1);
+            console.println("Read: " + statusData[0]);
             if ((statusData[0] | 0x08) == 0) {
                 console.println("Initialization error");
-                return;
+                //return;
             }
 
             for (int counter = 0; counter < 10; counter++) {
