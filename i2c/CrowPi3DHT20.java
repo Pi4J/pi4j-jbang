@@ -5,10 +5,10 @@ package i2c; /// usr/bin/env jbang "$0" "$@" ; exit $?
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-drivers:0.0.1-SNAPSHOT
 
 import com.pi4j.Pi4J;
-import com.pi4j.io.i2c.I2CConfigBuilder;
+import com.pi4j.io.i2c.I2C;
+import com.pi4j.io.i2c.I2CImplementation;
 import com.pi4j.util.Console;
 
 /**
@@ -47,7 +47,12 @@ public class CrowPi3DHT20 {
 
             console.println("Initializing the DHT20 sensor via I2C");
 
-            var i2c = pi4j.create(I2CConfigBuilder.newInstance(pi4j).bus(I2C_BUS).device(I2C_ADDRESS));
+            var i2cConfig = I2C.newConfigBuilder(pi4j)
+                    .bus(I2C_BUS)
+                    .device(I2C_ADDRESS)
+                    .i2cImplementation(I2CImplementation.DIRECT)
+                    .build();
+            var i2c = pi4j.create(i2cConfig);
 
             // Check initialization status
             Thread.sleep(500);
