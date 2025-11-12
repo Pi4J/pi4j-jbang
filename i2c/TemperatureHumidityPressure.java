@@ -59,7 +59,7 @@ public class TemperatureHumidityPressure {
     private static final Console console = new Console(); // Pi4J Logger
 
     private static final int I2C_BUS = 0x01;
-    private static final int I2C_ADDRESS = 0x77;
+    private static final int I2C_DEVICE = 0x77;
 
     public static void main(String[] args) {
         try {
@@ -67,7 +67,7 @@ public class TemperatureHumidityPressure {
 
             console.println("Initializing the sensor via I2C");
 
-            var i2c = pi4j.create(I2CConfigBuilder.newInstance(pi4j).bus(I2C_BUS).device(I2C_ADDRESS));
+            var i2c = pi4j.create(I2CConfigBuilder.newInstance(pi4j).bus(I2C_BUS).device(I2C_DEVICE));
             var sensor = new Bmx280Driver(i2c);
 
             for (int counter = 0; counter < 10; counter++) {

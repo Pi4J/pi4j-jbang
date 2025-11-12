@@ -22,8 +22,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
 public class DistanceSensor {
 
     // Config for CrowPi 2: trigger on BCM 16 and echo on BCM 26
-    private static final int PIN_TRIGGER = 16;
-    private static final int PIN_ECHO = 26;
+    private static final int BCM_TRIGGER = 16;
+    private static final int BCM_ECHO = 26;
 
     private static DigitalOutput trigger;
     private static DigitalInput echo;
@@ -36,12 +36,12 @@ public class DistanceSensor {
 
         try {
             // Initialize the output pin
-            trigger = pi4j.digitalOutput().create(PIN_TRIGGER);
+            trigger = pi4j.digitalOutput().create(BCM_TRIGGER);
             trigger.low();
 
             // Initialize the input pin
             var echoConfig = DigitalInput.newConfigBuilder(pi4j)
-                    .bcm(PIN_ECHO)
+                    .bcm(BCM_ECHO)
                     .pull(PullResistance.PULL_UP);
             echo = pi4j.create(echoConfig);
 

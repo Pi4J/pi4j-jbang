@@ -19,11 +19,11 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
 public class RgbLed {
 
     // Connect a LED to PIN 16 = BCM 23
-    private static final int PIN_RED = 23;
+    private static final int BCM_RED = 23;
     // Connect a LED to PIN 18 = BCM 24
-    private static final int PIN_GREEN = 24;
+    private static final int BCM_GREEN = 24;
     // Connect a LED to PIN 22 = BCM 25
-    private static final int PIN_BLUE = 25;
+    private static final int BCM_BLUE = 25;
 
     public static void main(String[] args) throws Exception {
 
@@ -31,9 +31,9 @@ public class RgbLed {
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize the three LEDs
-        var ledRed = pi4j.digitalOutput().create(PIN_RED);
-        var ledGreen = pi4j.digitalOutput().create(PIN_GREEN);
-        var ledBlue = pi4j.digitalOutput().create(PIN_BLUE);
+        var ledRed = pi4j.digitalOutput().create(BCM_RED);
+        var ledGreen = pi4j.digitalOutput().create(BCM_GREEN);
+        var ledBlue = pi4j.digitalOutput().create(BCM_BLUE);
 
         // Start with all off
         ledRed.low();

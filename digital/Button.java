@@ -21,7 +21,7 @@ import com.pi4j.io.gpio.digital.PullResistance;
 public class Button {
 
     // Connect a button to PIN 15 = BCM 22
-    private static final int PIN_BUTTON = 22;
+    private static final int BCM_BUTTON = 22;
 
     private static int pressCount = 0;
 
@@ -32,7 +32,7 @@ public class Button {
 
         // Initialize the button configuration
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
-                .bcm(PIN_BUTTON)
+                .bcm(BCM_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
                 .debounce(100_000_000L);
 

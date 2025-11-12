@@ -39,7 +39,7 @@ public class CrowPi3DHT20 {
     private static final Console console = new Console(); // Pi4J Logger
 
     private static final int I2C_BUS = 0x01;
-    private static final int I2C_ADDRESS = 0x38;
+    private static final int I2C_DEVICE = 0x38;
 
     public static void main(String[] args) {
         try {
@@ -49,7 +49,7 @@ public class CrowPi3DHT20 {
 
             var i2cConfig = I2C.newConfigBuilder(pi4j)
                     .bus(I2C_BUS)
-                    .device(I2C_ADDRESS)
+                    .device(I2C_DEVICE)
                     .i2cImplementation(I2CImplementation.DIRECT)
                     .build();
             var i2c = pi4j.create(i2cConfig);

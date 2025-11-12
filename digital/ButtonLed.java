@@ -28,9 +28,9 @@ public class ButtonLed {
     // Wiring see: https://pi4j.com/getting-started/minimal-example-application/
 
     // Connect a button to PIN 15 = BCM 22
-    private static final int PIN_BUTTON = 22;
+    private static final int BCM_BUTTON = 22;
     // Connect a LED to PIN 18 = BCM 24
-    private static final int PIN_LED = 24;
+    private static final int BCM_LED = 24;
 
     private static int pressCount = 0;
 
@@ -43,7 +43,7 @@ public class ButtonLed {
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("led")
                 .name("LED Flasher")
-                .bcm(PIN_LED)
+                .bcm(BCM_LED)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW);
         var led = pi4j.create(ledConfig);
@@ -51,7 +51,7 @@ public class ButtonLed {
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
                 .id("button")
                 .name("Press button")
-                .bcm(PIN_BUTTON)
+                .bcm(BCM_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
                 .debounce(100_000_000L);
         var button = pi4j.create(buttonConfig);
