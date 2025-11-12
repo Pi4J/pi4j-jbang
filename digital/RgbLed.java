@@ -76,7 +76,7 @@ public class RgbLed {
     }
 
     private static void blink10(DigitalOutput led) throws InterruptedException {
-        System.out.println("Start blinking LED " + led.getAddress());
+        System.out.println("Start blinking LED " + led.bcm());
 
         for (int i = 0; i < 10; i++) {
             led.toggle();
@@ -85,7 +85,7 @@ public class RgbLed {
 
         // Make sure the led is off
         led.low();
-        System.out.println("LED " + led.getAddress() + " is off");
+        System.out.println("LED " + led.bcm() + " is off");
     }
 
     // Contributed by Jonathan Stronkhorst
