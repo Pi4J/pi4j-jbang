@@ -52,7 +52,7 @@ public class TemperatureHumidityPressure {
             console.println("Initializing the sensor via I2C");
 
             var csb = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
-                    .address(SPI_CSB)
+                    .bcm(SPI_CSB)
                     .initial(DigitalState.HIGH)
                     .shutdown(DigitalState.HIGH)
                     .build());

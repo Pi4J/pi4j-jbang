@@ -41,7 +41,7 @@ public class DistanceSensor {
 
             // Initialize the input pin
             var echoConfig = DigitalInput.newConfigBuilder(pi4j)
-                    .address(PIN_ECHO)
+                    .bcm(PIN_ECHO)
                     .pull(PullResistance.PULL_UP);
             echo = pi4j.create(echoConfig);
 

@@ -43,7 +43,7 @@ public class ButtonLed {
         var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("led")
                 .name("LED Flasher")
-                .address(PIN_LED)
+                .bcm(PIN_LED)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW);
         var led = pi4j.create(ledConfig);
@@ -51,7 +51,7 @@ public class ButtonLed {
         var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
                 .id("button")
                 .name("Press button")
-                .address(PIN_BUTTON)
+                .bcm(PIN_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
                 .debounce(100_000_000L);
         var button = pi4j.create(buttonConfig);

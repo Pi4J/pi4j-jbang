@@ -43,8 +43,8 @@ public class Buzzer {
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins:
             // BCM 12, 13, 18, and 19
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                    .address(CHANNEL)
                     .pwmType(PwmType.HARDWARE)
+                    .channel(CHANNEL)
                     .initial(0)
                     .shutdown(0)
                     .build();
