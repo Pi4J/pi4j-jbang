@@ -57,7 +57,7 @@ public class TemperatureHumidityPressure {
                     .shutdown(DigitalState.HIGH)
                     .build());
             var spi = pi4j.create(SpiConfigBuilder.newInstance(pi4j)
-                    .address(0)
+                    .channel(0)
                     .bus(SPI_BUS)
                     .mode(SpiMode.MODE_0)
                     .baud(Spi.DEFAULT_BAUD)

@@ -1,4 +1,4 @@
-/// usr/bin/env jbang "$0" "$@" ; exit $?
+package pwm; /// usr/bin/env jbang "$0" "$@" ; exit $?
 //REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
@@ -11,18 +11,16 @@ import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
 
 /**
- * Example code to fade a LED with a PWM signal.
+ * Example code to fade a LED with a PWM signal and a SOFTWARE PWM pin.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
  * From the terminal, in the `digital` directory, start this example with:
- * <code>jbang FadingLed.java</code>
+ * <code>jbang FadingLedSoftware.java</code>
  */
-public class FadingLed {
+public class FadingLedSoftware {
 
-    // BCM 19 on Raspberry Pi 4 = PWM Channel 1
-    // BCM 19 on Raspberry Pi 5 = PWM Channel 3
-    // Buzzer in CrowPi is connected to BCM 18 = on RPi 5 is Channel 2
-    private static final int CHANNEL = 0;
+    // Connect a LED to PIN 16 = BCM 23
+    private static final int BCM_LED = 23;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -35,11 +33,10 @@ public class FadingLed {
             // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
             // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                    .pwmType(PwmType.HARDWARE)
-                    .channel(CHANNEL)
+                    .pwmType(PwmType.SOFTWARE)
+                    .bcm(BCM_LED)
                     .initial(0)
                     .frequency(1)
-                    .busNumber(2)
                     //.shutdown(0)
                     .build();
             System.out.println("PWM config create");
