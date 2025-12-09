@@ -57,10 +57,10 @@ public class FadingLedHardware {
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
-                for (int useValue = 0; useValue <= 100; useValue += 5) {
+                for (int useValue = 0; useValue <= 1000; useValue += 10) {
                     pwm.on(useValue);
                     System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
-                    Thread.sleep(200);
+                    Thread.sleep(50);
                 }
                 pwm.off();
                 Thread.sleep(1000);
