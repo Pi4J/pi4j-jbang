@@ -16,13 +16,23 @@ import com.pi4j.io.pwm.PwmType;
  * <p>
  * From the terminal, in the `digital` directory, start this example with:
  * <code>jbang FadingLedHardware.java</code>
+ * </p>
+ * <p>
+ * Test the available PWM hardware channels on your Raspberry Pi, e.g. on RPi 4:
+ * $  pinctrl | grep PWM
+ * 18: a5    pd | lo // GPIO18 = PWM0_0
+ * 19: a5    pd | lo // GPIO19 = PWM0_1
+ * 40: a0    pn | lo // PWM0_MISO/GPIO40 = PWM1_0
+ * 41: a0    pn | lo // PWM1_MOSI/GPIO41 = PWM1_1
+ * </p>
  */
 public class FadingLedHardware {
 
-    // BCM 18 on Raspberry Pi 4 = PWM Channel 0
-    // BCM 18 on Raspberry Pi 5 = PWM Channel 0
+    // Raspberry Pi 4:
+    //    GPIO18 = PWM0_0 = Chip 0, Channel 0
+    //    GPIO19 = PWM0_1 = Chip 0, Channel 1
     private static final int PWM_CHIP = 0;
-    private static final int PWM_CHANNEL = 0;
+    private static final int PWM_CHANNEL = 1;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
