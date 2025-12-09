@@ -16,6 +16,10 @@ import com.pi4j.io.pwm.PwmType;
  * <p>
  * From the terminal, in the `digital` directory, start this example with:
  * <code>jbang FadingLedSoftware.java</code>
+ * <p>
+ * WARNING! At this moment (December 2025), software PWM is not available yet with the FFM plugin...
+ * So this example will not work yet.
+ * </p>
  */
 public class FadingLedSoftware {
 

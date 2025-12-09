@@ -21,7 +21,8 @@ public class FadingLedHardware {
 
     // BCM 18 on Raspberry Pi 4 = PWM Channel 0
     // BCM 18 on Raspberry Pi 5 = PWM Channel 0
-    private static final int CHANNEL = 0;
+    private static final int PWM_CHIP = 0;
+    private static final int PWM_CHANNEL = 0;
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
@@ -35,8 +36,8 @@ public class FadingLedHardware {
             // BCM 12, 13, 18, and 19 
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
                     .pwmType(PwmType.HARDWARE)
-                    .chip(PwmChipUtil.getPWMChip())
-                    .channel(CHANNEL)
+                    .chip(PWM_CHIP)
+                    .channel(PWM_CHANNEL)
                     .initial(0)
                     .frequency(1)
                     //.shutdown(0)
