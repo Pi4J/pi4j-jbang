@@ -49,8 +49,7 @@ public class FadingLedHardware {
                     .chip(PWM_CHIP)
                     .channel(PWM_CHANNEL)
                     .initial(0)
-                    .frequency(1)
-                    //.shutdown(0)
+                    .frequency(1000)
                     .build();
             System.out.println("PWM config create");
             var pwm = pi4j.create(pwmConfig);
@@ -59,7 +58,7 @@ public class FadingLedHardware {
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
                 for (int useValue = 0; useValue <= 100; useValue += 5) {
-                    pwm.on(useValue, 1000);
+                    pwm.on(useValue);
                     System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
                     Thread.sleep(200);
                 }
