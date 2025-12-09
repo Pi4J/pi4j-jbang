@@ -41,9 +41,7 @@ public class FadingLedHardware {
             // Initialize the Pi4J context
             var pi4j = Pi4J.newAutoContext();
 
-            // All Raspberry Pi models support a hardware PWM pin on GPIO_01.
-            // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins: 
-            // BCM 12, 13, 18, and 19 
+            // Initialize PWM
             var pwmConfig = Pwm.newConfigBuilder(pi4j)
                     .pwmType(PwmType.HARDWARE)
                     .chip(PWM_CHIP)
@@ -57,14 +55,22 @@ public class FadingLedHardware {
 
             // Loop through PWM values 10 times
             for (int loop = 0; loop < 10; loop++) {
-                for (int useValue = 0; useValue <= 1000; useValue += 10) {
-                    pwm.on(useValue);
+                // Fade up from 0% to 100%
+                for (int dutyCycle = 0; dutyCycle <= 100; dutyCycle += 5) {
+                    pwm.on(dutyCycle);
                     System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
                     Thread.sleep(50);
                 }
-                pwm.off();
-                Thread.sleep(1000);
+                // Fade down from 100% to 0%
+                for (int dutyCycle = 100; dutyCycle >= 0; dutyCycle -= 5) {
+                    pwm.on(dutyCycle);
+                    System.out.println("PWM duty cycle / frequency is: " + pwm.getDutyCycle() + "/" + pwm.getFrequency());
+                    Thread.sleep(50);
+                }
             }
+
+            // Turn off PWM
+            pwm.off();
 
             // Shut down the Pi4J context
             pi4j.shutdown();
