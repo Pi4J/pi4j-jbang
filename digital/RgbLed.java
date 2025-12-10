@@ -1,4 +1,12 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+
+/**
+ * This example uses the simplifed main method, which is available since Java 25.
+ * More info about using specific Java versions with JBang is documented on
+ * https://www.jbang.dev/documentation/guide/latest/javaversions.html
+ */
+// JAVA 25
+
 //REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
@@ -16,109 +24,106 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
  * From the terminal, in the `digital` directory, start this example with:
  * <code>jbang RgbLed.java</code>
  */
-public class RgbLed {
 
-    // Connect a LED to PIN 16 = BCM 23
-    private static final int BCM_RED = 23;
-    // Connect a LED to PIN 18 = BCM 24
-    private static final int BCM_GREEN = 24;
-    // Connect a LED to PIN 22 = BCM 25
-    private static final int BCM_BLUE = 25;
+// Connect a LED to PIN 16 = BCM 23
+private static final int BCM_RED = 23;
+// Connect a LED to PIN 18 = BCM 24
+private static final int BCM_GREEN = 24;
+// Connect a LED to PIN 22 = BCM 25
+private static final int BCM_BLUE = 25;
 
-    public static void main(String[] args) throws Exception {
+private static void blink10(DigitalOutput led) throws InterruptedException {
+    System.out.println("Start blinking LED " + led.bcm());
 
-        // Initialize the Pi4J context
-        var pi4j = Pi4J.newAutoContext();
-
-        // Initialize the three LEDs
-        var ledRed = pi4j.digitalOutput().create(BCM_RED);
-        var ledGreen = pi4j.digitalOutput().create(BCM_GREEN);
-        var ledBlue = pi4j.digitalOutput().create(BCM_BLUE);
-
-        // Start with all off
-        ledRed.low();
-        ledGreen.low();
-        ledBlue.low();
-
-        // Toggle 10 times each color on and off
-        blink10(ledRed);
-        blink10(ledGreen);
-        blink10(ledBlue);
-        Thread.sleep(2_000);
-
-        // Put all off
-        ledRed.low();
-        ledGreen.low();
-        ledBlue.low();
-
-        // Morse
-        System.out.println("Starting Morse message");
-        morseHelloWorld(ledRed);
-        System.out.println("Morse message has been sent");
-        Thread.sleep(2_000);
-
-        // All three on, should be (close to) white
-        ledRed.high();
-        ledGreen.high();
-        ledBlue.high();
-        System.out.println("All three on, check if this looks like white or close to white...");
-        Thread.sleep(2_000);
-
-        // All three off
-        ledRed.low();
-        ledGreen.low();
-        ledBlue.low();
-
-        System.out.println("All three off");
-
-        // Shutdown the Pi4J context
-        pi4j.shutdown();
+    for (int i = 0; i < 10; i++) {
+        led.toggle();
+        Thread.sleep(250);
     }
 
-    private static void blink10(DigitalOutput led) throws InterruptedException {
-        System.out.println("Start blinking LED " + led.bcm());
+    // Make sure the led is off
+    led.low();
+    System.out.println("LED " + led.bcm() + " is off");
+}
 
-        for (int i = 0; i < 10; i++) {
-            led.toggle();
-            Thread.sleep(250);
-        }
+// Contributed by Jonathan Stronkhorst
+// Morse translator: https://morsecode.world/international/translator.html
+// Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
+private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
+    String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
 
-        // Make sure the led is off
-        led.low();
-        System.out.println("LED " + led.bcm() + " is off");
-    }
-
-    // Contributed by Jonathan Stronkhorst
-    // Morse translator: https://morsecode.world/international/translator.html
-    // Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
-    private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
-        String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
-
-        /*
-         * Upon reading morse guides:
-         * Dot is 1 unit
-         * dash is 3 units
-         * gap between elements in characters is 1 unit
-         * gap between letters is 3 units
-         * gap between words is 7 units
-         */
-        for (char c : helloWorld.toCharArray()) {
-            System.out.println("Morse: " + c);
-            if (c == '.') {
-                led.high();
-                Thread.sleep(100);
-                led.low();
-                Thread.sleep(100);
-            } else if (c == '-') {
-                led.high();
-                Thread.sleep(300);
-                led.low();
-                Thread.sleep(100);
-            } else if (c == ' ') {
-                Thread.sleep(200);
-            } else if (c == '/') {
-                Thread.sleep(300);
-            }
+    /*
+     * Upon reading morse guides:
+     * Dot is 1 unit
+     * dash is 3 units
+     * gap between elements in characters is 1 unit
+     * gap between letters is 3 units
+     * gap between words is 7 units
+     */
+    for (char c : helloWorld.toCharArray()) {
+        System.out.println("Morse: " + c);
+        if (c == '.') {
+            led.high();
+            Thread.sleep(100);
+            led.low();
+            Thread.sleep(100);
+        } else if (c == '-') {
+            led.high();
+            Thread.sleep(300);
+            led.low();
+            Thread.sleep(100);
+        } else if (c == ' ') {
+            Thread.sleep(200);
+        } else if (c == '/') {
+            Thread.sleep(300);
         }
     }
+}
+
+void main() throws Exception {
+    // Initialize the Pi4J context
+    var pi4j = Pi4J.newAutoContext();
+
+    // Initialize the three LEDs
+    var ledRed = pi4j.digitalOutput().create(BCM_RED);
+    var ledGreen = pi4j.digitalOutput().create(BCM_GREEN);
+    var ledBlue = pi4j.digitalOutput().create(BCM_BLUE);
+
+    // Start with all off
+    ledRed.low();
+    ledGreen.low();
+    ledBlue.low();
+
+    // Toggle 10 times each color on and off
+    blink10(ledRed);
+    blink10(ledGreen);
+    blink10(ledBlue);
+    Thread.sleep(2_000);
+
+    // Put all off
+    ledRed.low();
+    ledGreen.low();
+    ledBlue.low();
+
+    // Morse
+    System.out.println("Starting Morse message");
+    morseHelloWorld(ledRed);
+    System.out.println("Morse message has been sent");
+    Thread.sleep(2_000);
+
+    // All three on, should be (close to) white
+    ledRed.high();
+    ledGreen.high();
+    ledBlue.high();
+    System.out.println("All three on, check if this looks like white or close to white...");
+    Thread.sleep(2_000);
+
+    // All three off
+    ledRed.low();
+    ledGreen.low();
+    ledBlue.low();
+
+    System.out.println("All three off");
+
+    // Shutdown the Pi4J context
+    pi4j.shutdown();
 }
