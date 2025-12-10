@@ -32,53 +32,6 @@ private static final int BCM_GREEN = 24;
 // Connect a LED to PIN 22 = BCM 25
 private static final int BCM_BLUE = 25;
 
-private static void blink10(DigitalOutput led) throws InterruptedException {
-    System.out.println("Start blinking LED " + led.bcm());
-
-    for (int i = 0; i < 10; i++) {
-        led.toggle();
-        Thread.sleep(250);
-    }
-
-    // Make sure the led is off
-    led.low();
-    System.out.println("LED " + led.bcm() + " is off");
-}
-
-// Contributed by Jonathan Stronkhorst
-// Morse translator: https://morsecode.world/international/translator.html
-// Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
-private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
-    String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
-
-    /*
-     * Upon reading morse guides:
-     * Dot is 1 unit
-     * dash is 3 units
-     * gap between elements in characters is 1 unit
-     * gap between letters is 3 units
-     * gap between words is 7 units
-     */
-    for (char c : helloWorld.toCharArray()) {
-        System.out.println("Morse: " + c);
-        if (c == '.') {
-            led.high();
-            Thread.sleep(100);
-            led.low();
-            Thread.sleep(100);
-        } else if (c == '-') {
-            led.high();
-            Thread.sleep(300);
-            led.low();
-            Thread.sleep(100);
-        } else if (c == ' ') {
-            Thread.sleep(200);
-        } else if (c == '/') {
-            Thread.sleep(300);
-        }
-    }
-}
-
 void main() throws Exception {
     // Initialize the Pi4J context
     var pi4j = Pi4J.newAutoContext();
@@ -126,4 +79,51 @@ void main() throws Exception {
 
     // Shutdown the Pi4J context
     pi4j.shutdown();
+}
+
+private static void blink10(DigitalOutput led) throws InterruptedException {
+    System.out.println("Start blinking LED " + led.bcm());
+
+    for (int i = 0; i < 10; i++) {
+        led.toggle();
+        Thread.sleep(250);
+    }
+
+    // Make sure the led is off
+    led.low();
+    System.out.println("LED " + led.bcm() + " is off");
+}
+
+// Contributed by Jonathan Stronkhorst
+// Morse translator: https://morsecode.world/international/translator.html
+// Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
+private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
+    String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
+
+    /*
+     * Upon reading morse guides:
+     * Dot is 1 unit
+     * dash is 3 units
+     * gap between elements in characters is 1 unit
+     * gap between letters is 3 units
+     * gap between words is 7 units
+     */
+    for (char c : helloWorld.toCharArray()) {
+        System.out.println("Morse: " + c);
+        if (c == '.') {
+            led.high();
+            Thread.sleep(100);
+            led.low();
+            Thread.sleep(100);
+        } else if (c == '-') {
+            led.high();
+            Thread.sleep(300);
+            led.low();
+            Thread.sleep(100);
+        } else if (c == ' ') {
+            Thread.sleep(200);
+        } else if (c == '/') {
+            Thread.sleep(300);
+        }
+    }
 }

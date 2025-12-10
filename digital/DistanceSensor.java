@@ -35,6 +35,36 @@ private static final int BCM_ECHO = 26;
 private static DigitalOutput trigger;
 private static DigitalInput echo;
 
+void main() {
+    System.out.println("Starting distance sensor example...");
+
+    // Initialize Pi4J context
+    var pi4j = Pi4J.newAutoContext();
+
+    try {
+        // Initialize the output pin
+        trigger = pi4j.digitalOutput().create(BCM_TRIGGER);
+        trigger.low();
+
+        // Initialize the input pin
+        var echoConfig = DigitalInput.newConfigBuilder(pi4j)
+                .bcm(BCM_ECHO)
+                .pull(PullResistance.PULL_UP);
+        echo = pi4j.create(echoConfig);
+
+        // Loop and measure the distance 5 times per second
+        while (true) {
+            measureDistance();
+            Thread.sleep(200);
+        }
+    } catch (Exception ex) {
+        System.err.println("Error: " + ex.getMessage());
+    } finally {
+        // Shutdown the Pi4J context
+        pi4j.shutdown();
+    }
+}
+
 private static void measureDistance() {
     try {
         // Set trigger high for 0.01ms
@@ -90,34 +120,4 @@ private static int getDistance(float seconds, boolean half) {
  */
 private static float getSecondsDifference(long start, long end) {
     return (end - start) / 1000000000F;
-}
-
-void main() {
-    System.out.println("Starting distance sensor example...");
-
-    // Initialize Pi4J context
-    var pi4j = Pi4J.newAutoContext();
-
-    try {
-        // Initialize the output pin
-        trigger = pi4j.digitalOutput().create(BCM_TRIGGER);
-        trigger.low();
-
-        // Initialize the input pin
-        var echoConfig = DigitalInput.newConfigBuilder(pi4j)
-                .bcm(BCM_ECHO)
-                .pull(PullResistance.PULL_UP);
-        echo = pi4j.create(echoConfig);
-
-        // Loop and measure the distance 5 times per second
-        while (true) {
-            measureDistance();
-            Thread.sleep(200);
-        }
-    } catch (Exception ex) {
-        System.err.println("Error: " + ex.getMessage());
-    } finally {
-        // Shutdown the Pi4J context
-        pi4j.shutdown();
-    }
 }
