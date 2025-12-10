@@ -1,4 +1,12 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+
+/**
+ * This example uses the simplifed main method, which is available since Java 25.
+ * More info about using specific Java versions with JBang is documented on
+ * https://www.jbang.dev/documentation/guide/latest/javaversions.html
+ */
+// JAVA 25
+
 //REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
@@ -11,7 +19,9 @@ import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
-import com.pi4j.io.spi.*;
+import com.pi4j.io.spi.Spi;
+import com.pi4j.io.spi.SpiConfigBuilder;
+import com.pi4j.io.spi.SpiMode;
 import com.pi4j.util.Console;
 
 /**
@@ -39,50 +49,47 @@ import com.pi4j.util.Console;
  * </ul>
  *
  */
-public class TemperatureHumidityPressure {
+static final int SPI_BUS = 0;
+static final int SPI_CSB = 21;
+private static final Console console = new Console(); // Pi4J Logger
 
-    static final int SPI_BUS = 0;
-    static final int SPI_CSB = 21;
-    private static final Console console = new Console(); // Pi4J Logger
+void main() throws Exception {
+    try {
+        var pi4j = Pi4J.newAutoContext();
 
-    public static void main(String[] args) throws Exception {
-        try {
-            var pi4j = Pi4J.newAutoContext();
+        console.println("Initializing the sensor via I2C");
 
-            console.println("Initializing the sensor via I2C");
+        var csb = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
+                .bcm(SPI_CSB)
+                .initial(DigitalState.HIGH)
+                .shutdown(DigitalState.HIGH)
+                .build());
+        var spi = pi4j.create(SpiConfigBuilder.newInstance(pi4j)
+                .channel(0)
+                .bus(SPI_BUS)
+                .mode(SpiMode.MODE_0)
+                .baud(Spi.DEFAULT_BAUD)
+                .build());
+        var sensor = new Bmx280Driver(spi, csb);
 
-            var csb = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
-                    .bcm(SPI_CSB)
-                    .initial(DigitalState.HIGH)
-                    .shutdown(DigitalState.HIGH)
-                    .build());
-            var spi = pi4j.create(SpiConfigBuilder.newInstance(pi4j)
-                    .channel(0)
-                    .bus(SPI_BUS)
-                    .mode(SpiMode.MODE_0)
-                    .baud(Spi.DEFAULT_BAUD)
-                    .build());
-            var sensor = new Bmx280Driver(spi, csb);
-
-            for (int counter = 0; counter < 10; counter++) {
-                console.println("**************************************");
-                console.println("Reading values, loop " + (counter + 1));
-
-                var measurement = sensor.readMeasurement();
-                console.println("Humidity : " + measurement.getHumidity());
-                console.println("Pressure : " + measurement.getPressure());
-                console.println("Temperature : " + measurement.getTemperature());
-
-                Thread.sleep(2_000);
-            }
-
-            sensor.close();
-            pi4j.shutdown();
-        } catch (Exception e) {
-            console.println("Error: " + e.getMessage());
-        } finally {
+        for (int counter = 0; counter < 10; counter++) {
             console.println("**************************************");
-            console.println("Finished");
+            console.println("Reading values, loop " + (counter + 1));
+
+            var measurement = sensor.readMeasurement();
+            console.println("Humidity : " + measurement.getHumidity());
+            console.println("Pressure : " + measurement.getPressure());
+            console.println("Temperature : " + measurement.getTemperature());
+
+            Thread.sleep(2_000);
         }
+
+        sensor.close();
+        pi4j.shutdown();
+    } catch (Exception e) {
+        console.println("Error: " + e.getMessage());
+    } finally {
+        console.println("**************************************");
+        console.println("Finished");
     }
 }

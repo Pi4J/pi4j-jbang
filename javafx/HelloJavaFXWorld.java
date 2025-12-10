@@ -34,6 +34,11 @@ import java.util.Random;
  * <p>
  * From the terminal, in the `javafx` directory, start this example with:
  * <code>jbang HelloJavaFXWorld.java</code>
+ * </p>
+ * <p>
+ * This example doesn't use the Java 25 without a class,
+ * because need to extend the class...
+ * </p>
  */
 public class HelloJavaFXWorld extends Application {
 
