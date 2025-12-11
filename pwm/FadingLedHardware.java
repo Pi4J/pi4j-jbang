@@ -62,12 +62,14 @@ public class FadingLedHardware {
             for (int loop = 0; loop < 10; loop++) {
                 // Fade up from 0% to 100%
                 for (int dutyCycle = 0; dutyCycle <= 100; dutyCycle += 5) {
+                    pwm.off();
                     pwm.on(dutyCycle);
                     System.out.println("PWM duty cycle is: " + pwm.getDutyCycle());
                     Thread.sleep(50);
                 }
                 // Fade down from 100% to 0%
                 for (int dutyCycle = 100; dutyCycle >= 0; dutyCycle -= 5) {
+                    pwm.off();
                     pwm.on(dutyCycle);
                     System.out.println("PWM duty cycle is: " + pwm.getDutyCycle());
                     Thread.sleep(50);
