@@ -27,7 +27,7 @@ import com.pi4j.io.pwm.PwmType;
  * </p>
  * <p>
  * Test the available PWM hardware channels on your Raspberry Pi, e.g. on RPi 4:
- * $  pinctrl | grep PWM
+ * $ pinctrl | grep PWM
  * 18: a5    pd | lo // GPIO18 = PWM0_0
  * 19: a5    pd | lo // GPIO19 = PWM0_1
  * 40: a0    pn | lo // PWM0_MISO/GPIO40 = PWM1_0
