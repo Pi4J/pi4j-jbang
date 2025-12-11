@@ -40,7 +40,7 @@ public class FadingLedHardware {
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
+        System.setProperty("org.slf4j.simpleLogger.log.com.pi4j", "DEBUG");
 
         try {
             // Initialize the Pi4J context
