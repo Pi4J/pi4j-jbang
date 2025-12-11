@@ -38,8 +38,64 @@ import java.util.Random;
  * <code>jbang LedMatrix.java</code>
  *
  */
-
 private static Spi spi;
+
+void main() throws Exception {
+    var pi4j = Pi4J.newAutoContext();
+
+    // Initialize SPI
+    System.out.println("Initializing the matrix via SPI");
+
+    var spiConfig = Spi.newConfigBuilder(pi4j)
+            .id("Matrix SPI Provider")
+            .name("matrix-spi")
+            .bus(SpiBus.BUS_0)
+            .chipSelect(SpiChipSelect.CS_0)
+            .baud(Spi.DEFAULT_BAUD)
+            .mode(SpiMode.MODE_0)
+            .build();
+    spi = pi4j.create(spiConfig);
+
+    spi.write(SpiCommand.TEST.getValue(), (byte) 0x01);
+    System.out.println("Test mode all on");
+    Thread.sleep(1000);
+
+    spi.write(SpiCommand.TEST.getValue(), (byte) 0x00);
+    System.out.println("Test mode all off");
+    Thread.sleep(1000);
+
+    spi.write(SpiCommand.DECODE_MODE.getValue(), (byte) 0x00);
+    System.out.println("Use all bits");
+
+    spi.write(SpiCommand.BRIGHTNESS.getValue(), (byte) 0x08);
+    System.out.println("Changed brightness to medium level"
+            + " (0x00 lowest, 0x0F highest)");
+
+    spi.write(SpiCommand.SCAN_LIMIT.getValue(), (byte) 0x0f);
+    System.out.println("Configured to scan all digits");
+
+    spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
+    System.out.println("Woke up the MAX7219, is off on startup");
+
+    allOff();
+
+    showOneByOne(100);
+
+    showRows(250);
+    showCols(250);
+
+    showRandomOutput(5, 500);
+
+    showAllImages(2000);
+    showAllAsciiCharacters(750);
+    scrollAllAsciiCharacters(50);
+
+    allOff();
+
+    pi4j.shutdown();
+
+    System.out.println("Finished");
+}
 
 /**
  * Loop through all the rows and put all the LEDs off.
@@ -240,63 +296,6 @@ public static void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitB
     } catch (Exception ex) {
         System.err.println("Error during images: " + ex.getMessage());
     }
-}
-
-void main() throws Exception {
-    var pi4j = Pi4J.newAutoContext();
-
-    // Initialize SPI
-    System.out.println("Initializing the matrix via SPI");
-
-    var spiConfig = Spi.newConfigBuilder(pi4j)
-            .id("Matrix SPI Provider")
-            .name("matrix-spi")
-            .bus(SpiBus.BUS_0)
-            .chipSelect(SpiChipSelect.CS_0)
-            .baud(Spi.DEFAULT_BAUD)
-            .mode(SpiMode.MODE_0)
-            .build();
-    spi = pi4j.create(spiConfig);
-
-    spi.write(SpiCommand.TEST.getValue(), (byte) 0x01);
-    System.out.println("Test mode all on");
-    Thread.sleep(1000);
-
-    spi.write(SpiCommand.TEST.getValue(), (byte) 0x00);
-    System.out.println("Test mode all off");
-    Thread.sleep(1000);
-
-    spi.write(SpiCommand.DECODE_MODE.getValue(), (byte) 0x00);
-    System.out.println("Use all bits");
-
-    spi.write(SpiCommand.BRIGHTNESS.getValue(), (byte) 0x08);
-    System.out.println("Changed brightness to medium level"
-            + " (0x00 lowest, 0x0F highest)");
-
-    spi.write(SpiCommand.SCAN_LIMIT.getValue(), (byte) 0x0f);
-    System.out.println("Configured to scan all digits");
-
-    spi.write(SpiCommand.SHUTDOWN_MODE.getValue(), (byte) 0x01);
-    System.out.println("Woke up the MAX7219, is off on startup");
-
-    allOff();
-
-    showOneByOne(100);
-
-    showRows(250);
-    showCols(250);
-
-    showRandomOutput(5, 500);
-
-    showAllImages(2000);
-    showAllAsciiCharacters(750);
-    scrollAllAsciiCharacters(50);
-
-    allOff();
-
-    pi4j.shutdown();
-
-    System.out.println("Finished");
 }
 
 public enum SpiCommand {
