@@ -9,6 +9,8 @@
 import com.pi4j.Pi4J;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example code to fade a LED with a PWM signal and a HARDWARE PWM pin.
@@ -28,6 +30,8 @@ import com.pi4j.io.pwm.PwmType;
  */
 public class FadingLedHardware {
 
+    private static final Logger logger = LoggerFactory.getLogger(FadingLedHardware.class);
+
     // Raspberry Pi 4:
     //    GPIO18 = PWM0_0 = Chip 0, Channel 0
     //    GPIO19 = PWM0_1 = Chip 0, Channel 1
@@ -36,6 +40,7 @@ public class FadingLedHardware {
 
     public static void main(String[] args) {
         System.out.println("Starting PWM output example...");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "DEBUG");
 
         try {
             // Initialize the Pi4J context
