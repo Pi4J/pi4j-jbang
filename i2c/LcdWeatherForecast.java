@@ -110,20 +110,19 @@ void main() throws Exception {
 }
 
 public static String getForecast(Double latitude, Double longitude) {
-    StringBuilder rt = new StringBuilder();
+    var rt = new StringBuilder();
 
     try {
-        URL url = new URL("https://api.open-meteo.com/v1/forecast"
+        var url = new URL("https://api.open-meteo.com/v1/forecast"
                 + "?latitude=" + latitude + "&longitude=" + longitude
                 + "&daily=weather_code,apparent_temperature_max,sunset,rain_sum,wind_gusts_10m_max,temperature_2m_max,apparent_temperature_min,daylight_duration,temperature_2m_min,sunrise,sunshine_duration,wind_speed_10m_max&forecast_days=1");
 
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        var conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
 
-        int responseCode = conn.getResponseCode();
+        var responseCode = conn.getResponseCode();
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()));
+            var in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             String readLine;
             while ((readLine = in.readLine()) != null) {
                 rt.append(readLine);
@@ -143,7 +142,7 @@ public static String getForecast(Double latitude, Double longitude) {
 
 private static Forecast convertForecast(String content) {
     try {
-        ObjectMapper mapper = new ObjectMapper();
+        var mapper = new ObjectMapper();
         mapper.configure(
                 DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
                 false);
@@ -178,7 +177,7 @@ private static void showSunInfo(Forecast forecast) {
     System.out.println("Showing sun duration");
     var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
     var hours = (seconds * 1.0) / 60 / 60;
-    String roundedToTwoNumbers = String.format("%.2f", hours);
+    var roundedToTwoNumbers = String.format("%.2f", hours);
     lcdDisplay.clear();
     lcdDisplay.writeAt(0, 0, "Hours sun: " + roundedToTwoNumbers);
     lcdDisplay.writeAt(0, 1, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
