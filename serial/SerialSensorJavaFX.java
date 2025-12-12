@@ -56,7 +56,7 @@ public class SerialSensorJavaFX extends Application {
         Thread t = new Thread(serialHelper);
         t.start();
 
-        Scene scene = new Scene(new MeasurementChart(), 400, 700);
+        Scene scene = new Scene(new MeasurementChart(), 700, 400);
         stage.setTitle("Arduino sensor chart");
         stage.setScene(scene);
         stage.show();
@@ -69,10 +69,7 @@ public class SerialSensorJavaFX extends Application {
 
     class MeasurementChart extends VBox {
         /**
-         * Constructor which will build the UI with the chart
-         * and start the serial communication
-         *
-         * @param serialDevice the serial device
+         * Constructor which will build the UI with the chart.
          */
         public MeasurementChart() {
             // Initialize the pixelblaze.data holder for the chart
@@ -199,8 +196,6 @@ public class SerialSensorJavaFX extends Application {
 
         /**
          * Constructor which initializes the date formatter.
-         *
-         * @param data The pixelblaze.data series to which the light values must be added
          */
         public SerialListener() {
             this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
