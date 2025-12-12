@@ -69,6 +69,7 @@ import java.net.URL;
  * 70: -- -- -- -- -- -- -- --
  */
 private final static int WAIT_BETWEEN_MESSAGES = 3_000;
+private static Hd44780Driver lcdDisplay;
 
 void main() throws Exception {
     // Initialize the Pi4J context
@@ -80,7 +81,7 @@ void main() throws Exception {
             .device(0x27)
             .build());
 
-    Hd44780Driver lcdDisplay = Hd44780Driver.withPcf8574Connection(i2c, 16, 2);
+    lcdDisplay = Hd44780Driver.withPcf8574Connection(i2c, 16, 2);
 
     // Get the weather forecast as JSON String
     var forecastContent = getForecast(52.52, 13.41);
@@ -95,11 +96,11 @@ void main() throws Exception {
 
         // Show the pixelblaze.data of the received forecast 10 times
         for (int i = 0; i < 10; i++) {
-            showDate(lcdDisplay, forecast);
+            showDate(forecast);
             Thread.sleep(WAIT_BETWEEN_MESSAGES);
-            showCurrentWeather(lcdDisplay, forecast);
+            showCurrentWeather(forecast);
             Thread.sleep(WAIT_BETWEEN_MESSAGES);
-            showSunInfo(lcdDisplay, forecast);
+            showSunInfo(forecast);
             Thread.sleep(WAIT_BETWEEN_MESSAGES);
         }
     }
@@ -153,34 +154,34 @@ private static Forecast convertForecast(String content) {
     }
 }
 
-private static void showDate(Hd44780Driver lcd, Forecast forecast) {
+private static void showDate(Forecast forecast) {
     System.out.println("Showing date");
-    lcd.clearDisplay();
-    lcd.writeAt(0, 0, "Weather for");
-    lcd.writeAt(0, 1, forecast.dailyForecast.date[0]);
+    lcdDisplay.clear();
+    lcdDisplay.writeAt(0, 0, "Weather for");
+    lcdDisplay.writeAt(0, 1, forecast.dailyForecast.date[0]);
 }
 
-private static void showCurrentWeather(Hd44780Driver lcd, Forecast forecast) {
+private static void showCurrentWeather(Forecast forecast) {
     System.out.println("Showing current weather");
     var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
-    lcd.clearDisplay();
+    lcdDisplay.clear();
     if (text.length() > 16) {
-        lcd.writeAt(0, 0, text.substring(0, 15));
-        lcd.writeAt(0, 1, text.substring(15));
+        lcdDisplay.writeAt(0, 0, text.substring(0, 15));
+        lcdDisplay.writeAt(0, 1, text.substring(15));
     } else {
-        lcd.writeAt(0, 0, text);
-        lcd.writeAt(0, 1, "");
+        lcdDisplay.writeAt(0, 0, text);
+        lcdDisplay.writeAt(0, 1, "");
     }
 }
 
-private static void showSunInfo(Hd44780Driver lcd, Forecast forecast) {
+private static void showSunInfo(Forecast forecast) {
     System.out.println("Showing sun duration");
     var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
     var hours = (seconds * 1.0) / 60 / 60;
     String roundedToTwoNumbers = String.format("%.2f", hours);
-    lcd.clearDisplay();
-    lcd.writeAt(0, 0, "Hours sun: " + roundedToTwoNumbers);
-    lcd.writeAt(0, 1, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
+    lcdDisplay.clear();
+    lcdDisplay.writeAt(0, 0, "Hours sun: " + roundedToTwoNumbers);
+    lcdDisplay.writeAt(0, 1, getTimeFromTimestamp(forecast.dailyForecast.sunrise[0])
             + " till "
             + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]));
 }
