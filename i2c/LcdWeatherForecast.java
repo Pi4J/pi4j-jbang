@@ -94,7 +94,7 @@ void main() throws Exception {
     } else {
         System.out.println("Forecast received for " + forecast.dailyForecast.date[0]);
 
-        // Show the pixelblaze.data of the received forecast 10 times
+        // Show the data of the received forecast 10 times
         for (int i = 0; i < 10; i++) {
             showDate(forecast);
             Thread.sleep(WAIT_BETWEEN_MESSAGES);
