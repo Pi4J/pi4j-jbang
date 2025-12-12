@@ -1,16 +1,16 @@
-package pixelblaze; /// usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.10.2
-//SOURCES i2c.helper/ImageHelper.java
-//SOURCES i2c.helper/PixelBlazeOutputExpanderHelper.java
+//SOURCES helper/ImageHelper.java
+//SOURCES helper/PixelBlazeOutputExpanderHelper.java
 
-import pixelblaze.helper.PixelBlazeOutputExpanderHelper;
+import helper.PixelBlazeOutputExpanderHelper;
 
 import java.io.IOException;
 import java.util.Random;
 
-import static pixelblaze.helper.ImageHelper.getImageData;
-import static pixelblaze.helper.ImageHelper.imageToMatrix;
+import static helper.ImageHelper.getImageData;
+import static helper.ImageHelper.imageToMatrix;
 
 /**
  * Example code to use a Pixelblaze Output Expander to send an 8*32 image to a LED matrix. This example is based on

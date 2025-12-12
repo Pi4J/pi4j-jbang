@@ -1,4 +1,4 @@
-package pixelblaze.helper;
+package helper;
 
 import com.fazecast.jSerialComm.SerialPort;
 

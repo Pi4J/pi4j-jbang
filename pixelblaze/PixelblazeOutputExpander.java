@@ -1,9 +1,9 @@
-package pixelblaze; /// usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.10.2
-//SOURCES i2c.helper/PixelBlazeOutputExpanderHelper.java
+//SOURCES helper/PixelBlazeOutputExpanderHelper.java
 
-import pixelblaze.helper.PixelBlazeOutputExpanderHelper;
+import helper.PixelBlazeOutputExpanderHelper;
 
 import java.util.Random;
 

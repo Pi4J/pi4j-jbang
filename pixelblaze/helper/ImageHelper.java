@@ -1,4 +1,4 @@
-package pixelblaze.helper;
+package helper;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
