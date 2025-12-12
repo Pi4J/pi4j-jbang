@@ -70,6 +70,44 @@ import java.net.URL;
  */
 private final static int WAIT_BETWEEN_MESSAGES = 3_000;
 
+void main() throws Exception {
+    // Initialize the Pi4J context
+    var pi4j = Pi4J.newAutoContext();
+
+    // Initialize the LCD
+    var i2c = pi4j.create(I2C.newConfigBuilder(pi4j)
+            .bus(0x1)
+            .device(0x27)
+            .build());
+
+    Hd44780Driver lcdDisplay = Hd44780Driver.withPcf8574Connection(i2c, 16, 2);
+
+    // Get the weather forecast as JSON String
+    var forecastContent = getForecast(52.52, 13.41);
+
+    // Convert to Java object
+    var forecast = convertForecast(forecastContent);
+
+    if (forecast == null) {
+        System.err.println("Can't show the forecast, the object is null...");
+    } else {
+        System.out.println("Forecast received for " + forecast.dailyForecast.date[0]);
+
+        // Show the pixelblaze.data of the received forecast 10 times
+        for (int i = 0; i < 10; i++) {
+            showDate(lcdDisplay, forecast);
+            Thread.sleep(WAIT_BETWEEN_MESSAGES);
+            showCurrentWeather(lcdDisplay, forecast);
+            Thread.sleep(WAIT_BETWEEN_MESSAGES);
+            showSunInfo(lcdDisplay, forecast);
+            Thread.sleep(WAIT_BETWEEN_MESSAGES);
+        }
+    }
+
+    // Shutdown the Pi4J context
+    pi4j.shutdown();
+}
+
 public static String getForecast(Double latitude, Double longitude) {
     StringBuilder rt = new StringBuilder();
 
@@ -186,44 +224,6 @@ private static String getWmoDescription(int code) {
         case 99 -> "Thunderstorm with heavy hail";
         default -> "Unknown";
     };
-}
-
-void main() throws Exception {
-    // Initialize the Pi4J context
-    var pi4j = Pi4J.newAutoContext();
-
-    // Initialize the LCD
-    var i2c = pi4j.create(I2C.newConfigBuilder(pi4j)
-            .bus(0x1)
-            .device(0x27)
-            .build());
-
-    Hd44780Driver lcdDisplay = Hd44780Driver.withPcf8574Connection(i2c, 16, 2);
-
-    // Get the weather forecast as JSON String
-    var forecastContent = getForecast(52.52, 13.41);
-
-    // Convert to Java object
-    var forecast = convertForecast(forecastContent);
-
-    if (forecast == null) {
-        System.err.println("Can't show the forecast, the object is null...");
-    } else {
-        System.out.println("Forecast received for " + forecast.dailyForecast.date[0]);
-
-        // Show the pixelblaze.data of the received forecast 10 times
-        for (int i = 0; i < 10; i++) {
-            showDate(lcdDisplay, forecast);
-            Thread.sleep(WAIT_BETWEEN_MESSAGES);
-            showCurrentWeather(lcdDisplay, forecast);
-            Thread.sleep(WAIT_BETWEEN_MESSAGES);
-            showSunInfo(lcdDisplay, forecast);
-            Thread.sleep(WAIT_BETWEEN_MESSAGES);
-        }
-    }
-
-    // Shutdown the Pi4J context
-    pi4j.shutdown();
 }
 
 private record Forecast(
