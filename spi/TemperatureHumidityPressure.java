@@ -17,12 +17,12 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
+import com.pi4j.io.IO;
 import com.pi4j.io.gpio.digital.DigitalOutput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiConfigBuilder;
 import com.pi4j.io.spi.SpiMode;
-import com.pi4j.util.Console;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
@@ -51,13 +51,12 @@ import com.pi4j.util.Console;
  */
 static final int SPI_BUS = 0;
 static final int SPI_CSB = 21;
-private static final Console console = new Console(); // Pi4J Logger
 
 void main() throws Exception {
     try {
         var pi4j = Pi4J.newAutoContext();
 
-        console.println("Initializing the sensor via I2C");
+        IO.println("Initializing the sensor via I2C");
 
         var csb = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
                 .bcm(SPI_CSB)
@@ -73,23 +72,24 @@ void main() throws Exception {
         var sensor = new Bmx280Driver(spi, csb);
 
         for (int counter = 0; counter < 10; counter++) {
-            console.println("**************************************");
-            console.println("Reading values, loop " + (counter + 1));
+            IO.println("**************************************");
+            IO.println("Reading values, loop " + (counter + 1));
 
             var measurement = sensor.readMeasurement();
-            console.println("Humidity : " + measurement.getHumidity());
-            console.println("Pressure : " + measurement.getPressure());
-            console.println("Temperature : " + measurement.getTemperature());
+            IO.println("Humidity : " + measurement.getHumidity());
+            IO.println("Pressure : " + measurement.getPressure());
+            IO.println("Temperature : " + measurement.getTemperature());
 
             Thread.sleep(2_000);
         }
 
         sensor.close();
+
         pi4j.shutdown();
     } catch (Exception e) {
-        console.println("Error: " + e.getMessage());
+        IO.println("Error: " + e.getMessage());
     } finally {
-        console.println("**************************************");
-        console.println("Finished");
+        IO.println("**************************************");
+        IO.println("Finished");
     }
 }
