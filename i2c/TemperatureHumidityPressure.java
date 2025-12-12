@@ -71,7 +71,7 @@ void main() {
         IO.println("Initializing the sensor via I2C");
 
         var i2cConfig = I2CConfigBuilder.newInstance(pi4j).bus(I2C_BUS).device(I2C_DEVICE);
-        var i2c = pi4j.create();
+        var i2c = pi4j.create(i2cConfig);
         var sensor = new Bmx280Driver(i2c);
 
         for (int counter = 0; counter < 10; counter++) {
