@@ -17,7 +17,6 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
-import com.pi4j.io.IO;
 import com.pi4j.io.i2c.I2CConfigBuilder;
 
 /**
