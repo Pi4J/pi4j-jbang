@@ -1,4 +1,4 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.10.2
 //SOURCES helper/PixelBlazeOutputExpanderHelper.java
@@ -10,19 +10,19 @@ import java.util.Random;
 /**
  * Example code to use a Pixelblaze Output Expander to control a LED strip.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
- *
+ * <p>
  * Although this sample is part of the Pi4J JBang examples, it doesn't use Pi4J ;-)
  * The Pixelblaze Output Expander is a serial device, and the library com.fazecast.jSerialComm seems to provide
- * good support for the data speed required by the Pixelblaze.
- *
+ * good support for the pixelblaze.data speed required by the Pixelblaze.
+ * <p>
  * Product page: https://shop.electromage.com/products/pixelblaze-output-expander-serial-to-8x-ws2812-apa102-driver
- *
+ * <p>
  * This example can be executed without sudo:
- * jbang PixelblazeOutputExpander.java
- *
+ * jbang pixelblaze.PixelblazeOutputExpander.java
+ * <p>
  * Thanks to Jeff Vyduna for his Java driver for the Pixelblaze Output Expander that has been used in this example.
- * Serial data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
- * 
+ * Serial pixelblaze.data format info: https://github.com/simap/pixelblaze_output_expander/tree/v3.x
+ * <p>
  * Serial Wiring
  *
  * <ul>
@@ -30,7 +30,7 @@ import java.util.Random;
  *  <li>5V to external power supply</li>
  *  <li>DAT to BCM14 (pin 8 = UART Tx)</li>
  * </ul>
- *
+ * <p>
  * All info about this example is described here:
  * https://pi4j.com/examples/jbang/pixelblaze_output_expander/
  */
@@ -88,7 +88,7 @@ public class PixelblazeOutputExpander {
         byte[] red = new byte[NUMBER_OF_LEDS_STRIP_SHORT * BYTES_PER_PIXEL];
         int i;
         for (i = 0; i < NUMBER_OF_LEDS_STRIP_SHORT; i++) {
-            red[i*BYTES_PER_PIXEL]= (byte) 0xff;
+            red[i * BYTES_PER_PIXEL] = (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
             System.out.println("All red");
@@ -107,10 +107,10 @@ public class PixelblazeOutputExpander {
         byte[] fiveMeterRed = new byte[NUMBER_OF_LEDS_STRIP_LONG * BYTES_PER_PIXEL];
         byte[] fiveMeterWhite = new byte[NUMBER_OF_LEDS_STRIP_LONG * BYTES_PER_PIXEL];
         for (i = 0; i < NUMBER_OF_LEDS_STRIP_LONG; i++) {
-            fiveMeterRed[i*BYTES_PER_PIXEL]= (byte) 0xff;
-            fiveMeterWhite[i*BYTES_PER_PIXEL]= (byte) 0xff;
-            fiveMeterWhite[(i*BYTES_PER_PIXEL) + 1]= (byte) 0xff;
-            fiveMeterWhite[(i*BYTES_PER_PIXEL) + 2]= (byte) 0xff;
+            fiveMeterRed[i * BYTES_PER_PIXEL] = (byte) 0xff;
+            fiveMeterWhite[i * BYTES_PER_PIXEL] = (byte) 0xff;
+            fiveMeterWhite[(i * BYTES_PER_PIXEL) + 1] = (byte) 0xff;
+            fiveMeterWhite[(i * BYTES_PER_PIXEL) + 2] = (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
             System.out.println("All RED on LED strip on channel 1");
@@ -128,7 +128,7 @@ public class PixelblazeOutputExpander {
         // All red, 8*32 LED matrix
         byte[] redMatrix = new byte[NUMBER_OF_LEDS_MATRIX * BYTES_PER_PIXEL];
         for (i = 0; i < NUMBER_OF_LEDS_MATRIX; i++) {
-            redMatrix[i*BYTES_PER_PIXEL]= (byte) 0xff;
+            redMatrix[i * BYTES_PER_PIXEL] = (byte) 0xff;
         }
         for (i = 0; i < 5; i++) {
             System.out.println("All red on LED matrix on channel 2");

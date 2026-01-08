@@ -33,7 +33,7 @@ public class PixelBlazeOutputExpanderHelper {
     }
 
     public void sendColors(int channel, int bytesPerPixel, int rIndex, int gIndex, int bIndex, int wIndex,
-            byte[] rgbPerPixel, boolean debug) {
+                           byte[] rgbPerPixel, boolean debug) {
         if (debug) {
             System.out.println("Sending colors on channel " + channel);
         }
@@ -130,8 +130,8 @@ public class PixelBlazeOutputExpanderHelper {
 
     private static class ExpanderDataWriteAdapter {
 
-        private SerialPort port = null;
         private final String portPath;
+        private SerialPort port = null;
 
         public ExpanderDataWriteAdapter(String portPath) {
             this.portPath = portPath;
@@ -162,7 +162,7 @@ public class PixelBlazeOutputExpanderHelper {
                     // Make sure all pending commands are sent before closing the port
                     port.getOutputStream().flush();
                 } catch (IOException e) {
-                    System.err.println("Error while flushing the data: " + e.getMessage());
+                    System.err.println("Error while flushing the pixelblaze.data: " + e.getMessage());
                 }
                 port.closePort();
             }

@@ -1,8 +1,9 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
-//DEPS org.openjfx:javafx-controls:20.0.2
-//DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
-//DEPS com.pi4j:pi4j-core:3.0.1
+//DEPS org.openjfx:javafx-controls:25
+//DEPS org.openjfx:javafx-graphics:25:${os.detected.jfxname}
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import javafx.animation.KeyFrame;
@@ -31,8 +32,13 @@ import java.util.Random;
  * Example code to illustrate how a JavaFX UI can be executed with JBang.
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
  * <p>
- * This example can be executed with:
- * jbang HelloJavaFXWorld.java
+ * From the terminal, in the `javafx` directory, start this example with:
+ * <code>jbang HelloJavaFXWorld.java</code>
+ * </p>
+ * <p>
+ * This example doesn't use the Java 25 without a class,
+ * because need to extend the class...
+ * </p>
  */
 public class HelloJavaFXWorld extends Application {
 

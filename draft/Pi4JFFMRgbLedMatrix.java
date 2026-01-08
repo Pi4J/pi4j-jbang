@@ -1,7 +1,7 @@
 package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
 
 import java.awt.*;
 import java.lang.foreign.*;
@@ -55,7 +55,7 @@ public class Pi4JFFMRgbLedMatrix {
     // Memory layouts for ws2811 structures
     private static final MemoryLayout ws2811_channel_t_layout = MemoryLayout.structLayout(
             ValueLayout.JAVA_INT.withName("count"),      // LED count
-            ValueLayout.ADDRESS.withName("leds"),        // LED data array
+            ValueLayout.ADDRESS.withName("leds"),        // LED pixelblaze.data array
             ValueLayout.JAVA_BYTE.withName("brightness"), // brightness
             ValueLayout.JAVA_BYTE.withName("invert"),    // invert signal
             ValueLayout.JAVA_BYTE.withName("gpio"),      // GPIO pin
@@ -164,7 +164,7 @@ public class Pi4JFFMRgbLedMatrix {
         // Initialize color buffer
         clear();
 
-        // Allocate native memory for ws2811 structure and LED data
+        // Allocate native memory for ws2811 structure and LED pixelblaze.data
         this.ws2811_struct = arena.allocate(ws2811_t_layout);
         this.led_data = arena.allocateFrom(ValueLayout.JAVA_INT, new int[LED_COUNT]);
 
@@ -335,7 +335,7 @@ public class Pi4JFFMRgbLedMatrix {
      * This converts the RGB buffer to WS2812B format and sends it via PWM
      */
     public void refresh() {
-        // Convert color buffer to WS2812B data format
+        // Convert color buffer to WS2812B pixelblaze.data format
         byte[] ledData = new byte[WIDTH * HEIGHT * 3]; // 3 bytes per LED (GRB format for WS2812B)
 
         int dataIndex = 0;
@@ -355,16 +355,16 @@ public class Pi4JFFMRgbLedMatrix {
             }
         }
 
-        // Send data to LEDs via PWM (this is a simplified approach)
+        // Send pixelblaze.data to LEDs via PWM (this is a simplified approach)
         // In a real implementation, you'd need to convert to proper WS2812B timing
         sendWS2812BData(ledData);
     }
 
     /**
-     * Sends WS2812B data using the rpi_ws281x native library
+     * Sends WS2812B pixelblaze.data using the rpi_ws281x native library
      * This provides precise timing control for WS2812B LEDs
      *
-     * @param data RGB data in GRB format
+     * @param data RGB pixelblaze.data in GRB format
      */
     private void sendWS2812BData(byte[] data) {
         try {
@@ -374,7 +374,7 @@ public class Pi4JFFMRgbLedMatrix {
             for (int i = 0; i < Math.min(data.length / 3, LED_COUNT); i++) {
                 int dataIndex = i * 3;
 
-                // Extract GRB values (data is already in GRB format)
+                // Extract GRB values (pixelblaze.data is already in GRB format)
                 int green = data[dataIndex] & 0xFF;
                 int red = data[dataIndex + 1] & 0xFF;
                 int blue = data[dataIndex + 2] & 0xFF;
@@ -383,17 +383,17 @@ public class Pi4JFFMRgbLedMatrix {
                 ledValues[i] = (green << 16) | (red << 8) | blue;
             }
 
-            // Copy data to native memory
+            // Copy pixelblaze.data to native memory
             MemorySegment.copy(ledValues, 0, led_data, ValueLayout.JAVA_INT, 0, ledValues.length);
 
-            // Render the LED data
+            // Render the LED pixelblaze.data
             int result = (int) ws2811_render.invoke(ws2811_struct);
             if (result != 0) {
                 System.err.println("ws2811_render failed with code: " + result);
             }
 
         } catch (Throwable e) {
-            System.err.println("Failed to send WS2812B data: " + e.getMessage());
+            System.err.println("Failed to send WS2812B pixelblaze.data: " + e.getMessage());
             e.printStackTrace();
         }
     }

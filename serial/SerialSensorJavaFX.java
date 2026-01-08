@@ -1,4 +1,4 @@
-///usr/bin/env jbang "$0" "$@" ; exit $?
+/// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.10.2
 //DEPS org.openjfx:javafx-controls:20.0.2
@@ -7,47 +7,43 @@
 //DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.Serial;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Example code to read a sensor value sent by an Arduino via serial.
- *
+ * <p>
  * An SDK with bundled JavaFX is needed for this example, use SDKMAN to use a specific version:
  * curl -s "https://get.sdkman.io" | bash
  * source "$HOME/.sdkman/bin/sdkman-init.sh"
  * sdk install java 22.0.1.fx-zulu
- * 
- * This example can be executed without sudo:
- * jbang SerialSensorJavaFX.java
+ * <p>
+ * From the terminal, in the `serial` directory, start this example with:
+ * <code>jbang SerialSensorJavaFX.java</code>
  */
 public class SerialSensorJavaFX extends Application {
     final XYChart.Series<String, Integer> data = new XYChart.Series<>();
+
+    public static void main(String[] args) {
+        launch();
+    }
 
     @Override
     public void start(Stage stage) {
@@ -59,31 +55,24 @@ public class SerialSensorJavaFX extends Application {
         SerialHelper serialHelper = new SerialHelper("dev/ttyS0");
         Thread t = new Thread(serialHelper);
         t.start();
-        
-        Scene scene = new Scene(new MeasurementChart(), 400, 700);
+
+        Scene scene = new Scene(new MeasurementChart(), 700, 400);
         stage.setTitle("Arduino sensor chart");
         stage.setScene(scene);
         stage.show();
     }
 
     @Override
-    public void stop(){
+    public void stop() {
         System.out.println("Stage is closing");
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 
     class MeasurementChart extends VBox {
         /**
-         * Constructor which will build the UI with the chart
-         * and start the serial communication
-         *
-         * @param serialDevice the serial device
+         * Constructor which will build the UI with the chart.
          */
         public MeasurementChart() {
-            // Initialize the data holder for the chart
+            // Initialize the pixelblaze.data holder for the chart
             XYChart.Series<String, Integer> data = new XYChart.Series<>();
             data.setName("Value");
 
@@ -98,7 +87,7 @@ public class SerialSensorJavaFX extends Application {
 
             lineChart.getData().add(data);
 
-            this.getChildren().add(lineChart);            
+            this.getChildren().add(lineChart);
         }
     }
 
@@ -141,10 +130,9 @@ public class SerialSensorJavaFX extends Application {
     }
 
     class SerialHelper implements Runnable {
-        private static int INTERVAL_SEND_SECONDS = 5;
-
-        private SerialPort port = null;
+        private static final int INTERVAL_SEND_SECONDS = 5;
         private final String portPath;
+        private SerialPort port = null;
 
         public SerialHelper(String portPath) {
             this.portPath = portPath;
@@ -179,7 +167,7 @@ public class SerialSensorJavaFX extends Application {
                     write("Timestamp: " + System.currentTimeMillis());
 
                     // Wait predefined time for next loop
-                    Thread.sleep(INTERVAL_SEND_SECONDS * 1000);
+                    Thread.sleep(INTERVAL_SEND_SECONDS * 1000L);
                 } catch (Exception ex) {
                     System.err.println("Error: " + ex.getMessage());
                     keepRunning = false;
@@ -208,8 +196,6 @@ public class SerialSensorJavaFX extends Application {
 
         /**
          * Constructor which initializes the date formatter.
-         *
-         * @param data The data series to which the light values must be added
          */
         public SerialListener() {
             this.formatter = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
@@ -236,7 +222,7 @@ public class SerialSensorJavaFX extends Application {
                 String timestamp = LocalTime.now().format(formatter);
 
                 if (arduinoMessage != null && arduinoMessage.type.equals("light")) {
-                    // We need to use the runLater approach as this data is handled
+                    // We need to use the runLater approach as this pixelblaze.data is handled
                     // in another thread as the UI-component
                     Platform.runLater(() -> {
                         data.getData().add(

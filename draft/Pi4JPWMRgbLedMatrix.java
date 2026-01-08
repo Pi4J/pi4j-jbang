@@ -1,10 +1,10 @@
 package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS org.slf4j:slf4j-api:2.0.12
-//DEPS org.slf4j:slf4j-simple:2.0.12
-//DEPS com.pi4j:pi4j-core:3.0.1
-//DEPS com.pi4j:pi4j-plugin-raspberrypi:3.0.1
-//DEPS com.pi4j:pi4j-plugin-linuxfs:3.0.1
+//DEPS org.slf4j:slf4j-api:2.0.17
+//DEPS org.slf4j:slf4j-simple:2.0.17
+//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-raspberrypi:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
@@ -91,8 +91,8 @@ public class Pi4JPWMRgbLedMatrix {
         // Note: WS2812B requires precise timing that's difficult with Pi4J PWM
         // This is a conceptual implementation - real usage would need native library
         var pwmConfig = Pwm.newConfigBuilder(pi4j)
-                .address(CHANNEL)
                 .pwmType(PwmType.HARDWARE)
+                .channel(CHANNEL)
                 .initial(0)
                 .shutdown(0)
                 .build();
@@ -243,7 +243,7 @@ public class Pi4JPWMRgbLedMatrix {
      * This converts the RGB buffer to WS2812B format and sends it via PWM
      */
     public void refresh() {
-        // Convert color buffer to WS2812B data format
+        // Convert color buffer to WS2812B pixelblaze.data format
         byte[] ledData = new byte[TOTAL_LEDS * 3]; // 3 bytes per LED (GRB format for WS2812B)
 
         int dataIndex = 0;
@@ -263,7 +263,7 @@ public class Pi4JPWMRgbLedMatrix {
             }
         }
 
-        // Send data to LEDs via PWM (this is a simplified approach)
+        // Send pixelblaze.data to LEDs via PWM (this is a simplified approach)
         // In a real implementation, you'd need to convert to proper WS2812B timing
         sendWS2812BData(ledData);
     }
