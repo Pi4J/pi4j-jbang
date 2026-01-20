@@ -1,8 +1,8 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
 
 //DEPS com.fazecast:jSerialComm:2.11.4
-//DEPS org.openjfx:javafx-controls:25.0.1
-//DEPS org.openjfx:javafx-graphics:25.0.1:${os.detected.jfxname}
+//DEPS org.openjfx:javafx-controls:25
+//DEPS org.openjfx:javafx-graphics:25:${os.detected.jfxname}
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
 //DEPS com.fasterxml.jackson.core:jackson-core:2.21.0
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.21.0
@@ -56,10 +56,10 @@ public class SerialSensorJavaFX extends Application {
         //
         // Most probably it will be similar to one of these:
         // * Raspberry Pi 4 or earlier: "dev/ttyS0"
-        // * Raspberry Pi 5: "dev/ttyAMA0"
+        // * Raspberry Pi 5: "dev/ttyACM0"
         // * macOS: "dev/cu.usbmodem831302"
 
-        SerialHelper serialHelper = new SerialHelper("dev/ttyAMA0");
+        SerialHelper serialHelper = new SerialHelper("dev/ttyACM0");
         Thread t = new Thread(serialHelper);
         t.start();
 
