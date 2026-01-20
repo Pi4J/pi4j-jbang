@@ -1,11 +1,11 @@
 /// usr/bin/env jbang "$0" "$@" ; exit $?
 
-//DEPS com.fazecast:jSerialComm:2.10.2
-//DEPS org.openjfx:javafx-controls:20.0.2
-//DEPS org.openjfx:javafx-graphics:20.0.2:${os.detected.jfxname}
-//DEPS com.fasterxml.jackson.core:jackson-annotations:2.14.1
-//DEPS com.fasterxml.jackson.core:jackson-core:2.14.1
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.14.1
+//DEPS com.fazecast:jSerialComm:2.11.4
+//DEPS org.openjfx:javafx-controls:25.0.1
+//DEPS org.openjfx:javafx-graphics:25.0.1:${os.detected.jfxname}
+//DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
+//DEPS com.fasterxml.jackson.core:jackson-core:2.21
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.21
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -33,7 +33,7 @@ import java.time.format.DateTimeFormatter;
  * An SDK with bundled JavaFX is needed for this example, use SDKMAN to use a specific version:
  * curl -s "https://get.sdkman.io" | bash
  * source "$HOME/.sdkman/bin/sdkman-init.sh"
- * sdk install java 22.0.1.fx-zulu
+ * sdk install java 25.0.1.fx-zulu
  * <p>
  * From the terminal, in the `serial` directory, start this example with:
  * <code>jbang SerialSensorJavaFX.java</code>
