@@ -13,7 +13,7 @@ void loop() {
 
     Serial.print("{\"type\":\"echo\",\"value\":\"");
     Serial.print(received);
-    Serial.println("\"}");
+    Serial.println("\"}\n");
   }
 
   loopCounter++;
@@ -21,7 +21,7 @@ void loop() {
   if (loopCounter > maxLoopCounter) {
     Serial.print("{\"type\":\"light\",\"value\":");
     Serial.print(analogRead(analogPinLightSensor));
-    Serial.println("}");
+    Serial.println("}\n");
     
     loopCounter = 0;
   }

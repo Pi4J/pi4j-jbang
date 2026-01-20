@@ -4,8 +4,8 @@
 //DEPS org.openjfx:javafx-controls:25.0.1
 //DEPS org.openjfx:javafx-graphics:25.0.1:${os.detected.jfxname}
 //DEPS com.fasterxml.jackson.core:jackson-annotations:2.21
-//DEPS com.fasterxml.jackson.core:jackson-core:2.21
-//DEPS com.fasterxml.jackson.core:jackson-databind:2.21
+//DEPS com.fasterxml.jackson.core:jackson-core:2.21.0
+//DEPS com.fasterxml.jackson.core:jackson-databind:2.21.0
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -49,10 +49,17 @@ public class SerialSensorJavaFX extends Application {
     public void start(Stage stage) {
         // Depending on the type of board and the connection you are using
         // (GPIO pin, or other serial connection), this can be a different port.
-        // Most probably it will be `/dev/ttyS0` (Raspberry Pi 4 or earlier),
-        // or `/dev/ttyAMA0` (Raspberry Pi 5).
+        //
+        // Right after connecting the serial connection, run `dmesg` in the terminal.
+        // You should see a message like this, showing the new connected port:
+        // "[  166.283835] cdc_acm 1-1:1.1: ttyACM0: USB ACM device"
+        //
+        // Most probably it will be similar to one of these:
+        // * Raspberry Pi 4 or earlier: "dev/ttyS0"
+        // * Raspberry Pi 5: "dev/ttyAMA0"
+        // * macOS: "dev/cu.usbmodem831302"
 
-        SerialHelper serialHelper = new SerialHelper("dev/ttyS0");
+        SerialHelper serialHelper = new SerialHelper("dev/ttyAMA0");
         Thread t = new Thread(serialHelper);
         t.start();
 
@@ -73,7 +80,6 @@ public class SerialSensorJavaFX extends Application {
          */
         public MeasurementChart() {
             // Initialize the pixelblaze.data holder for the chart
-            XYChart.Series<String, Integer> data = new XYChart.Series<>();
             data.setName("Value");
 
             // Initialize the chart
@@ -91,7 +97,7 @@ public class SerialSensorJavaFX extends Application {
         }
     }
 
-    class ArduinoMessage {
+    static class ArduinoMessage {
         @JsonProperty("type")
         public String type;
 
@@ -113,7 +119,7 @@ public class SerialSensorJavaFX extends Application {
         }
     }
 
-    class ArduinoMessageMapper {
+    static class ArduinoMessageMapper {
         public static ArduinoMessage map(String jsonString) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -193,6 +199,7 @@ public class SerialSensorJavaFX extends Application {
 
     class SerialListener implements SerialPortDataListener {
         private final DateTimeFormatter formatter;
+        private final StringBuilder buffer = new StringBuilder();
 
         /**
          * Constructor which initializes the date formatter.
@@ -214,24 +221,30 @@ public class SerialSensorJavaFX extends Application {
 
             try {
                 byte[] newData = event.getReceivedData();
-                String received = new String(newData)
-                        .replace("\t", "")
-                        .replace("\n", "");
+                buffer.append(new String(newData));
 
-                ArduinoMessage arduinoMessage = ArduinoMessageMapper.map(received);
-                String timestamp = LocalTime.now().format(formatter);
+                int newlineIndex;
+                while ((newlineIndex = buffer.indexOf("\n")) != -1) {
+                    String message = buffer.substring(0, newlineIndex).trim();
+                    buffer.delete(0, newlineIndex + 1);
 
-                if (arduinoMessage != null && arduinoMessage.type.equals("light")) {
-                    // We need to use the runLater approach as this pixelblaze.data is handled
-                    // in another thread as the UI-component
-                    Platform.runLater(() -> {
-                        data.getData().add(
-                                new XYChart.Data<>(timestamp, arduinoMessage.getIntValue())
-                        );
-                    });
+                    if (message.isEmpty()) {
+                        continue;
+                    }
+
+                    String timestamp = LocalTime.now().format(formatter);
+                    System.out.println(timestamp + " - Received: " + message);
+
+                    ArduinoMessage arduinoMessage = ArduinoMessageMapper.map(message);
+
+                    if (arduinoMessage != null && "light".equals(arduinoMessage.type)) {
+                        Platform.runLater(() -> {
+                            data.getData().add(
+                                    new XYChart.Data<>(timestamp, arduinoMessage.getIntValue())
+                            );
+                        });
+                    }
                 }
-
-                System.out.println(timestamp + " - Received: " + received);
             } catch (Exception ex) {
                 System.err.println("Serial error: " + ex.getMessage());
             }
