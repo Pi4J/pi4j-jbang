@@ -18,6 +18,8 @@ import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Example code to use a button (DigitalInput).
@@ -30,9 +32,13 @@ import com.pi4j.io.gpio.digital.PullResistance;
 // Connect a button to PIN 15 = BCM 22
 private static final int BCM_BUTTON = 22;
 
+private static Logger logger;
 private static int pressCount = 0;
 
 void main() throws Exception {
+
+    System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+    logger = LoggerFactory.getLogger(this.getClass());
 
     // Initialize the Pi4J context
     var pi4j = Pi4J.newAutoContext();
