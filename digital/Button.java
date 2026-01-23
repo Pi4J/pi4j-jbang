@@ -64,13 +64,7 @@ void main() throws Exception {
     });
 
     // Loop until the button has been pressed 10 times
-    var buttonState = button.state();
-    System.out.println("Current button state: " + buttonState);
     while (pressCounter.get() < 10) {
-        if (buttonState != button.state()) {
-            buttonState = button.state();
-            System.out.println("Button changed in loop to state: " + buttonState);
-        }
         Thread.sleep(10);
     }
 
