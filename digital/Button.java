@@ -47,7 +47,7 @@ void main() throws Exception {
     var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
             .bcm(BCM_BUTTON)
             .pull(PullResistance.PULL_DOWN)
-            .debounce(100_000_000L);
+            .debounce(3000L);
 
     // Initialize the button (digital input)
     var button = pi4j.create(buttonConfig);
