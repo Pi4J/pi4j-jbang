@@ -21,6 +21,9 @@ import com.pi4j.io.gpio.digital.PullResistance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * Example code to use a button (DigitalInput).
  * Make sure to follow the README of this project to learn more about JBang and how to install it.
@@ -32,13 +35,9 @@ import org.slf4j.LoggerFactory;
 // Connect a button to PIN 15 = BCM 22
 private static final int BCM_BUTTON = 22;
 
-private static Logger logger;
-private static int pressCount = 0;
-
 void main() throws Exception {
-
     System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-    logger = LoggerFactory.getLogger(this.getClass());
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Initialize the Pi4J context
     var pi4j = Pi4J.newAutoContext();
@@ -54,19 +53,20 @@ void main() throws Exception {
     System.out.println("Button is initialized");
 
     // Add a listener to the button
+    var pressCounter = new AtomicInteger(0);
     button.addListener(e -> {
         System.out.println("Button changed in listener to: " + e.state());
         if (e.state() == DigitalState.LOW) {
             // Each time the button changes to the low state, increment the counter
-            pressCount++;
-            System.out.println("Button was pressed for the " + pressCount + "th time");
+            var currentCount = pressCounter.incrementAndGet();
+            System.out.println("Button was pressed for the " + currentCount + "th time");
         }
     });
 
     // Loop until the button has been pressed 10 times
     var buttonState = button.state();
     System.out.println("Current button state: " + buttonState);
-    while (pressCount < 10) {
+    while (pressCounter.get() < 10) {
         if (buttonState != button.state()) {
             buttonState = button.state();
             System.out.println("Button changed in loop to state: " + buttonState);
