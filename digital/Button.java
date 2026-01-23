@@ -36,8 +36,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 private static final int BCM_BUTTON = 22;
 
 void main() throws Exception {
-    //System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
-    //Logger logger = LoggerFactory.getLogger(this.getClass());
+    System.setProperty(org.slf4j.simple.SimpleLogger.LOG_FILE_KEY, "/trace.log");
+    System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
+    Logger logger = LoggerFactory.getLogger(this.getClass());
 
     // Initialize the Pi4J context
     var pi4j = Pi4J.newAutoContext();
