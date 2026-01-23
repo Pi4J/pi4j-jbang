@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 private static final int BCM_BUTTON = 22;
 
 void main() throws Exception {
-    System.setProperty(org.slf4j.simple.SimpleLogger.LOG_FILE_KEY, "/trace.log");
+    System.setProperty(org.slf4j.simple.SimpleLogger.LOG_FILE_KEY, "trace.log");
     System.setProperty(org.slf4j.simple.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, "TRACE");
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -47,7 +47,7 @@ void main() throws Exception {
     var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
             .bcm(BCM_BUTTON)
             .pull(PullResistance.PULL_DOWN)
-            .debounce(100_000_000L);
+            .debounce(3000L);
 
     // Initialize the button (digital input)
     var button = pi4j.create(buttonConfig);
