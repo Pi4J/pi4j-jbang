@@ -2,4 +2,4 @@
 /out/
 .DS_Store
 /*.iml
-/*/trace.log
+trace.log
