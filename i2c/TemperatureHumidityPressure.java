@@ -7,7 +7,7 @@
  */
 // JAVA 25
 
-//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/mavens/
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
