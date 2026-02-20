@@ -11,8 +11,8 @@
 
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//DEPS com.pi4j:pi4j-core:4.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-plugin-ffm:4.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-core:4.0.0
+//DEPS com.pi4j:pi4j-plugin-ffm:4.0.0
 //DEPS com.pi4j:pi4j-drivers:0.0.1-SNAPSHOT
 
 import com.pi4j.Pi4J;
