@@ -40,10 +40,10 @@ import com.pi4j.util.Console;
  * 70: -- -- -- -- -- -- -- --
  *
  */
-private static final Console console = new Console(); // Pi4J Logger
+final Console console = new Console(); // Pi4J Logger
 
-private static final int I2C_BUS = 0x01;
-private static final int I2C_DEVICE = 0x38;
+final int I2C_BUS = 0x01;
+final int I2C_DEVICE = 0x38;
 
 public static void main(String[] args) {
     try {

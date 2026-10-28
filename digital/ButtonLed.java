@@ -33,11 +33,11 @@ import com.pi4j.util.Console;
  */
 
 // Connect a button to PIN 15 = BCM 22
-private static final int BCM_BUTTON = 22;
+final int BCM_BUTTON = 22;
 // Connect a LED to PIN 18 = BCM 24
-private static final int BCM_LED = 24;
+final int BCM_LED = 24;
 
-private static int pressCount = 0;
+int pressCount = 0;
 
 void main() throws Exception {
     final var console = new Console();

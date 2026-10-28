@@ -68,8 +68,8 @@ import java.net.URL;
  * 60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
  * 70: -- -- -- -- -- -- -- --
  */
-private final static int WAIT_BETWEEN_MESSAGES = 3_000;
-private static Hd44780Driver lcdDisplay;
+static int WAIT_BETWEEN_MESSAGES = 3_000;
+Hd44780Driver lcdDisplay;
 
 void main() throws Exception {
     // Initialize the Pi4J context
@@ -109,7 +109,7 @@ void main() throws Exception {
     pi4j.shutdown();
 }
 
-public static String getForecast(Double latitude, Double longitude) {
+String getForecast(Double latitude, Double longitude) {
     var rt = new StringBuilder();
 
     try {
@@ -140,7 +140,7 @@ public static String getForecast(Double latitude, Double longitude) {
     return data;
 }
 
-private static Forecast convertForecast(String content) {
+Forecast convertForecast(String content) {
     try {
         var mapper = new ObjectMapper();
         mapper.configure(
@@ -153,14 +153,14 @@ private static Forecast convertForecast(String content) {
     }
 }
 
-private static void showDate(Forecast forecast) {
+void showDate(Forecast forecast) {
     System.out.println("Showing date");
     lcdDisplay.clear();
     lcdDisplay.writeAt(0, 0, "Weather for");
     lcdDisplay.writeAt(0, 1, forecast.dailyForecast.date[0]);
 }
 
-private static void showCurrentWeather(Forecast forecast) {
+void showCurrentWeather(Forecast forecast) {
     System.out.println("Showing current weather");
     var text = getWmoDescription(forecast.dailyForecast.weatherCode[0]);
     lcdDisplay.clear();
@@ -173,7 +173,7 @@ private static void showCurrentWeather(Forecast forecast) {
     }
 }
 
-private static void showSunInfo(Forecast forecast) {
+void showSunInfo(Forecast forecast) {
     System.out.println("Showing sun duration");
     var seconds = forecast.dailyForecast.sunshineDurationInSeconds[0];
     var hours = (seconds * 1.0) / 60 / 60;
@@ -185,14 +185,14 @@ private static void showSunInfo(Forecast forecast) {
             + getTimeFromTimestamp(forecast.dailyForecast.sunset[0]));
 }
 
-private static String getTimeFromTimestamp(String timestamp) {
+String getTimeFromTimestamp(String timestamp) {
     if (timestamp.contains("T")) {
         return timestamp.substring(timestamp.indexOf("T") + 1);
     }
     return timestamp;
 }
 
-private static String getWmoDescription(int code) {
+String getWmoDescription(int code) {
     return switch (code) {
         case 0 -> "Clear sky";
         case 1 -> "Mainly clear";
