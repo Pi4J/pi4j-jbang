@@ -8,6 +8,12 @@
 // JAVA 25
 
 /**
+ * The FFM plugin calls restricted native methods. Without this option Java prints warnings,
+ * and restricted methods will be blocked in a future Java release unless native access is enabled.
+ */
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
+
+/**
  * Repos with the snapshot definition is only needed when a snapshot DEPS is used.
  */
 //REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
@@ -17,8 +23,6 @@
 //DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-drivers:2.0.0-SNAPSHOT
-
-//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
