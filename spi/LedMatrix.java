@@ -36,7 +36,7 @@ import java.util.Random;
  * <code>jbang LedMatrix.java</code>
  *
  */
-private static Spi spi;
+Spi spi;
 
 void main() throws Exception {
     var pi4j = Pi4J.newAutoContext();
@@ -98,7 +98,7 @@ void main() throws Exception {
 /**
  * Loop through all the rows and put all the LEDs off.
  */
-public static void allOff() {
+void allOff() {
     try {
         for (int row = 1; row <= 8; row++) {
             spi.write((byte) row, (byte) 0x00);
@@ -113,7 +113,7 @@ public static void allOff() {
  *
  * @param waitBetween Number of milliseconds to wait between every LED output
  */
-public static void showOneByOne(int waitBetween) {
+void showOneByOne(int waitBetween) {
     try {
         for (int row = 1; row <= 8; row++) {
             System.out.println("One by one on row " + row);
@@ -133,7 +133,7 @@ public static void showOneByOne(int waitBetween) {
  *
  * @param waitBetween Number of milliseconds to wait between every row output
  */
-public static void showRows(int waitBetween) {
+void showRows(int waitBetween) {
     try {
         for (int onRow = 1; onRow <= 8; onRow++) {
             for (int row = 1; row <= 8; row++) {
@@ -152,7 +152,7 @@ public static void showRows(int waitBetween) {
  *
  * @param waitBetween Number of milliseconds to wait between every column output
  */
-public static void showCols(int waitBetween) {
+void showCols(int waitBetween) {
     try {
         for (int onColumn = 0; onColumn < 8; onColumn++) {
             for (int row = 1; row <= 8; row++) {
@@ -172,7 +172,7 @@ public static void showCols(int waitBetween) {
  * @param numberOfLoops Number of random outputs to be generated
  * @param waitBetween   Number of milliseconds to wait between random screens
  */
-public static void showRandomOutput(int numberOfLoops, int waitBetween) {
+void showRandomOutput(int numberOfLoops, int waitBetween) {
     try {
         Random r = new Random();
         int min = 0;
@@ -195,7 +195,7 @@ public static void showRandomOutput(int numberOfLoops, int waitBetween) {
  *
  * @param waitBetween Number of milliseconds to wait between every image output
  */
-public static void showAllImages(int waitBetween) {
+void showAllImages(int waitBetween) {
     try {
         for (Image image : Image.values()) {
             showImage(image);
@@ -212,7 +212,7 @@ public static void showAllImages(int waitBetween) {
  *
  * @param image Image to be shown
  */
-public static void showImage(Image image) {
+void showImage(Image image) {
     try {
         for (int i = 0; i < 8; i++) {
             spi.write((byte) (i + 1), image.getRows().get(i));
@@ -227,7 +227,7 @@ public static void showImage(Image image) {
  *
  * @param waitBetween Milliseconds between every AsciiCharacter
  */
-public static void showAllAsciiCharacters(int waitBetween) {
+void showAllAsciiCharacters(int waitBetween) {
     try {
         for (AsciiCharacter asciiCharacter : AsciiCharacter.values()) {
             showAsciiCharacter(asciiCharacter);
@@ -244,7 +244,7 @@ public static void showAllAsciiCharacters(int waitBetween) {
  *
  * @param asciiCharacter AsciiCharacter to be shown
  */
-public static void showAsciiCharacter(AsciiCharacter asciiCharacter) {
+void showAsciiCharacter(AsciiCharacter asciiCharacter) {
     try {
         for (int row = 0; row < 8; row++) {
             spi.write((byte) (row + 1), asciiCharacter.getRows().get(row));
@@ -259,7 +259,7 @@ public static void showAsciiCharacter(AsciiCharacter asciiCharacter) {
  *
  * @param waitBetweenMove Milliseconds between every column move
  */
-public static void scrollAllAsciiCharacters(int waitBetweenMove) {
+void scrollAllAsciiCharacters(int waitBetweenMove) {
     try {
         for (AsciiCharacter asciiCharacter : AsciiCharacter.values()) {
             scrollAsciiCharacter(asciiCharacter, waitBetweenMove);
@@ -277,7 +277,7 @@ public static void scrollAllAsciiCharacters(int waitBetweenMove) {
  * @param asciiCharacter  AsciiCharacter to be scrolled
  * @param waitBetweenMove Milliseconds between every column move
  */
-public static void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitBetweenMove) {
+void scrollAsciiCharacter(AsciiCharacter asciiCharacter, int waitBetweenMove) {
     try {
         for (int move = 0; move < ((8 * 2) + 1); move++) {
             for (int row = 0; row < 8; row++) {

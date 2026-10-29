@@ -24,11 +24,11 @@ import com.pi4j.io.gpio.digital.DigitalOutput;
  */
 
 // Connect a LED to PIN 16 = BCM 23
-private static final int BCM_RED = 23;
+final int BCM_RED = 23;
 // Connect a LED to PIN 18 = BCM 24
-private static final int BCM_GREEN = 24;
+final int BCM_GREEN = 24;
 // Connect a LED to PIN 22 = BCM 25
-private static final int BCM_BLUE = 25;
+final int BCM_BLUE = 25;
 
 void main() throws Exception {
     // Initialize the Pi4J context
@@ -79,7 +79,7 @@ void main() throws Exception {
     pi4j.shutdown();
 }
 
-private static void blink10(DigitalOutput led) throws InterruptedException {
+void blink10(DigitalOutput led) throws InterruptedException {
     System.out.println("Start blinking LED " + led.bcm());
 
     for (int i = 0; i < 10; i++) {
@@ -95,7 +95,7 @@ private static void blink10(DigitalOutput led) throws InterruptedException {
 // Contributed by Jonathan Stronkhorst
 // Morse translator: https://morsecode.world/international/translator.html
 // Guide for the Morse timing: https://re06.org/how-to-read-morse-code-a-step-by-step-guide-to-timing-rhythm-and-practice-for-beginners/
-private static void morseHelloWorld(DigitalOutput led) throws InterruptedException {
+void morseHelloWorld(DigitalOutput led) throws InterruptedException {
     String helloWorld = ".... . .-.. .-.. --- / .-- --- .-. .-.. -.. -.-.--";
 
     /*

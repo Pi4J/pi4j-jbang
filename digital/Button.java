@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 // Connect a button to PIN 15 = BCM 22
-private static final int BCM_BUTTON = 22;
+final int BCM_BUTTON = 22;
 
 void main() throws Exception {
     System.setProperty(org.slf4j.simple.SimpleLogger.LOG_FILE_KEY, "trace.log");

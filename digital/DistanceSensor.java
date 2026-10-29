@@ -29,11 +29,11 @@ import com.pi4j.io.gpio.digital.PullResistance;
  */
 
 // Config for CrowPi 2: trigger on BCM 16 and echo on BCM 26
-private static final int BCM_TRIGGER = 16;
-private static final int BCM_ECHO = 26;
+final int BCM_TRIGGER = 16;
+final int BCM_ECHO = 26;
 
-private static DigitalOutput trigger;
-private static DigitalInput echo;
+DigitalOutput trigger;
+DigitalInput echo;
 
 void main() {
     System.out.println("Starting distance sensor example...");
@@ -65,7 +65,7 @@ void main() {
     }
 }
 
-private static void measureDistance() {
+void measureDistance() {
     try {
         // Set trigger high for 0.01ms
         // Pi4J V2+ only provides a pulse method for milliseconds, but the distance sensor needs a short pulse...
@@ -106,7 +106,7 @@ private static void measureDistance() {
  * @param seconds Number of seconds
  * @param half    Flag to define if the calculated distance must be divided
  */
-private static int getDistance(float seconds, boolean half) {
+int getDistance(float seconds, boolean half) {
     float distance = seconds * 34300;
     return Math.round(half ? distance / 2 : distance);
 }
@@ -118,6 +118,6 @@ private static int getDistance(float seconds, boolean half) {
  * @param start Start timestamp in nanoseconds
  * @param end   End timestamp in nanoseconds
  */
-private static float getSecondsDifference(long start, long end) {
+float getSecondsDifference(long start, long end) {
     return (end - start) / 1000000000F;
 }
