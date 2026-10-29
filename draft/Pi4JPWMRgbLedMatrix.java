@@ -10,6 +10,8 @@ package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 //DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
 
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
+
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.pwm.Pwm;

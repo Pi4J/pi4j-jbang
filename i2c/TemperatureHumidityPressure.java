@@ -16,7 +16,9 @@
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-drivers:1.2.0
+//DEPS com.pi4j:pi4j-drivers:2.0.0-SNAPSHOT
+
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;

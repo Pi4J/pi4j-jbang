@@ -16,8 +16,10 @@
 //DEPS org.slf4j:slf4j-simple:2.0.17
 //DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
-//DEPS com.pi4j:pi4j-drivers:1.2.0
+//DEPS com.pi4j:pi4j-drivers:2.0.0-SNAPSHOT
 //DEPS com.fasterxml.jackson.core:jackson-databind:2.13.4.1
+
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;

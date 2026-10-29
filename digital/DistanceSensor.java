@@ -17,6 +17,8 @@
 //DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
 //DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
 
+//RUNTIME_OPTIONS --enable-native-access=ALL-UNNAMED
+
 import com.pi4j.Pi4J;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalOutput;
@@ -34,6 +36,10 @@ import com.pi4j.io.gpio.digital.PullResistance;
 // Config for CrowPi 2: trigger on BCM 16 and echo on BCM 26
 final int BCM_TRIGGER = 18;
 final int BCM_ECHO = 24;
+
+// Maximum time to wait for the echo, so a missed measurement doesn't block the loop forever.
+// An HC-SR04 reports "no object in range" with an echo pulse of about 38ms.
+final long TIMEOUT_NANOS = 50_000_000L;
 
 DigitalOutput trigger;
 DigitalInput echo;
@@ -70,25 +76,34 @@ void main() {
 
 void measureDistance() {
     try {
-        // Set trigger high for 0.01ms
+        // Set trigger high for 10 microseconds (10,000 ns)
         // Pi4J V2+ only provides a pulse method for milliseconds, but the distance sensor needs a short pulse...
         // This is reaching the limits of what a programming language on Linux can do, but we can try ;-)
         trigger.state(DigitalState.HIGH);
         long startTrigger = System.nanoTime();
-        while (System.nanoTime() - startTrigger < 10) {
+        while (System.nanoTime() - startTrigger < 10_000) {
             // Busy wait
         }
         trigger.state(DigitalState.LOW);
 
         // Start the measurement
+        long startWait = System.nanoTime();
         while (echo.isLow()) {
             // Wait until the echo pin is high, indicating the ultrasound was sent
+            if (System.nanoTime() - startWait > TIMEOUT_NANOS) {
+                System.err.println("Timeout: echo never went high");
+                return;
+            }
         }
         long startEcho = System.nanoTime();
 
         // Wait till measurement is finished
         while (echo.isHigh()) {
             // Wait until the echo pin is low, indicating the ultrasound was received back
+            if (System.nanoTime() - startEcho > TIMEOUT_NANOS) {
+                System.err.println("Timeout: echo never went low");
+                return;
+            }
         }
         long endEcho = System.nanoTime();
 
