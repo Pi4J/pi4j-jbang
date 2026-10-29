@@ -7,6 +7,9 @@
  */
 // JAVA 25
 
+/**
+ * Repos with the snapshot definition is only needed when a snapshot DEPS is used.
+ */
 //REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
 
 //DEPS org.slf4j:slf4j-api:2.0.17

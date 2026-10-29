@@ -1,15 +1,19 @@
 package draft; /// usr/bin/env jbang "$0" "$@" ; exit $?
 
+/**
+ * Repos with the snapshot definition is only needed when a snapshot DEPS is used.
+ */
+//REPOS mavencentral,mavensnapshot=https://central.sonatype.com/repository/maven-snapshots/
+
 //DEPS org.slf4j:slf4j-api:2.0.17
 //DEPS org.slf4j:slf4j-simple:2.0.17
-//DEPS com.pi4j:pi4j-core:4.0.2
-//DEPS com.pi4j:pi4j-plugin-linuxfs:4.0.2
+//DEPS com.pi4j:pi4j-core:5.0.0-SNAPSHOT
+//DEPS com.pi4j:pi4j-plugin-ffm:5.0.0-SNAPSHOT
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.pwm.PwmType;
-import com.pi4j.plugin.linuxfs.provider.pwm.LinuxFsPwmProviderImpl;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -40,7 +44,8 @@ public class Pi4JPWMRgbLedMatrix {
     /**
      * RGB LED Matrix in CrowPi 2 is connected to WPI 26 = BCM 12 --> needs to be configured, see above!
      */
-    private static final int CHANNEL = 0;
+    private static final int PWM_CHIP = 0;
+    private static final int PWM_CHANNEL = 0;
 
     /**
      * Width and height of the LED matrix
@@ -91,7 +96,8 @@ public class Pi4JPWMRgbLedMatrix {
         // This is a conceptual implementation - real usage would need native library
         var pwmConfig = Pwm.newConfigBuilder(pi4j)
                 .pwmType(PwmType.HARDWARE)
-                .channel(CHANNEL)
+                .chip(PWM_CHIP)
+                .channel(PWM_CHANNEL)
                 .initial(0)
                 .shutdown(0)
                 .build();
@@ -110,9 +116,7 @@ public class Pi4JPWMRgbLedMatrix {
 
     public static void main(String[] args) {
         // Initialize the Pi4J context
-        var pi4j = Pi4J.newContextBuilder()
-                .add(new LinuxFsPwmProviderImpl("/sys/class/pwm/", 0))
-                .build();
+        var pi4j = Pi4J.newAutoContext();
 
         // Initialize the RGB LED Matrix
         var matrix = new Pi4JPWMRgbLedMatrix(pi4j);

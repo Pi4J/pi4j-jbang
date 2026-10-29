@@ -118,7 +118,6 @@ $ jbang ButtonLed.java
 [jbang] Building jar...
 [main] INFO com.pi4j.Pi4J - New auto context
 [main] INFO com.pi4j.Pi4J - New context builder
-[main] INFO com.pi4j.platform.impl.DefaultRuntimePlatforms - adding platform to managed platform map [id=raspberrypi; name=RaspberryPi Platform; priority=5; class=com.pi4j.plugin.raspberrypi.platform.RaspberryPiPlatform]
 [main] INFO com.pi4j.util.Console - LED high
 [main] INFO com.pi4j.util.Console - LED low
 ```
