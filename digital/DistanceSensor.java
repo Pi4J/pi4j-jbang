@@ -29,8 +29,8 @@ import com.pi4j.io.gpio.digital.PullResistance;
  */
 
 // Config for CrowPi 2: trigger on BCM 16 and echo on BCM 26
-final int BCM_TRIGGER = 16;
-final int BCM_ECHO = 26;
+final int BCM_TRIGGER = 18;
+final int BCM_ECHO = 24;
 
 DigitalOutput trigger;
 DigitalInput echo;
