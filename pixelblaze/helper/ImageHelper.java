@@ -114,7 +114,7 @@ public class ImageHelper {
 
         graphics.translate((nWidth - width) / 2, (nHeight - height) / 2);
         // Rotation around the center point
-        graphics.rotate(radian, width / 2, height / 2);
+        graphics.rotate(radian, width / 2.0, height / 2.0);
         graphics.drawImage(buffImage, 0, 0, null);
         graphics.dispose();
 

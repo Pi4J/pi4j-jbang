@@ -57,14 +57,18 @@ void main() {
         // All Raspberry Pi models support a hardware PWM pin on GPIO_01.
         // Raspberry Pi models A+, B+, 2B, 3B also support hardware PWM pins:
         // BCM 12, 13, 18, and 19
-        var pwmConfig = Pwm.newConfigBuilder(pi4j)
+        var pwmConfig = Pwm.newConfigBuilder()
                 .pwmType(PwmType.HARDWARE)
                 .channel(CHANNEL)
+                .chip(0)
                 .initial(0)
                 .shutdown(0)
+                .initial(0)
                 .build();
         pwm = pi4j.create(pwmConfig);
 
+        pwm.on(50, 1);
+        Thread.sleep(3000);
         int[] frequencies = new int[]{
                 262, // C4(262)
                 294, // D4(294)q

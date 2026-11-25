@@ -55,13 +55,13 @@ void main() throws Exception {
 
     var pi4j = Pi4J.newAutoContext();
 
-    var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
+    var ledConfig = DigitalOutput.newConfigBuilder()
             .bcm(BCM_LED)
             .shutdown(DigitalState.LOW)
             .initial(DigitalState.LOW);
     var led = pi4j.create(ledConfig);
 
-    var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+    var buttonConfig = DigitalInput.newConfigBuilder()
             .bcm(BCM_BUTTON)
             .pull(PullResistance.PULL_DOWN)
             .debounce(100_000_000L);

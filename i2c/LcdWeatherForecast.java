@@ -85,7 +85,7 @@ void main() throws Exception {
     var pi4j = Pi4J.newAutoContext();
 
     // Initialize the LCD
-    var i2c = pi4j.create(I2C.newConfigBuilder(pi4j)
+    var i2c = pi4j.create(I2C.newConfigBuilder()
             .bus(0x1)
             .device(0x27)
             .build());
