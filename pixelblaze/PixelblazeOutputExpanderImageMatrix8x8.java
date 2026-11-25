@@ -4,7 +4,6 @@
 //SOURCES helper/ImageHelper.java
 //SOURCES helper/PixelBlazeOutputExpanderHelper.java
 
-import helper.ImageHelper;
 import helper.PixelBlazeOutputExpanderHelper;
 
 import java.io.File;

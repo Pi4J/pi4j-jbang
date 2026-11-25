@@ -26,11 +26,10 @@
 
 import com.pi4j.Pi4J;
 import com.pi4j.drivers.sensor.environment.bmx280.Bmx280Driver;
-import com.pi4j.io.gpio.digital.DigitalOutput;
-import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.spi.Spi;
 import com.pi4j.io.spi.SpiConfigBuilder;
 import com.pi4j.io.spi.SpiMode;
+import com.pi4j.plugin.ffm.FFMContext;
 
 /**
  * Example code to read the temperature, humidity and pressure from a BME280 sensor, on an Adafruit board via I2C and SPI.
@@ -58,26 +57,21 @@ import com.pi4j.io.spi.SpiMode;
  *
  */
 static final int SPI_BUS = 0;
-static final int SPI_CSB = 21;
 
 void main() throws Exception {
     try {
         var pi4j = Pi4J.newAutoContext();
 
-        IO.println("Initializing the sensor via I2C");
+        IO.println("Initializing the sensor via SPI");
 
-        var csb = pi4j.create(DigitalOutput.newConfigBuilder(pi4j)
-                .bcm(SPI_CSB)
-                .initial(DigitalState.HIGH)
-                .shutdown(DigitalState.HIGH)
-                .build());
-        var spi = pi4j.create(SpiConfigBuilder.newInstance(pi4j)
+        pi4j = new FFMContext();
+        var spi = pi4j.create(SpiConfigBuilder.newInstance()
                 .channel(0)
                 .bus(SPI_BUS)
                 .mode(SpiMode.MODE_0)
-                .baud(Spi.DEFAULT_BAUD)
-                .build());
-        var sensor = new Bmx280Driver(spi, csb);
+                .baud(Spi.DEFAULT_BAUD) );
+
+        var sensor = new Bmx280Driver(spi);
 
         for (int counter = 0; counter < 10; counter++) {
             IO.println("**************************************");

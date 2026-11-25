@@ -52,7 +52,7 @@ void main() throws Exception {
     var pi4j = Pi4J.newAutoContext();
 
     // Initialize the button configuration
-    var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+    var buttonConfig = DigitalInput.newConfigBuilder()
             .bcm(BCM_BUTTON)
             .pull(PullResistance.PULL_DOWN)
             .debounce(3000L);

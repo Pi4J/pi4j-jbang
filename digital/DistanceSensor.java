@@ -60,7 +60,7 @@ void main() {
         trigger.low();
 
         // Initialize the input pin
-        var echoConfig = DigitalInput.newConfigBuilder(pi4j)
+        var echoConfig = DigitalInput.newConfigBuilder()
                 .bcm(BCM_ECHO)
                 .pull(PullResistance.PULL_UP);
         echo = pi4j.create(echoConfig);

@@ -55,9 +55,9 @@ void main() throws Exception {
     // Initialize SPI
     System.out.println("Initializing the matrix via SPI");
 
-    var spiConfig = Spi.newConfigBuilder(pi4j)
+    var spiConfig = Spi.newConfigBuilder()
             .bus(SpiBus.BUS_0)
-            .chipSelect(SpiChipSelect.CS_0)
+            .channel(0)
             .baud(Spi.DEFAULT_BAUD)
             .mode(SpiMode.MODE_0)
             .build();

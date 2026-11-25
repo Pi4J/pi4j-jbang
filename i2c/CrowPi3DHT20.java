@@ -51,10 +51,10 @@ import com.pi4j.util.Console;
  * 70: -- -- -- -- -- -- -- --
  *
  */
-final Console console = new Console(); // Pi4J Logger
+static final Console console = new Console(); // Pi4J Logger
 
-final int I2C_BUS = 0x01;
-final int I2C_DEVICE = 0x38;
+static final int I2C_BUS = 0x01;
+static final int I2C_DEVICE = 0x38;
 
 public static void main(String[] args) {
     try {
@@ -62,7 +62,7 @@ public static void main(String[] args) {
 
         console.println("Initializing the DHT20 sensor via I2C");
 
-        var i2cConfig = I2C.newConfigBuilder(pi4j)
+        var i2cConfig = I2C.newConfigBuilder()
                 .bus(I2C_BUS)
                 .device(I2C_DEVICE)
                 .i2cImplementation(I2CImplementation.DIRECT)

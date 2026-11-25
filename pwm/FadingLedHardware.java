@@ -60,7 +60,7 @@ void main() {
         var pi4j = Pi4J.newAutoContext();
 
         // Initialize PWM
-        var pwmConfig = Pwm.newConfigBuilder(pi4j)
+        var pwmConfig = Pwm.newConfigBuilder()
                 .pwmType(PwmType.HARDWARE)
                 .chip(PWM_CHIP)
                 .channel(PWM_CHANNEL)

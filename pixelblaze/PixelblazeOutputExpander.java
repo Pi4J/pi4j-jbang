@@ -142,7 +142,7 @@ public class PixelblazeOutputExpander {
     }
 
     private static void sendOneByOne(int channel, int numberOfLeds, byte red, byte green, byte blue, long duration) throws InterruptedException {
-        System.out.println("One by one on channel " + channel + ", will take " + Math.round((numberOfLeds * duration) / 1000) + "s");
+        System.out.println("One by one on channel " + channel + ", will take " + Math.round((numberOfLeds * duration) / 1000.0) + "s");
         for (int i = 0; i < numberOfLeds; i++) {
             // System.out.println("One by one on channel " + channel + ", LED " + i);
             byte[] oneLed = new byte[numberOfLeds * BYTES_PER_PIXEL];

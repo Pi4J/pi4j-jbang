@@ -100,7 +100,7 @@ public class Pi4JPWMRgbLedMatrix {
         // Create PWM configuration for WS2812B
         // Note: WS2812B requires precise timing that's difficult with Pi4J PWM
         // This is a conceptual implementation - real usage would need native library
-        var pwmConfig = Pwm.newConfigBuilder(pi4j)
+        var pwmConfig = Pwm.newConfigBuilder()
                 .pwmType(PwmType.HARDWARE)
                 .chip(PWM_CHIP)
                 .channel(PWM_CHANNEL)
